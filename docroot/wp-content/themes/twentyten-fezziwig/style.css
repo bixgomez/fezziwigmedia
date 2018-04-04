@@ -1,0 +1,124 @@
+/*
+Theme Name: Fezziwig
+Theme URI: http://wordpress.org/
+Description: A Child Theme of Twentyten!
+Author: Richard Gilbert
+Template: twentyten
+Version: 1.0
+*/
+
+@import url("../twentyten/style.css");
+
+/* Richard's Overrides */
+
+body {
+	background-image: url(images/fezziwig-site-background-v03.png);
+	background-repeat: no-repeat;
+	background-position: center 20px;
+	background-color: #ECDCC0;
+	}
+
+#wrapper {
+	background-color: transparent;
+	}
+	
+#header,
+#footer {
+	visibility: hidden;
+	display: none;
+	}
+	
+#container {
+	position: relative;
+	}
+	
+#access .menu-header, div.menu, #colophon, #branding, #main, #wrapper {
+	margin: 0 auto;
+	width: 500px;
+	}
+	
+#main {
+	padding: 350px 0 0;
+	}
+	
+.one-column #content {
+	width:520px;
+	}
+	
+#content .entry-title {
+	visibility: hidden;
+	display: none;
+	}
+	
+#primary, #secondary {
+    display: none;
+    float: right;
+    overflow: hidden;
+    width: 220px;
+}
+
+.gform_wrapper .top_label .gfield_label {
+    display: none !important;
+}
+
+.gform_wrapper {
+    background-color: transparent;
+    height: 165px !important;
+    margin: 20px 35px !important;
+    max-width: 418px !important;
+    overflow: hidden !important;
+    width: 418px !important;
+}
+
+div.gform_body {
+    background-color: transparent;
+    height: 35px;
+    position: relative;
+    width: 418px;
+}
+
+input#input_1_1 {
+    background-color: transparent;
+    border: 0 solid red;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    font-family: georgia,times New Roman,sans-serif;
+    font-size: 18px;
+    height: 30px;
+    width: 340px;
+}
+
+form#gform_1 {
+    background-color: transparent;
+    height: 35px;
+    position: relative;
+    width: 418px;
+}
+
+input#gform_submit_button_1 {
+    background-color: transparent;
+    border: 0 solid white;
+    color: transparent;
+    height: 36px;
+    left: 347px;
+    position: absolute;
+    top: 0;
+    z-index: 1000;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+#gforms_confirmation_message {
+    background-color: #EEE2CB !important;
+    border: 1px solid #EEE2CB !important;
+    color: #5C697A !important;
+    font-size: 20px !important;
+    height: 73px !important;
+    line-height: 145% !important;
+    margin-bottom: 136px !important;
+    margin-top: -18px !important;
+    padding: 20px 0 !important;
+    text-align: center !important;
+    width: 478px !important;
+}
+	

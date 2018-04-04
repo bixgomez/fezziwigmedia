@@ -1,0 +1,102 @@
+#main {
+	height:190px !IMPORTANT;
+	}
+	
+body.page .edit-link {
+    clear: both;
+    display: none;
+	}
+
+
+div#frm_form_2_container {
+	position: relative !IMPORTANT;
+	width: 433px !IMPORTANT;
+	height: 100px !IMPORTANT;
+	border: 0px solid red !IMPORTANT;
+	margin: 20px 0 0 39px !IMPORTANT;
+	}
+input#field_email-address {
+	position: absolute !IMPORTANT;
+	top: 0px !IMPORTANT;
+	left: 0px !IMPORTANT;
+	width: 377px !IMPORTANT;
+	height: 35px !IMPORTANT;
+	border: 0px dotted #dddddd !IMPORTANT;
+	background-color: transparent !IMPORTANT;
+	margin: 0px !IMPORTANT;
+	padding: 0px !IMPORTANT;
+	}
+	
+	
+#frm_form_2_container input[type="text"] {
+	-moz-box-shadow: 0px 0px 0px #CCC !IMPORTANT;
+	-webkit-box-shadow: 0px 0px 0px #CCC !IMPORTANT;
+	box-shadow: 0px 0px 0px #CCC !IMPORTANT;
+	padding: 1px 0 0 19px !IMPORTANT;
+	width: 350px !IMPORTANT;
+	border: 0px solid white !IMPORTANT;
+	background-color:transparent !IMPORTANT;
+	}
+	
+	
+.with_frm_style p.submit {
+	position: absolute !IMPORTANT;
+	top: 0px !IMPORTANT;
+	right: 0px !IMPORTANT;	
+	margin: 0px !IMPORTANT;
+	padding: 0px !IMPORTANT;
+	}
+.with_frm_style p.submit input {
+	height: 35px !IMPORTANT;
+	width: 56px !IMPORTANT;
+	border: 0px solid white !IMPORTANT;
+	color: transparent !IMPORTANT;
+	background-color: transparent !IMPORTANT;
+	padding: 0 !IMPORTANT;
+	margin: 0 !IMPORTANT;
+	opacity: 0;
+	}
+	
+
+input:focus {
+	outline: medium none !IMPORTANT;
+	}
+	
+div#message {
+	position: absolute !IMPORTANT;
+	left: 0px !IMPORTANT;
+	top: 0px !IMPORTANT;
+	border: 0px solid blue !IMPORTANT;
+	width: 525px !IMPORTANT;
+	height: 120px !IMPORTANT;
+	background-color: #EEE2CB !IMPORTANT;
+	}
+div#message p {
+	padding:33px 15px 0 0 !IMPORTANT;
+	text-align:center !IMPORTANT;
+	color: #5C697A !IMPORTANT;
+	}
+	
+.with_frm_style ul#frm_errors {
+	//list-style:square inside url("../images/error.png") !IMPORTANT;
+	padding:7px 0 0 !IMPORTANT;
+	color: #333333 !IMPORTANT;
+	}
+	
+	
+.with_frm_style p.submit {
+    padding-bottom: 0px !IMPORTANT;
+    padding-top: 0px !IMPORTANT;
+}
+	
+.with_frm_style p.submit {
+    height: 35px !IMPORTANT;
+    overflow: hidden !IMPORTANT;
+    padding-bottom: 0 !IMPORTANT;
+    padding-top: 0 !IMPORTANT;
+    width: 55px !IMPORTANT;
+	}
+	
+label.frm_pos_none {
+	opacity: 0;	
+		}
