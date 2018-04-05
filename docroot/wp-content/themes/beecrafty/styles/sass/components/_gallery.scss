@@ -1,0 +1,30 @@
+#content {
+
+  #postgallery-wrapper {
+  // background-color: pink;
+  }
+
+  div.ngg-gallery-thumbnail-box {
+    float: left;
+    max-width: 100% !important;
+    margin: 0 0 8px 8px;
+    div.ngg-gallery-thumbnail {
+      display: block;
+      border: none;
+      float: none;
+      margin: 0;
+      clear: both;
+      a.cboxElement {
+        display: block;
+        margin: 0;
+        img {
+          border: 1px solid #DDDDDD;
+          box-shadow: 1px 1px 2px #E6E6E6;
+          margin: 0;
+          padding: 5px;
+        }
+      }
+    }
+  }
+
+}

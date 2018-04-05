@@ -2269,7 +2269,7 @@ div.slideshowlink {
 }
 .ngg-gallery-thumbnail {
   float: left;
-  margin: 0 0 5px 5px !important;
+  // margin: 0 0 5px 5px !important;
   text-align: center;
 }
 #postcontent-wrapper {
@@ -2410,33 +2410,7 @@ body.home div#wrap div#inner {
 body.home div#wrap div#footer {
   display: none;
 }
-body.home div#wrap div#nav {
-  left: 252px;
-  position: absolute;
-  top: 353px;
-  width: 491px;
-}
-body.home #nav {
-  background-color: transparent;
-  background-image: none;
-  clear: both;
-  color: #7D7D7D;
-  height: 40px;
-}
-body.home #nav .wrap {
-  background-color: transparent;
-  background-image: none;
-  height: 40px;
-  overflow: hidden;
-  width: 540px;
-}
-body.home #nav li a {
-  background-color: transparent;
-  display: inline-block;
-  font-size: 24px;
-  margin: 0 4px;
-  padding: 3px 12px;
-}
+
 #content .gform_wrapper {
   padding-left: 0;
 }
