@@ -13,7 +13,13 @@ define('CHILD_THEME_URL', 'http://www.studiopress.com/themes/beecrafty');
 // Load scripts
 add_action('get_header', 'beecrafty_load_scripts');
 function beecrafty_load_scripts() {
-    wp_enqueue_script('boxes', CHILD_URL.'/js/boxes.js', TRUE);
+  wp_enqueue_script('boxes', CHILD_URL.'/js/boxes.js', TRUE);
+}
+
+// Load real css.
+add_action( 'wp_enqueue_scripts', 'enqueue_theme_css', 200 );
+function enqueue_theme_css() {
+  wp_enqueue_style('default', CHILD_URL.'/styles/css/styles.css');
 }
 
 // Add support for custom background
