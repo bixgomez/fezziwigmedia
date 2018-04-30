@@ -1,0 +1,49 @@
+
+#nav {
+
+  li a,
+  li.current_page_item a {
+    color: $link-color !important;
+    &:hover {
+      color: $link-color--hover !important;
+    }
+  }
+
+  body.home & {
+
+    background-color: transparent;
+    position: absolute;
+    left: 0;
+    top: 353px;
+    width: 100%;
+
+    .wrap {
+
+      // background-color: orange;
+      background-image: none;
+      overflow: hidden;
+      width: auto;
+      width: 480px;
+      margin: 0 auto;
+    }
+
+    ul.menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      li {
+        // background-color: pink;
+        margin: 0 11px;
+
+        a {
+          background-color: transparent;
+          display: inline-block;
+          font-size: 24px;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
+}

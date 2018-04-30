@@ -22,11 +22,6 @@ function enqueue_theme_css() {
   wp_enqueue_style('default', CHILD_URL.'/styles/css/styles.css');
 }
 
-// Add support for custom background
-if ( function_exists('add_custom_background') ) {
-	add_custom_background();
-}
-
 // Add custom image sizes
 add_image_size('Blog Excerpt', 600, 400, TRUE);
 add_image_size('Home Featured Header ', 200,200, TRUE);

@@ -1,0 +1,17 @@
+#footer-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: $padding--base;
+
+  .sidebar--footer-left {
+    text-align: right;
+  }
+
+  .sidebar--footer-middle {
+    text-align: center;
+  }
+
+  .sidebar--footer-right {
+    text-align: left;
+  }
+}

@@ -1,0 +1,16 @@
+$color-blue--base: #5c697a;
+$color-blue--pale: mix($color-blue--base, transparent, 70%);
+$color-blue--paler: mix($color-blue--pale, transparent, 70%);
+$color-blue--palest: mix($color-blue--paler, transparent, 70%);
+
+$color-orange--base: #f67f60;
+$color-orange--pale: mix($color-orange--base, transparent, 70%);
+$color-orange--paler: mix($color-orange--pale, transparent, 70%);
+$color-orange--palest: mix($color-orange--paler, transparent, 70%);
+
+$color-outer-bg: #ecdcc0;
+$color-inner-bg: mix(white, transparent, 30%);
+
+$text-color: $color-blue--base;
+$link-color: darken(saturate($text-color, 70%), 5%);
+$link-color--hover: mix($link-color, transparent, 80%);

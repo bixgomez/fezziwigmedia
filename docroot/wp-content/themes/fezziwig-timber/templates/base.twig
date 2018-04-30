@@ -1,0 +1,51 @@
+{% block html_head_container %}
+
+{% include 'html-header.twig' %}
+	{% block head %}
+	{% endblock %}
+	</head>
+{% endblock %}
+
+<body class="{{body_class}}" data-template="base.twig">
+
+<div class="site-wrapper">
+	<div class="site-container">
+		<div id="page" class="site">
+			<div class="site-inner">
+
+				<header id="masthead" class="section section-header">
+					<div id="masthead-inner" class="section-inner">
+						{% include 'header.twig' %}
+					</div><!-- .section-inner -->
+				</header>
+
+				<section id="content" role="main" class="section site-content">
+          			<div id="content-inner" class="section-inner">
+						{% if title %}<h1>{{title}}</h1>{% endif %}
+						<div class="wrapper {{sidebar_class}}">
+							{% block content %}
+								Sorry, no content
+							{% endblock %}
+						</div>
+						{% if sidebar %}
+							<aside class="layout-sidebar">
+								{{sidebar}}
+							</aside>
+						{% endif %}
+					</div>
+				</section>
+
+				<footer id="footer" class="section section-footer">
+					<div id="footer-inner" class="section-inner">
+						{% include 'footer.twig' %}
+					</div><!-- .section-inner -->
+				</footer>
+				{{ function('wp_footer') }}
+				
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

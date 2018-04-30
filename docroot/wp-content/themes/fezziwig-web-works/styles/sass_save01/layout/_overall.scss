@@ -1,0 +1,87 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  background-color: $site-bgcolor;
+  color: $text-color;
+  font-size: 1em;
+}
+
+.site-wrapper {
+  padding: $site-padding 0;
+}
+
+.section-inner {
+  padding: $section-padding;
+  .site-header &,
+  .site-content & {
+    padding-bottom: 0;
+  }
+  .site-footer &,
+  .site-content & {
+    padding-top: 0;
+  }
+}
+
+.site-container {
+  background-color: $content-bgcolor;
+  max-width: $site-maxwidth;
+  margin: 0 auto;
+  background-image: url('#{$imgpath}/home/background-left.png');
+  background-repeat: repeat-y;
+  background-position: left $bg-pos--sides;
+  background-size: $bg-size--sides;
+  // background-color: red;
+}
+
+.site {
+  width: 100%;
+  background-image: url('#{$imgpath}/home/background-right.png');
+  background-repeat: repeat-y;
+  background-position: right $bg-pos--sides;
+  background-size: $bg-size--sides;
+}
+
+.site-header {
+  background-image: url('#{$imgpath}/home/background-top.png');
+  background-repeat: no-repeat;
+  background-position: top;
+  min-height: $bg-size--header / 11.73;
+  background-size: $bg-size * 28.345;
+}
+
+.site-footer {
+  background-image: url('#{$imgpath}/home/background-bottom.png');
+  background-repeat: no-repeat;
+  background-position: bottom;
+  min-height: $bg-size--footer / 11.73;
+  background-size: $bg-size--footer;
+}
+
+.entry-content {
+  margin: 0;
+}
+
+body {
+  line-height: 1.5;
+}
+
+h1 { font-size: 1.5em; }
+h2 { font-size: 1.25em; }
+h3 { font-size: 1.125em; }
+h4 { font-size: 1.0em; }
+h5 { font-size: .9em; }
+
+h1, h2, h3, h4 {
+  line-height: 1.2;
+}
+
+p, h1, h2, h3, h4 {
+  padding: 0;
+  margin: 0 0 1em 0;
+}
+
+h1, h2, h3, h4 {
+  margin-bottom: .5em;
+}

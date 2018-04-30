@@ -1,0 +1,31 @@
+
+.main-navigation {
+
+  body &,
+  body.home & {
+
+    background-color: transparent;
+    width: 100%;
+
+    ul.menu {
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      li {
+        // background-color: pink;
+        margin: 0 11px;
+
+        a {
+          background-color: transparent;
+          display: inline-block;
+          font-size: 1.25em;
+          text-transform: uppercase;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
+}

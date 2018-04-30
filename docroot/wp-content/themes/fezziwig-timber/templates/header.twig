@@ -1,0 +1,11 @@
+{% block header %}
+
+    <div class="site-branding">
+        {{ function('the_custom_logo') }}
+    </div><!-- .site-branding -->
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+        {% include "menu.twig" with {'menu': menu.get_items} %}
+    </nav><!-- #site-navigation -->
+
+{% endblock %}
