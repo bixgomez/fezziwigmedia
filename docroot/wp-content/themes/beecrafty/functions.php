@@ -102,7 +102,7 @@ function footer_output_filter($output, $creds_text) {
 	
     $creds_text_start = 'Copyright [footer_copyright] ';
     
-    $bloginfo = get_bloginfo( $show );
+    $bloginfo = get_bloginfo();
     
     $creds_text_end = ' | <a href="http://www.studiopress.com/themes/beecrafty">Bee Crafty Child Theme</a> on <a href="http://www.studiopress.com/themes/genesis">Genesis Theme Framework</a> | [footer_wordpress_link] | [footer_loginout]';
     
