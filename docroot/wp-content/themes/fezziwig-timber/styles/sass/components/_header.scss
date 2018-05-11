@@ -2,9 +2,11 @@
 }
 
 .site-branding--titles {
+  text-align: center;
+  padding: 0;
+  margin: 0;
 
   font-size: 1em;
-
   @include breakpoint($md) {
     font-size: 1.04em;
   }
@@ -14,26 +16,14 @@
   @include breakpoint($xl) {
     font-size: 1.5em;
   }
-
-  /*
-  @include breakpoint($md-up) {
-    font-size: 2.11vw;
-  }
-  @include breakpoint($xl-up) {
-    font-size: 1.4em;
-  }
-  */
-
-  text-align: center;
-  padding: 0;
-  margin: 0;
 }
 
 .site-title {
   font-family: 'Vast Shadow', 'Arial Black', sans-serif;
   text-transform: uppercase;
   color: $color-blue--dark;
-  font-size: 2.16em;
+  font-size: 2.11em;
+
   letter-spacing: .115em;
 
   padding-bottom: 0;
@@ -44,6 +34,11 @@
     border-bottom: 4px double $color-orange--pale;
     padding-bottom: .175em;
     margin-bottom: .3em;
+    letter-spacing: .138em;
+  }
+
+  @include breakpoint($lg-up) {
+    letter-spacing: .139em;
   }
 
   line-height: 1;
@@ -58,11 +53,11 @@
   @include breakpoint($sm-down) {
     .fezziwig {
       display: block;
-      font-size: 1.7em;
+      font-size: 1.65em;
     }
     .media-arts {
       display: block;
-      font-size: 1.3em;
+      font-size: 1.27em;
       margin-top: -.05em;
     }
   }
@@ -89,8 +84,10 @@
   text-transform: uppercase;
   letter-spacing: .15em;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   display: flex;
+  width: 100%;
+
   span {
     flex: 1;
     white-space: nowrap;
@@ -110,6 +107,7 @@
   }
 
 }
+
 
 .site-subtitle-2 {
   font-family: 'Playfair Display SC', Georgia, serif;
@@ -133,3 +131,4 @@
     }
   }
 }
+
