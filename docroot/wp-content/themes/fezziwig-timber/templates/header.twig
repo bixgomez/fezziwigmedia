@@ -1,11 +1,44 @@
 {% block header %}
 
+<header id="masthead" class="section section-header">
+  <div id="masthead-inner" class="section-inner">
+
     <div class="site-branding">
+
+      {#
+      <div class="site-branding--logo">
         {{ function('the_custom_logo') }}
+      </div>
+      #}
+
+      <div class="site-branding--titles">
+        <h1 class="site-title"><a href="/">Fezziwig Media Arts</a></h1>
+        <h2 class="site-subtitle-1">
+          <span>Drupal and WordPress</span>
+          <span>·</span>
+          <span>Design and Development</span>
+        </h2>
+
+        {#
+        <h3 class="site-subtitle-2">
+          <span class="name">Richard Gilbert, Proprietor.</span>
+        </h3>
+        #}
+
+      </div>
     </div><!-- .site-branding -->
 
+  </div><!-- .section-inner -->
+</header>
+
+<section id="nav" role="main" class="section section-nav">
+  <div id="nav-inner" class="section-inner">
+
     <nav id="site-navigation" class="main-navigation" role="navigation">
-        {% include "menu.twig" with {'menu': menu.get_items} %}
+      {% include "menu.twig" with {'menu': menu.get_items} %}
     </nav><!-- #site-navigation -->
+
+  </div><!-- .section-inner -->
+</section>
 
 {% endblock %}

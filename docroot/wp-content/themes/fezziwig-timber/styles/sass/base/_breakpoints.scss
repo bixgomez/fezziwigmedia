@@ -1,0 +1,31 @@
+// Breakpoints.
+$xxs: 0;
+$xs: 320px;
+$sm: 544px;
+$md: 800px;
+$lg: 960px;
+$xl: 1024px;
+$max-site-width: $xl;
+
+//Breakpoint variables
+$xxs-only: $xxs ($xs - 1);
+$xxs-up: $xxs;
+
+$xs-only: $xs ($sm - 1);
+$xs-up: $xs;
+$xs-down: 0 $xs;
+
+$sm-only: $sm ($md - 1);
+$sm-up: $sm;
+$sm-down: 0 $sm;
+
+$md-only: $md ($lg - 1);
+$md-up: $md;
+$md-down: 0 $md;
+
+$lg-only: $lg ($xl - 1);
+$lg-up: $lg;
+$lg-down: 0 $lg;
+
+$xl-only: $xl;
+$xl-up: $xl;

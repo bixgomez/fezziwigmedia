@@ -1,0 +1,107 @@
+body.blog #content-inner .wrapper {
+  display: grid;
+  grid-gap: 1.25em;
+  grid-template-columns: 1fr;
+
+  @include breakpoint($sm-up) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include breakpoint($md-up) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @include breakpoint($lg-up) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+article.teaser {
+  font-size: 1.0em;
+  @include breakpoint($sm-up) {
+    font-size: .8em;
+  }
+}
+
+.teaser--inner {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.teaser--cover-link {
+  display: block;
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+  overflow: hidden;
+  text-indent: -9999px;
+}
+
+.teaser--image {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+  overflow: hidden;
+  text-indent: -9999px;
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+  transition: .5s ease-in-out;
+  .teaser:hover & {
+    opacity: .5;
+  }
+}
+
+.teaser--content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  overflow: hidden;
+  opacity: 0;
+  background-color: mix(white, transparent, 80%);
+  body.mobile & {
+    opacity: 1;
+    background-color: mix(white, transparent, 90%);
+  }
+  transition: .5s ease-in-out;
+  .teaser:hover & {
+    opacity: 1;
+    background-color: mix(white, transparent, 90%);
+  }
+  padding: .75em;
+  .teaser--title {
+    margin-bottom: .25em;
+  }
+  .teaser--body {
+    font-size: .9em;
+    .read-more {
+      display: block;
+      text-transform: lowercase;
+      white-space: nowrap;
+      font-size: .95em;
+      margin-top: .5em;
+      text-decoration: none;
+      text-align: right;
+      line-height: 1;
+    }
+  }
+}
+
+.teaser--proportions {
+  margin-top: 100%; /* makes parent height 100% of its width  */
+  position: relative;
+  z-index: 10;
+}

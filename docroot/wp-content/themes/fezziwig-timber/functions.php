@@ -67,7 +67,13 @@ new StarterSite();
 function fezziwig_timber_scripts() {
 	wp_register_script( 'bigtext', get_template_directory_uri() . '/js/bigtext.js', array ( 'jquery' ), 1.1, true );
 	wp_enqueue_script( 'bigtext' );
-	wp_enqueue_style( 'fezziwig-timber-google-fonts', 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,700|Arvo:400,700|Montserrat:400,500,600,700', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--1', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700|Arvo:400,700|Montserrat:400,500,600,700', false );
+    wp_enqueue_style( 'fezziwig-timber-google-fonts--2', '//fonts.googleapis.com/css?family=EB+Garamond:400,400i,600', false );
+    wp_enqueue_style( 'fezziwig-timber-google-fonts--3', '//fonts.googleapis.com/css?family=Josefin+Sans:100,300,400', false );
+    wp_enqueue_style( 'fezziwig-timber-google-fonts--4', '//fonts.googleapis.com/css?family=Ovo', false );
+    wp_enqueue_style( 'fezziwig-timber-google-fonts--5', '//fonts.googleapis.com/css?family=Playfair+Display+SC:400,700', false );
+    wp_enqueue_style( 'fezziwig-timber-google-fonts--6', '//fonts.googleapis.com/css?family=Vast+Shadow', false );
+
 	wp_enqueue_style( 'fezziwig-timber-style', get_stylesheet_directory_uri() . '/styles/css/styles.css' );
 }
 add_action( 'wp_enqueue_scripts', 'fezziwig_timber_scripts' );
@@ -85,3 +91,11 @@ function fezziwig_timber_custom_logo_setup() {
   add_theme_support( 'custom-logo', $defaults );
 }
 add_action( 'after_setup_theme', 'fezziwig_timber_custom_logo_setup' );
+
+add_filter('body_class','my_body_classes');
+function my_body_classes($c) {
+  is_front_page() ? $c[] = 'front' : null;
+  wp_is_mobile() ? $c[] = 'mobile' : null;
+  !wp_is_mobile() ? $c[] = 'desktop' : null;
+  return $c;
+}

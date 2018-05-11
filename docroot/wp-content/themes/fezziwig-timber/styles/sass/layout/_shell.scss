@@ -1,0 +1,13 @@
+#nav-inner {
+  background-color: mix(white, transparent, 20%);
+  padding: 0;
+  border-top: 4px solid $color-orange--paler;
+  border-bottom: 4px solid $color-orange--paler;
+}
+
+#footer-inner {
+  background-color: mix(white, transparent, 20%);
+  border-top: 4px solid $color-orange--paler;
+  padding-top: .75em;
+  padding-bottom: .75em;
+}

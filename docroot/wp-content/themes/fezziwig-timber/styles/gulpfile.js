@@ -32,7 +32,7 @@ gulp.task('sass', function () {
         './node_modules/compass-sass-mixins/lib/'
       ],
       errLogToConsole: true,
-      outputStyle: 'expanded'
+      outputStyle: 'compressed'
       
     }).on('error', sass.logError))
 

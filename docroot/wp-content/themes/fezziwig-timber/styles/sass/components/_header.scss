@@ -1,0 +1,70 @@
+.site-branding {
+}
+
+.site-branding--titles {
+  font-size: 1.5em;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.site-title {
+  font-family: 'Vast Shadow', 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  color: $color-blue--dark;
+  font-size: 2.125em;
+  letter-spacing: .115em;
+  border-bottom: 4px double $color-orange--pale;
+  line-height: 1;
+  padding: 0 0 .175em;
+  margin: 0 0 .3em;
+  a {
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      color: $color-blue--darkest;
+    }
+  }
+}
+
+.site-subtitle-1 {
+  font-family: 'Playfair Display SC', Georgia, serif;
+  color: mix($color-blue--darkest, $color-orange--darkest, 60%);
+  font-size: 1.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  padding: 0;
+  margin: 0;
+}
+
+.site-subtitle-2 {
+  font-family: 'Playfair Display SC', Georgia, serif;
+  letter-spacing: .115em;
+  text-transform: none;
+  color: $color-blue--dark;
+  font-size: .8em;
+  line-height: 1;
+  padding-top: .5em;
+}
+
+.site-subtitle-1 {
+  display: flex;
+  span {
+    flex: 1;
+    white-space: nowrap;
+  }
+}
+
+.site-subtitle-2 {
+  display: block;
+  span {
+    white-space: nowrap;
+    &.name {
+      padding-right: 1em;
+    }
+    &.telephone {
+      padding-left: 1em;
+    }
+  }
+}
