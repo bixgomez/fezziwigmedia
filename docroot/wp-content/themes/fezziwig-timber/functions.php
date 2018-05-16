@@ -25,6 +25,14 @@ class StarterSite extends TimberSite {
 		add_filter( 'get_twig', array( $this, 'add_to_twig' ) );
 		add_action( 'init', array( $this, 'register_post_types' ) );
 		add_action( 'init', array( $this, 'register_taxonomies' ) );
+
+        add_image_size( 'square-extrasmall', 120, 120, true ); // Hard Crop Mode
+        add_image_size( 'square-small', 240, 240, true ); // Soft Crop Mode
+        add_image_size( 'square-medium', 480, 480, true ); // Soft Crop Mode
+        add_image_size( 'square-large', 960, 960, true ); // Soft Crop Mode
+        add_image_size( 'square-extralarge', 1200, 1200, true ); // Soft Crop Mode
+        add_image_size( 'unlimitedheight', 590, 9999 ); // Unlimited Height Mode
+
 		parent::__construct();
 	}
 

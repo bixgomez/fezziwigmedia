@@ -25,7 +25,7 @@
         <h2 class="teaser--title">{{post.title}}</h2>
         <p class="teaser--body">{{post.preview}}</p>
       </div>
-      <img class="teaser--image" src="{{post.thumbnail.src}}">
+      <img class="teaser--image" src="{{post.thumbnail.src('square-medium')}}">
       <a class="teaser--cover-link" href="{{post.link}}">Read More</a>
     </div>
   {% endblock %}
