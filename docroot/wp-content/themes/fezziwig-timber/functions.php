@@ -26,11 +26,22 @@ class StarterSite extends TimberSite {
 		add_action( 'init', array( $this, 'register_post_types' ) );
 		add_action( 'init', array( $this, 'register_taxonomies' ) );
 
-        add_image_size( 'square-extrasmall', 120, 120, true ); // Hard Crop Mode
-        add_image_size( 'square-small', 240, 240, true ); // Soft Crop Mode
-        add_image_size( 'square-medium', 480, 480, true ); // Soft Crop Mode
-        add_image_size( 'square-large', 960, 960, true ); // Soft Crop Mode
-        add_image_size( 'square-extralarge', 1200, 1200, true ); // Soft Crop Mode
+        add_image_size( 'square-extrasmall', 120, 120, true ); 
+        add_image_size( 'square-small', 240, 240, true ); 
+        add_image_size( 'square-medium', 480, 480, true ); 
+        add_image_size( 'square-large', 960, 960, true ); 
+        add_image_size( 'square-extralarge', 1200, 1200, true ); 
+
+        add_image_size( 'portrait-small', 240, 360, true ); 
+        add_image_size( 'portrait-medium', 480, 720, true ); 
+        add_image_size( 'portrait-large', 960, 1440, true ); 
+        add_image_size( 'portrait-extralarge', 1200, 1800, true ); 
+
+        add_image_size( 'landscape-small', 360, 240, true ); 
+        add_image_size( 'landscape-medium', 720, 480, true ); 
+        add_image_size( 'landscape-large', 1440, 960, true ); 
+        add_image_size( 'landscape-extralarge', 1800, 1200, true ); 
+
         add_image_size( 'unlimitedheight', 590, 9999 ); // Unlimited Height Mode
 
 		parent::__construct();
