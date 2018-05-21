@@ -78,24 +78,43 @@ body {
 }
 
 .article-content {
-  display: flex;
-  .image {
-    display: none;
-  }
+
+  display: block;
   @include breakpoint($md-up) {
-    .image {
-      display: block;
-      flex: 1.25;
-      order: 1;
-      > .inner {
-        margin-right: 1.75vw;
-        border: 4px solid $color-orange--paler;
-        img {
-          border: 3px solid transparent;
-        }
+    display: flex;
+  }
+
+  .image {
+    display: block;
+    margin-bottom: 1em;
+    flex: 1.25;
+    order: 1;
+    > .inner {
+      @include breakpoint($md-up) {
+        margin-right: 1.5em;
+      }
+      border: 4px solid $color-orange--paler;
+      img {
+        border: 3px solid transparent;
       }
     }
   }
+
+  img {
+    &.square-medium {
+      display: block;
+      @include breakpoint($md-up) {
+        display: none;
+      }
+    }
+    &.portrait-large {
+      display: none;
+      @include breakpoint($md-up) {
+        display: block;
+      }
+    }
+  }
+
   .text {
     flex: 3;
     order: 2;
