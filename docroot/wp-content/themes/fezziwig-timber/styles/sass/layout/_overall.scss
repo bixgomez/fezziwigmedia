@@ -10,9 +10,9 @@ html {
 body {
   background-color: $color-outer-bg;
   color: $text-color;
-  font-size: 1em;
   margin: 0 auto;
   padding: 0;
+  transition: .25s ease-in-out;
 
   @include breakpoint($sm) {
     width: $sm;
@@ -26,7 +26,9 @@ body {
   @include breakpoint($xl) {
     width: $xl;
   }
-
+  @include breakpoint($max-site-width) {
+    width: 98vw;
+  }
 }
 
 .site-outer {
