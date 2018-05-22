@@ -5,12 +5,14 @@
 		<article class="post-type-{{post.post_type}}" id="post-{{post.ID}}">
 			<section class="article-content">
 
-        <div class="image">
-          <div class="inner">
-            <img class="portrait-large" src="{{post.thumbnail.src('portrait-large')}}">
-            <img class="square-medium" src="{{post.thumbnail.src('square-medium')}}">
+        {% if (post.thumbnail) %}
+          <div class="image">
+            <div class="inner">
+              <img class="portrait-large" src="{{post.thumbnail.src('portrait-large')}}">
+              <img class="square-medium" src="{{post.thumbnail.src('square-medium')}}">
+            </div>
           </div>
-        </div>
+        {% endif %}
 
         <div class="text">
           <div class="inner">
