@@ -23,4 +23,3 @@ chmod 660 ${WP_ROOT}/wp-config.php
 find ${WP_ROOT}/wp-content -exec chgrp ${WS_GROUP} {} \;
 find ${WP_ROOT}/wp-content -type d -exec chmod 775 {} \;
 find ${WP_ROOT}/wp-content -type f -exec chmod 664 {} \;
-
