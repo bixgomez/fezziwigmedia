@@ -34,25 +34,29 @@ class widget_context {
 	}
 
 	/**
-	 * Use widget_context::instance() instead.
+	 * Set path to the plugin directory.
+	 *
+	 * @param string $path Path to the plugin directory.
 	 */
-	private function __construct() {
-		$this->plugin_path = dirname( dirname( __FILE__ ) );
+	public function set_path( $path ) {
+		$this->plugin_path = $path;
 	}
 
 	/**
 	 * Hook into WP.
 	 */
 	public function init() {
+		// Ensure that path to this plugin is defined first.
+		if ( empty( $this->plugin_path ) ) {
+			return;
+		}
+
 		// Define available widget contexts
 		add_action( 'init', array( $this, 'define_widget_contexts' ), 5 );
 
 		// Load plugin settings and show/hide widgets by altering the
 		// $sidebars_widgets global variable
 		add_action( 'wp', array( $this, 'set_widget_contexts_frontend' ) );
-
-		// Enable localization
-		add_action( 'plugins_loaded', array( $this, 'init_l10n' ) );
 
 		// Append Widget Context settings to widget controls
 		add_action( 'in_widget_form', array( $this, 'widget_context_controls' ), 10, 3 );
@@ -196,13 +200,6 @@ class widget_context {
 	}
 
 
-	function init_l10n() {
-
-		load_plugin_textdomain( 'widget-context', false, basename( $this->plugin_path ) . '/languages' );
-
-	}
-
-
 	function admin_scripts( $page ) {
 
 		// Enqueue only on widgets and customizer view
@@ -212,14 +209,14 @@ class widget_context {
 
 		wp_enqueue_style(
 			'widget-context-css',
-			$this->asset_url( '/css/admin.css' ),
+			$this->asset_url( 'assets/css/admin.css' ),
 			null,
 			$this->asset_version
 		);
 
 		wp_enqueue_script(
 			'widget-context-js',
-			$this->asset_url( '/js/widget-context.js' ),
+			$this->asset_url( 'assets/js/widget-context.js' ),
 			array( 'jquery' ),
 			$this->asset_version
 		);
@@ -394,7 +391,16 @@ class widget_context {
 	}
 
 
+	/**
+	 * Conditional logic for the URL check.
+	 *
+	 * @param  bool  $check Current visibility state.
+	 * @param  array $settings Visibility settings.
+	 *
+	 * @return bool
+	 */
 	function context_check_url( $check, $settings ) {
+		static $path;
 
 		$settings = wp_parse_args(
 				$settings,
@@ -405,57 +411,102 @@ class widget_context {
 
 		$urls = trim( $settings['urls'] );
 
-		if ( empty( $urls ) )
+		if ( empty( $urls ) ) {
 			return $check;
-
-		if ( $this->match_path( $urls ) )
-			return true;
-
-		return $check;
-
-	}
-
-
-	function match_path( $patterns ) {
-
-		global $wp;
-
-		$patterns_safe = array();
-
-		// Get the request URI from WP
-		$url_request = $wp->request;
-
-		// Append the query string
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) )
-			$url_request .= '?' . $_SERVER['QUERY_STRING'];
-
-		$rows = explode( "\n", $patterns );
-
-		foreach ( $rows as $pattern ) {
-
-			// Trim trailing, leading slashes and whitespace
-			$pattern = trim( trim( $pattern ), '/' );
-
-			// Escape regex chars
-			$pattern = preg_quote( $pattern, '/' );
-
-			// Enable wildcard checks
-			$pattern = str_replace( '\*', '.*', $pattern );
-
-			$patterns_safe[] = $pattern;
-
 		}
 
-		// Remove empty patterns
-		$patterns_safe = array_filter( $patterns_safe );
+		if ( ! isset( $path ) ) {
+			// Do the parsing only once.
+			$path = $this->get_request_path( $_SERVER['REQUEST_URI'] );
+		}
 
-		$regexps = sprintf(
-				'/^(%s)$/i',
-				implode( '|', $patterns_safe )
-			);
+		if ( $this->match_path( $path, $urls ) ) {
+			return true;
+		}
 
-		return preg_match( $regexps, $url_request );
+		return $check;
+	}
 
+	/**
+	 * Return the path relative to the root of the hostname. We always remove
+	 * the leading and trailing slashes around the URI path.
+	 *
+	 * @param  string $uri Current request URI.
+	 *
+	 * @return string
+	 */
+	public function get_request_path( $uri ) {
+		$parts = wp_parse_args(
+			wp_parse_url( $uri ),
+			array(
+				'path' => '',
+			)
+		);
+
+		$path = trim( $parts['path'], '/' );
+
+		if ( ! empty( $parts['query'] ) ) {
+			$path .= '?' . $parts['query'];
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Check if the current request matches path rules.
+	 *
+	 * @param  string $path  Current request relative to the root of the hostname.
+	 * @param  string $rules A list of path patterns seperated by new line.
+	 *
+	 * @return bool
+	 */
+	function match_path( $path, $rules ) {
+		$path_only = strtok( $path, '?' );
+		$patterns = explode( "\n", $rules );
+
+		foreach ( $patterns as &$pattern ) {
+			// Use the same logic for parsing the visibility rules.
+			$pattern = $this->get_request_path( trim( $pattern ) );
+		}
+
+		// Remove empty patterns.
+		$patterns = array_filter( $patterns );
+
+		// Match against the path with and without the query string.
+		if ( $this->path_matches_patterns( $path, $patterns ) || $this->path_matches_patterns( $path_only, $patterns ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a URI path matches a set of regex patterns.
+	 *
+	 * @param  string $path Request URI.
+	 * @param  array  $patterns A list of patterns.
+	 *
+	 * @return bool
+	 */
+	public function path_matches_patterns( $path, $patterns ) {
+		if ( empty( $patterns ) ) {
+			return false;
+		}
+
+		foreach ( $patterns as &$pattern ) {
+			// Escape regex chars since we only support wildcards.
+			$pattern = preg_quote( trim( $pattern ), '/' );
+
+			// Enable wildcard checks.
+			$pattern = str_replace( '\*', '.*', $pattern );
+		}
+
+		$regex = sprintf(
+			'/^(%s)$/i',
+			implode( '|', $patterns )
+		);
+
+		return (bool) preg_match( $regex, $path );
 	}
 
 
@@ -976,20 +1027,40 @@ class widget_context {
 
 						<div class="wc-sidebar-section wc-sidebar-credits">
 							<p>
-								<img src="http://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331/?s=60" alt="Kaspars Dambis" width="60" height="60" />
-								<?php printf( esc_html__( 'Widget Context is created and maintained by %s.' , 'widget-context'), '<a href="http://kaspars.net">Kaspars Dambis</a>' ); ?>
+								<img src="https://gravatar.com/avatar/661eb21385c25c01ad64ab9e13b37331?s=120" alt="Kaspars Dambis" width="60" height="60" />
+								<?php
+								printf(
+									// translators: %s: link with an anchor text.
+									esc_html__( 'Widget Context is created and maintained by %s.', 'widget-context' ),
+									'<a href="https://kaspars.net">Kaspars Dambis</a>'
+								);
+								?>
 							</p>
 						</div>
 
 						<div class="wc-sidebar-section wc-sidebar-newsletter">
-							<h3><?php esc_html_e( 'News & Updates' , 'widget-context'); ?></h3>
-							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.' , 'widget-context'); ?></p>
+							<h3><?php esc_html_e( 'News & Updates', 'widget-context' ); ?></h3>
+							<p><?php esc_html_e( 'Subscribe to receive news & updates about the plugin.', 'widget-context' ); ?></p>
 							<form action="//osc.us2.list-manage.com/subscribe/post?u=e8d173fc54c0fc4286a2b52e8&amp;id=8afe96c5a3" method="post" target="_blank">
 								<?php $user = wp_get_current_user(); ?>
 								<p><label><?php _e( 'Your Name', 'widget-context' ); ?>: <input type="text" name="NAME" value="<?php echo esc_attr( sprintf( '%s %s', $user->first_name, $user->last_name ) ) ?>" /></label></p>
 								<p><label><?php _e( 'Your Email', 'widget-context' ); ?>: <input type="text" name="EMAIL" value="<?php echo esc_attr( $user->user_email ); ?>" /></label></p>
 								<p><input class="button" name="subscribe" type="submit" value="<?php _e( 'Subscribe', 'widget-context' ); ?>" /></p>
 							</form>
+							<h3>
+								<?php esc_html_e( 'Suggested Plugins', 'widget-context' ); ?>
+							</h3>
+							<p>
+								<?php esc_html_e( 'Here are some of my other plugins:', 'widget-context' ); ?>
+							</p>
+							<ul>
+								<li>
+									<a href="https://preseto.com/go/cf7-storage?utm_source=wc">Storage for Contact Form 7</a> saves all Contact Form 7 submissions (including attachments) in your WordPress database.
+								</li>
+								<li>
+									<a href="https://wordpress.org/plugins/contact-form-7-extras/">Contact Form 7 Controls</a> adds a simple interface for managing Contact Form 7 form settings.
+								</li>
+							</ul>
 						</div>
 
 					</div>
@@ -1025,7 +1096,7 @@ class widget_context {
 
 		wp_enqueue_script(
 			'widget-context-debug-js',
-			$this->asset_url( '/debug/debug.js' ),
+			$this->asset_url( 'debug/debug.js' ),
 			array( 'jquery' )
 		);
 
@@ -1039,7 +1110,13 @@ class widget_context {
 	 * @return string
 	 */
 	function asset_url( $asset_relative_path ) {
-		return plugins_url( plugin_basename( $this->plugin_path ) . $asset_relative_path );
+		$file_path = sprintf(
+			'%s/%s',
+			plugin_basename( $this->plugin_path ),
+			ltrim( $asset_relative_path, '/' )
+		);
+
+		return plugins_url( $file_path );
 	}
 
 

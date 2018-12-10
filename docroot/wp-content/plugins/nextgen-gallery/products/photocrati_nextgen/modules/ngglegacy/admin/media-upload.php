@@ -122,7 +122,7 @@ function media_upload_nextgen_form($errors) {
 
 	// Get the images
 	if ( $galleryID != 0 )
-		$picarray = $wpdb->get_col("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY {$ngg->options['galSort']} {$ngg->options['galSortDir']} LIMIT $start, 10 ");	
+		$picarray = $wpdb->get_col("SELECT DISTINCT pid FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY {$ngg->options['galSort']},`pid` {$ngg->options['galSortDir']} LIMIT $start, 10 ");
 
 	// WP-Core code for Post-thumbnail
 	$calling_post_id = 0;
@@ -197,8 +197,9 @@ if ($chromeless)
 			$gallerylist = $nggdb->find_all_galleries();
 			if(is_array($gallerylist)) {
 				foreach($gallerylist as $gallery) {
-					$selected = ($gallery->gid == $galleryID )?	' selected="selected"' : "";
-					echo '<option value="'.$gallery->gid.'"'.$selected.' >'.$gallery->title.'</option>'."\n";
+					$selected = ($gallery->gid == $galleryID )?	' selected="selected"' : '';
+                    $gallery_title = apply_filters('ngg_gallery_title_select_field', $gallery->title, $gallery, $gallery->gid == $galleryID);
+                    echo "<option value='{$gallery->gid}'{$selected}>{$gallery_title}</option>\n";
 				}
 			}
 			?>
