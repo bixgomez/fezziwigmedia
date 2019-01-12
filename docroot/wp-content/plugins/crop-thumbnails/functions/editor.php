@@ -8,39 +8,82 @@ class CPT_ForbiddenException extends Exception {}
 
 class CropPostThumbnailsEditor {
 
-	private $debugOutput = '';
+	protected $debugOutput = '';
 
 	function __construct() {
 		add_action('wp_ajax_cpt_cropdata', array($this, 'provideCropData') );
 	}
 	
 	public function provideCropData() {
+		header('Content-Type: application/json; charset=UTF-8');
 		try {
-			header('Content-Type: application/json; charset=UTF-8');
-			$result = $this->getCropData();
-			echo json_encode($result);
+			echo json_encode( $this->getCropData() );
 		} catch(InvalidArgumentException $e) {
-			http_response_code(400);
-			echo 'FAILURE while processing request: '.$e->getMessage();
+			self::doErrorResponse(400, 'FAILURE while processing request: '.$e->getMessage());
 		} catch(CPT_ForbiddenException $e) {
-			http_response_code(403);
-			echo 'ERROR not allowed.';
+			self::doErrorResponse(403, 'ERROR not allowed.');
 		} catch(Exception $e) {
-			http_response_code(400);
-			echo 'FAILURE while processing request.';
+			self::doErrorResponse(400, 'FAILURE while processing request.');
 		}
 		die();//to prevent to send back a "0"
 	}
 
-	private function fixJsLangStrings($msg) {
+
+	/**
+	 * Will directly print an error-output
+	 * @param int $statusCode the statuscode of the response
+	 * @param string $errorMsg the provided errormessage
+	 */
+	protected static function doErrorResponse($statusCode, $errorMsg) {
+		http_response_code($statusCode);
+		echo json_encode(array(
+			'lang' => self::getLangArray(),
+			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase()),
+			'error' => $errorMsg,
+			'statusCode' => $statusCode
+		));
+	}
+
+	/**
+	 * Fix html-encoded language strings
+	 * Note: abstraction to keep the code DRY
+	 * @param string $msg the language string to fix
+	 * @return string
+	 */
+	protected static function fixJsLangStrings($msg) {
 		return str_replace('&quot;','"',esc_js($msg));
+	}
+
+	/**
+	 * Returns the lang-array needed for the js-app to work
+	 * @return Array
+	 */
+	protected static function getLangArray() {
+		return array(
+			'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
+			'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
+			'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
+			'rawImage' => self::fixJsLangStrings(__('Raw','crop-thumbnails')),
+			'pixel' => self::fixJsLangStrings(__('pixel','crop-thumbnails')),
+			'instructions_header' => self::fixJsLangStrings(__('Quick Instructions','crop-thumbnails')),
+			'instructions_step_1' => self::fixJsLangStrings(__('Step 1: Choose an image-size from the list.','crop-thumbnails')),
+			'instructions_step_2' => self::fixJsLangStrings(__('Step 2: Change the selection of the image above.','crop-thumbnails')),
+			'instructions_step_3' => self::fixJsLangStrings(__('Step 3: Click on "Save Crop".','crop-thumbnails')),
+			'label_crop' => self::fixJsLangStrings(__('Save Crop','crop-thumbnails')),
+			'label_same_ratio' => self::fixJsLangStrings(__('Crop all images with same ratio at once','crop-thumbnails')),
+			'label_deselect_all' => self::fixJsLangStrings(__('deselect all','crop-thumbnails')),
+			'dimensions' => self::fixJsLangStrings(__('Dimensions:','crop-thumbnails')),
+			'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
+			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
+			'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
+			'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by wordpress.','crop-thumbnails')),
+			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
+			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
+			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails'))
+		);
 	}
 	
 	public function getCropData() {
-		if(!self::isUserPermitted()) {
-			throw new CPT_ForbiddenException();
-		}
-		
 		global $content_width;//include nasty content_width
 		$content_width = 9999;//override the idioty
 		
@@ -56,27 +99,7 @@ class CropPostThumbnailsEditor {
 			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes()),
-			'lang' => array(
-				'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
-				'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
-				'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
-				'rawImage' => self::fixJsLangStrings(__('Raw','crop-thumbnails')),
-				'pixel' => self::fixJsLangStrings(__('pixel','crop-thumbnails')),
-				'instructions_header' => self::fixJsLangStrings(__('Quick Instructions','crop-thumbnails')),
-				'instructions_step_1' => self::fixJsLangStrings(__('Step 1: Choose an image-size from the list.','crop-thumbnails')),
-				'instructions_step_2' => self::fixJsLangStrings(__('Step 2: Change the selection of the image above.','crop-thumbnails')),
-				'instructions_step_3' => self::fixJsLangStrings(__('Step 3: Click on "Save Crop".','crop-thumbnails')),
-				'label_crop' => self::fixJsLangStrings(__('Save Crop','crop-thumbnails')),
-				'label_same_ratio' => self::fixJsLangStrings(__('Crop all images with same ratio at once','crop-thumbnails')),
-				'label_deselect_all' => self::fixJsLangStrings(__('deselect all','crop-thumbnails')),
-				'dimensions' => self::fixJsLangStrings(__('Dimensions:','crop-thumbnails')),
-				'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
-				'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
-				'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
-				'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by wordpress.','crop-thumbnails')),
-				'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
-				'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails'))
-			),
+			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase())
 		);
 		
@@ -84,12 +107,17 @@ class CropPostThumbnailsEditor {
 		if(empty($_REQUEST['imageId'])) {
 			throw new InvalidArgumentException('Missing Parameter "imageId".');
 		}
+
 		
 		$imagePostObj = get_post(intval($_REQUEST['imageId']));
 		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
 			throw new InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
 		}
 		$result['sourceImageId'] = $imagePostObj->ID;
+
+		if(!CptSaveThumbnail::isUserPermitted( $imagePostObj->ID )) {
+			throw new CPT_ForbiddenException();
+		}
 
 		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
@@ -162,7 +190,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 	
-	private function getUncroppedImageData($ID, $imageSize = 'full') {
+	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
 		$result = array(
@@ -177,7 +205,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 	
-	private function calculateRatioData($width,$height) {
+	protected function calculateRatioData($width,$height) {
 		$gcd = $this->gcd($width,$height);
 		$result = array(
 			'gcd' => $gcd,
@@ -187,7 +215,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 
-	private static function shouldBeHiddenOnPostType($options,$post_type) {
+	protected static function shouldBeHiddenOnPostType($options,$post_type) {
 		if(empty($post_type)) {
 			return false;
 		}
@@ -204,13 +232,13 @@ class CropPostThumbnailsEditor {
 	 * @param string name post-type (i.e. post, page, ...)
 	 * @return boolean true if Image-size should be hidden
 	 */
-	private static function shouldSizeBeHidden($options, $img_size, $post_type='') {
+	protected static function shouldSizeBeHidden($options, $img_size, $post_type='') {
 		$_return = false;
 		if(!empty($post_type)) {
 			//we are NOT in the mediathek
 
 			//-if hide_size
-			if(!empty($options['hide_size'][$post_type][ $img_size['name'] ])) {
+			if(!empty($options['hide_size'][$post_type][ $img_size['id'] ])) {
 				$_return = true;
 			}
 
@@ -230,20 +258,10 @@ class CropPostThumbnailsEditor {
 	}
 
 
-	private static function isUserPermitted() {
-		$return = false;
-		if(current_user_can('upload_files')) {
-			$return = true;
-		}
-		//TODO maybe add noence (is it needed? there are no file- or db-operations)
-		return $return;
-	}
-
-
 	/**
 	 * Greatest cummon divisor
 	 */
-	private function gcd($a, $b) {
+	protected function gcd($a, $b) {
 		if(function_exists('gmp_gcd')) {
 			$gcd = gmp_strval(gmp_gcd($a,$b));
 			return ($gcd);
@@ -253,7 +271,7 @@ class CropPostThumbnailsEditor {
 		}
 	}
 
-	private static function my_gcd($a, $b) {
+	protected static function my_gcd($a, $b) {
 		$b = ( $a == 0 )? 0 : $b;
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}

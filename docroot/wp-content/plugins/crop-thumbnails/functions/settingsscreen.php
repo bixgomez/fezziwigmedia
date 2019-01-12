@@ -1,7 +1,7 @@
 <?php
 class CropThumbnailsSettingsScreen {
-	private static $uniqeSettingsId = 'cpt-settings';
-	private static $cssPrefix = 'cpt_settings_';
+	protected static $uniqeSettingsId = 'cpt-settings';
+	protected static $cssPrefix = 'cpt_settings_';
 
 	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
@@ -75,6 +75,11 @@ class CropThumbnailsSettingsScreen {
 		$_sectionID = 'choose_sizes_section';
 		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
 
+		$_sectionID = 'userPermission';
+		add_settings_section($_sectionID, esc_html__('User Permission','crop-thumbnails'), array($this,'emptySectionDescription'), 'page1');
+		$_tmpID = 'user_permission_only_on_edit_files';
+		add_settings_field($_tmpID, esc_html__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+
 		$_sectionID = 'quick_test';
 		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
 		
@@ -86,7 +91,7 @@ class CropThumbnailsSettingsScreen {
 		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
-	private function vueSettingsScreen() {
+	protected function vueSettingsScreen() {
 		$settings = array(
 			'options' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions(),
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
@@ -122,6 +127,20 @@ class CropThumbnailsSettingsScreen {
 	}
 
 	public function emptySectionDescription() {/*empty*/ }
+
+
+	
+	public function callback_user_permission_only_on_edit_files() {
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		$_id = 'user_permission_only_on_edit_files';
+		if(empty($options[$_id])) { $options[$_id] = ''; }
+		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		?>
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+		</div>
+		<?php
+	}
 
 	public function callback_debug_js() {
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
@@ -164,6 +183,11 @@ class CropThumbnailsSettingsScreen {
 					}
 				}
 			}
+		}
+
+		$_tmpID = 'user_permission_only_on_edit_files';
+		if(!empty($input[$_tmpID])) {
+			$storeInDb[$_tmpID] = 1;
 		}
 
 		/* Advanced Section */

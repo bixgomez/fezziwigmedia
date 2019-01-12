@@ -162,7 +162,35 @@ class C_Widget_Gallery extends WP_Widget
                 $params['container_ids'] = $instance['list'];
                 break;
         }
-        echo $renderer->display_images($params);
+        // "Random" galleries are a bit resource intensive when querying the database and widgets are generally
+        // going to be on every page a site may serve. Because the displayed gallery renderer does *NOT* cache the
+        // HTML of random galleries the following is a bit of a workaround: for random widgets we create a displayed
+        // gallery object and then cache the results of get_entities() so that, for at least as long as
+        // NGG_RENDERING_CACHE_TTL seconds, widgets will be temporarily cached
+        if (in_array($params['source'], array('random', 'random_images'))) {
+            $displayed_gallery = $renderer->params_to_displayed_gallery($params);
+            if (is_null($displayed_gallery->id())) {
+                $displayed_gallery->id(md5(json_encode($displayed_gallery->get_entity())));
+            }
+            $cache_group = 'random_widget_gallery_ids';
+            $cache_params = array($displayed_gallery->get_entity());
+            $transientM = C_Photocrati_Transient_Manager::get_instance();
+            $key = $transientM->generate_key($cache_group, $cache_params);
+            $ids = $transientM->get($key, FALSE);
+            if (!empty($ids)) {
+                $params['image_ids'] = $ids;
+            } else {
+                $ids = array();
+                foreach ($displayed_gallery->get_entities($instance['items'], FALSE, TRUE) as $item) {
+                    $ids[] = $item->{$item->id_field};
+                }
+                $params['image_ids'] = implode(',', $ids);
+                $transientM->set($key, $params['image_ids'], NGG_RENDERING_CACHE_TTL);
+            }
+            $params['source'] = 'images';
+            unset($params['container_ids']);
+        }
+        print $renderer->display_images($params);
     }
 }
 class C_Widget_MediaRSS extends WP_Widget
