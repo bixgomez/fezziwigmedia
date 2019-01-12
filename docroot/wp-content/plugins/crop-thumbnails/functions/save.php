@@ -4,7 +4,7 @@ add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap')
 
 class CptSaveThumbnail {
 	
-	private static $debug = array();
+	protected static $debug = array();
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -105,7 +105,7 @@ class CptSaveThumbnail {
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
-					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height']);
+					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height'], $input);
 				} else {
 					self::addDebug('error on '.$currentFilePathInfo['basename']);
 					self::addDebug($_processing_error);
@@ -195,18 +195,29 @@ class CptSaveThumbnail {
 		die();
 	}
 
-	private static function addDebug($text) {
+	protected static function addDebug($text) {
 		self::$debug[] = $text;
 	}
 	
-	private static function getDebug() {
+	protected static function getDebug() {
 		if(!empty(self::$debug)) {
 			return self::$debug;
 		}
 		return array();
 	}
 	
-	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
+	/**
+	 * Update the metadata for one image-size.
+	 * 
+	 * @param array $imageMetadata the image-metadata base array to modify
+	 * @param string $imageSizeName the name of the image-size
+	 * @param array $currentFilePathInfo pathinfo of the new thumbnail/image-size
+	 * @param int $croppedWidth the new width of the image
+	 * @param int $croppedHeight the new height of the image
+	 * @param array $croppingInput the input data for the cropping (to store the crop-informations)
+	 * @return array the modified $imageMetadata
+	 */
+	protected static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight, $croppingInput) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
 		
 		$fileTypeInformations = wp_check_filetype($fullFilePath);
@@ -216,6 +227,14 @@ class CptSaveThumbnail {
 		$newValues['width'] = intval($croppedWidth);
 		$newValues['height'] = intval($croppedHeight);
 		$newValues['mime-type'] = $fileTypeInformations['type'];
+		$newValues['cpt_last_cropping_data'] = array(
+			'x' => $croppingInput->selection->x,
+			'y' => $croppingInput->selection->y,
+			'x2' => $croppingInput->selection->x2,
+			'y2' => $croppingInput->selection->y2,
+			'original_width' => $imageMetadata['width'],
+			'original_height' => $imageMetadata['height'],
+		);
 		
 		$oldValues = array();
 		if(empty($imageMetadata['sizes'])) {
@@ -235,7 +254,7 @@ class CptSaveThumbnail {
 	 * @param array all available ImageSizes
 	 * @return boolean true if the newImageSize is in the list of ImageSizes and dimensions are correct
 	 */
-	private static function isImageSizeValid(&$submitted,$dbData) {
+	protected static function isImageSizeValid(&$submitted,$dbData) {
 		if(empty($submitted->name)) {
 			return false;
 		}
@@ -256,7 +275,8 @@ class CptSaveThumbnail {
 	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	private function getValidatedInput() {
+	protected function getValidatedInput() {
+
 		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
 		}
@@ -272,6 +292,9 @@ class CptSaveThumbnail {
 			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
+		if(!self::isUserPermitted($input->sourceImageId)) {
+			throw new Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);
+		}
 		
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
 			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
@@ -306,7 +329,7 @@ class CptSaveThumbnail {
 	 * @param int height of the new image
 	 * @return string path to the new image
 	 */
-	private static function generateFilename( $file, $w, $h ){
+	protected static function generateFilename( $file, $w, $h ){
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];
@@ -314,5 +337,25 @@ class CptSaveThumbnail {
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
 		return $destfilename;
+	}
+
+	/**
+	 * Check if the user is permitted to crop the thumbnails.
+	 * 
+	 * You may override the default result of this function by using the filter 'crop_thumbnails_user_permission_check'.
+	 * 
+	 * @param int $imageId The ID of the image that should be cropped (not used in default test)
+	 * @return boolean true if the user is permitted
+	 */
+	public static function isUserPermitted($imageId) {
+		$return = false;
+		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		if(current_user_can('edit_files')) {
+			$return = true;
+		}
+		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
+			$return = true;
+		}
+		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
 	}
 }

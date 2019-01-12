@@ -5,7 +5,7 @@
  */
 class CropPostThumbnailsBackendPreparer {
 	
-	private $allowedMime = array('image/jpeg','image/png');
+	protected $allowedMime = array('image/jpeg','image/png');
 	
 	public function __construct() {
 		if ( is_admin() ) {
@@ -29,7 +29,7 @@ class CropPostThumbnailsBackendPreparer {
 	 * });
 	 * </code>
 	 */
-	private function shouldCropThumbnailsBeActive() {
+	protected function shouldCropThumbnailsBeActive() {
 		global $pagenow;
 		$result = ($pagenow == 'post.php'
 			|| $pagenow == 'post-new.php'
@@ -92,7 +92,7 @@ class CropPostThumbnailsBackendPreparer {
 	/**
 	 * Check if on the current admin page (posttype) the crop-button should be visible in the featured image Box.
 	 */
-	private static function showCropButtonOnThisAdminPage() {
+	protected static function showCropButtonOnThisAdminPage() {
 		$screenData = get_current_screen();
 		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$showFeaturedImageCropButton = false;
@@ -120,7 +120,7 @@ jQuery(document).ready(function($) {
 	CROP_THUMBNAILS_CURRENT_POST_ID = null;
 	
 	/**
-	 * Adds a button to the featured image metabox.
+	 * Adds a button to the featured image metabox (Wordpress < 5).
 	 * The button will be visible only if a featured image is set.
 	 */
 	function handleFeaturedImageBox() {
@@ -128,9 +128,7 @@ jQuery(document).ready(function($) {
 		 * add link to featured image box
 		 */
 		var baseElem = $('#postimagediv');
-		if(!baseElem.length) {
-			return;
-		}
+		if(!baseElem.length) { return; }//this is not wordpress < 5
 		
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
@@ -165,6 +163,53 @@ jQuery(document).ready(function($) {
 		
 		updateCropFeaturedImageButton( parseInt(wp.media.featuredImage.get()) );
 	}
+
+	/**
+	 * Adds a button to the featured image panel (Wordpress >= 5)
+	 * 
+	 * I know this way to add the button is quite dirty - will refactoring it when i learned the api-way to do it.
+	 */
+	function handleFeaturedImagePanel() {
+		// @see https://github.com/WordPress/gutenberg/tree/master/packages/editor/src/components/post-featured-image
+		
+		if(typeof wp.element === 'undefined') { return };//this is not wordpress 5.x
+
+		var el = wp.element.createElement;
+		function wrapPostFeaturedImage( OriginalComponent ) { 
+			return function( props ) {
+				setTimeout(function() {
+					var baseElem = $('.edit-post-sidebar');
+					var cropButton = $('<button class="button cropThumbnailsLink" style="margin-top:1em" data-cropthumbnail=\'{"image_id":'+ parseInt(props.featuredImageId) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>"><span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?></button>');
+					if(typeof props.media !== 'undefined') {
+						var panel = baseElem.find('.editor-post-featured-image');
+						panel.find('.cropThumbnailsLink').remove();
+						if(panel.find('.components-responsive-wrapper').length>0) {
+							panel.append(cropButton);
+						}
+					}
+				}, 50);
+				
+				return (
+					el(
+						wp.element.Fragment,
+						{},
+						el(
+							OriginalComponent,
+							props
+						),
+						//TODO add in a better way here
+					)
+				);
+			} 
+		}
+		if(typeof wp.hooks !== 'undefined' && typeof wp.hooks.addFilter !== 'undefined') {
+			wp.hooks.addFilter( 
+				'editor.PostFeaturedImage', 
+				'crop-thumbnails/wrap-post-featured-image', 
+				wrapPostFeaturedImage
+			);
+		}	
+	}
 	
 	<?php if(self::showCropButtonOnThisAdminPage()) : ?>
 	/** add link on posts and pages **/
@@ -176,6 +221,7 @@ jQuery(document).ready(function($) {
 			CROP_THUMBNAILS_CURRENT_POST_ID = post_id_hidden;
 
 			handleFeaturedImageBox();
+			handleFeaturedImagePanel();
 			
 			$('body').on('cropThumbnailModalClosed',function() {
 				//lets cache-break the crop-thumbnail-preview-box
