@@ -27,7 +27,7 @@ body {
     width: $xl;
   }
   @include breakpoint($max-site-width) {
-    width: 98vw;
+    width: $max-site-width;
   }
 }
 
