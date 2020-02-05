@@ -81,6 +81,6 @@ class C_NextGen_Serializable
         if (!is_string($string))
             return false;
         $string = trim($string);
-        return (bool)preg_match("/O:[0-9]+:/is", $string);
+        return (bool)preg_match("/(O|C):\+?[0-9]+:/is", $string);
     }
 }

@@ -58,8 +58,8 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','cpt_vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
@@ -128,7 +128,7 @@ jQuery(document).ready(function($) {
 		 * add link to featured image box
 		 */
 		var baseElem = $('#postimagediv');
-		if(!baseElem.length) { return; }//this is not wordpress < 5
+		if(!baseElem.length) { return; }//this is not WordPress < 5
 		
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
@@ -172,7 +172,7 @@ jQuery(document).ready(function($) {
 	function handleFeaturedImagePanel() {
 		// @see https://github.com/WordPress/gutenberg/tree/master/packages/editor/src/components/post-featured-image
 		
-		if(typeof wp.element === 'undefined') { return };//this is not wordpress 5.x
+		if(typeof wp.element === 'undefined') { return };//this is not WordPress 5.x
 
 		var el = wp.element.createElement;
 		function wrapPostFeaturedImage( OriginalComponent ) { 

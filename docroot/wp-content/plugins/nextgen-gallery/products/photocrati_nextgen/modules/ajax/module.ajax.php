@@ -17,7 +17,7 @@ class M_Ajax extends C_Base_Module
             'photocrati-ajax',
             'AJAX',
             'Provides AJAX functionality',
-            '3.0.0',
+            '3.1.8',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -115,7 +115,7 @@ class C_Ajax_Option_Handler {
 				$retval = $this->slug;
 				break;
 			case 'ajax_url':
-				$retval = site_url( "/?{$this->slug}=1" );
+				$retval = site_url( "/index.php?{$this->slug}=1" );
 				if ( is_ssl() && strpos( $retval, 'https' ) === false ) {
 					$retval = str_replace( 'http', 'https', $retval );
 				}

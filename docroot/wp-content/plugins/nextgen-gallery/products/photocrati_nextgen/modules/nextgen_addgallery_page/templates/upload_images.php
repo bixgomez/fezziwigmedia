@@ -47,9 +47,7 @@
                 window.set_plupload_url = function(gallery_id, gallery_name) {
                     var qs = "&action=upload_image&gallery_id="+urlencode(gallery_id);
                     qs += "&gallery_name="+urlencode(gallery_name);
-	                <?php foreach ($sec_token->get_request_list() as $name=>$value): ?>
-	                qs += "&<?php echo $name?>=<?php echo $value?>";
-	                <?php endforeach ?>
+                    qs += "&nonce="+urlencode("<?php echo $nonce; ?>");
                     return photocrati_ajax.url + qs;
                 };
 
@@ -76,14 +74,14 @@
                     window.uploaded_image_ids = [];
                     window.uploaded_image_errors = [];
 
-                    plupload.addFileFilter('xss_protection', function(enabled, file, cb){
+                    ngg_plupload.addFileFilter('xss_protection', function(enabled, file, cb){
                         var retval = true;
                         if (enabled) {
                            if (file.name.match(/\<|\>/)) {
                                retval = false;
                                this.trigger("Error", {
-                                  code: plupload.SECURITY_ERROR,
-                                  message: plupload.translate('XSS attempt detected'),
+                                  code: ngg_plupload.SECURITY_ERROR,
+                                  message: ngg_plupload.translate('XSS attempt detected'),
                                   file: file
                                });
                            }
@@ -117,7 +115,15 @@
                             });
 
                             // Change the text for the dragdrop
-                            $('.plupload_droptext').html("<?php _e('Drag image and ZIP files here or click <strong>Add Files</strong>', 'nggallery'); ?>");
+                            <?php
+                            $settings = C_NextGen_Settings::get_instance();
+                            $display_zips = (!is_multisite() || (is_multisite() && $settings->get('wpmuZipUpload')));
+                            if ($display_zips)
+                                $message = __('Drag image and ZIP files here or click <strong>Add Files</strong>', 'nggallery');
+                            else
+                                $message = __('Drag image files here or click <strong>Add Files</strong>', 'nggallery');
+                            ?>
+                            $('.plupload_droptext').html("<?php print $message; ?>");
 
                             // Move the buttons
                             var buttons = $('.plupload_buttons').detach();
@@ -202,7 +208,7 @@
                             }
 
                             // Display message/notification
-                            if (up.state == plupload.STOPPED) {
+                            if (up.state == ngg_plupload.STOPPED) {
 								if (typeof(up.error_msg) != 'undefined') {
 									$.gritter.add({
 										title: up.error_msg,
@@ -234,7 +240,7 @@
                                 }
                                 catch (ex) {
                                     up.trigger('Error', {
-                                        code: plupload.IO_ERROR,
+                                        code: ngg_plupload.IO_ERROR,
                                         msg: "<?php _e("An unexpected error occured. This is most likely due to a server misconfiguration. Check your PHP error log or ask your hosting provider for assistance.", 'nggallery'); ?>",
                                         details: response.replace(/<.*>/, '').trim(),
                                         file: file
@@ -244,7 +250,7 @@
                             }
 							if(typeof(response.error) != 'undefined') {
 								up.trigger('Error', {
-									code: plupload.IO_ERROR,
+									code: ngg_plupload.IO_ERROR,
 									msg: response.error,
 									details: response,
 									file: file

@@ -20,7 +20,7 @@ use WP_Post;
  * @example
  * ```php
  * // single.php, see connected twig example
- * $context = Timber::get_context();
+ * $context = Timber::context();
  * $context['post'] = new Timber\Post(); // It's a new Timber\Post object, but an existing post from WordPress.
  * Timber::render('single.twig', $context);
  * ?>
@@ -209,7 +209,7 @@ class Post extends Core implements CoreInterface {
 	}
 
 	/**
-	 * Determined whether or not an admin/editor is looking at the post in "preview mode" via the
+	 * Determine whether or not an admin/editor is looking at the post in "preview mode" via the
 	 * WordPress admin
 	 * @internal
 	 * @return bool
@@ -404,7 +404,30 @@ class Post extends Core implements CoreInterface {
 	}
 
 	/**
-	 * @return PostPreview
+	 * Gets a preview/excerpt of your post.
+	 *
+	 * If you have text defined in the excerpt textarea of your post, it will use that. Otherwise it
+	 * will pull from the post_content. If there's a `<!-- more -->` tag, it will use that to mark
+	 * where to pull through.
+	 *
+	 * This method returns a `Timber\PostPreview` object, which is a **chainable object**. This
+	 * means that you can change the output of the preview by **adding more methods**. Refer to the
+	 * [documentation of the `Timber\PostPreview` class](https://timber.github.io/docs/reference/timber-postpreview/)
+	 * to get an overview of all the available methods.
+	 *
+	 * @example
+	 * ```twig
+     * {# Use default preview #}
+	 * <p>{{ post.preview }}</p>
+	 *
+	 * {# Change the post preview text #}
+	 * <p>{{ post.preview.read_more('Continue Reading') }}</p>
+	 *
+	 * {# Additionally restrict the length to 50 words #}
+	 * <p>{{ post.preview.length(50).read_more('Continue Reading') }}</p>
+	 * ```
+	 * @see \Timber\PostPreview
+	 * @return \Timber\PostPreview
 	 */
 	public function preview() {
 		return new PostPreview($this);
@@ -508,19 +531,57 @@ class Post extends Core implements CoreInterface {
 	 * @return array
 	 */
 	protected function get_post_custom( $pid ) {
-		apply_filters('timber_post_get_meta_pre', array(), $pid, $this);
-		$customs = get_post_custom($pid);
-		if ( !is_array($customs) || empty($customs) ) {
+		$post_meta = array();
+
+		/**
+		 * Filters post meta data before it is fetched from the database.
+		 *
+		 * Timber loads all meta values into the post object on initialization. With this filter,
+		 * you can disable fetching the meta values through the default method, which uses
+		 * `get_post_meta()`, by returning `false` or an non-empty array.
+		 *
+		 * @example
+		 * ```php
+		 * // Disable fetching meta values.
+		 * add_filter( 'timber_post_get_meta_pre', '__return_false' );
+		 *
+		 * // Add your own meta data.
+		 * add_filter( 'timber_post_get_meta_pre', function( $post_meta, $post_id, $post ) {
+		 *     $post_meta = array(
+		 *         'custom_data_1' => 73,
+		 *         'custom_data_2' => 274,
+		 *     );
+		 *
+		 *     return $post_meta;
+		 * }, 10, 3 );
+		 * ```
+		 *
+		 * @param array $post_meta        An array of custom meta values. Passing false or a
+		 *                                non-empty array will skip fetching the values from the
+		 *                                database and will use the filtered values instead. Default
+		 *                                `array()`.
+		 * @param int          $post_id   The post ID.
+		 * @param \Timber\Post $post      The post object.
+		 */
+		$post_meta = apply_filters('timber_post_get_meta_pre', $post_meta, $pid, $this);
+
+		// Load all meta data when it wasn’t filtered before.
+		if ( false !== $post_meta && empty( $post_meta ) ) {
+			$post_meta = get_post_meta( $pid );
+		}
+
+		if ( !is_array($post_meta) ) {
 			return array();
 		}
-		foreach ( $customs as $key => $value ) {
+
+		foreach ( $post_meta as $key => $value ) {
 			if ( is_array($value) && count($value) == 1 && isset($value[0]) ) {
 				$value = $value[0];
 			}
-			$customs[$key] = maybe_unserialize($value);
+			$post_meta[$key] = maybe_unserialize($value);
 		}
-		$customs = apply_filters('timber_post_get_meta', $customs, $pid, $this);
-		return $customs;
+		$post_meta = apply_filters('timber_post_get_meta', $post_meta, $pid, $this);
+		return $post_meta;
 	}
 
 	/**
@@ -811,7 +872,7 @@ class Post extends Core implements CoreInterface {
 	 */
 	public function field_object( $field_name ) {
 		$value = apply_filters('timber/post/meta_object_field', null, $this->ID, $field_name, $this);
-		$value = $this->convert($value, __CLASS__);
+		$value = $this->convert($value);
 		return $value;
 	}
 
@@ -834,7 +895,7 @@ class Post extends Core implements CoreInterface {
 			}
 		}
 		$value = apply_filters('timber_post_get_meta_field', $value, $this->ID, $field_name, $this);
-		$value = $this->convert($value, __CLASS__);
+		$value = $this->convert($value);
 		return $value;
 	}
 
@@ -970,7 +1031,7 @@ class Post extends Core implements CoreInterface {
 	/**
 	 * Get the categoires on a particular post
 	 * @api
-	 * @return array of TimberTerms
+	 * @return array of Timber\Terms
 	 */
 	public function categories() {
 		return $this->terms('category');
@@ -980,7 +1041,7 @@ class Post extends Core implements CoreInterface {
 	 * Returns a category attached to a post
 	 * @api
 	 * If mulitpuile categories are set, it will return just the first one
-	 * @return TimberTerm|null
+	 * @return Timber\Term|null
 	 */
 	public function category() {
 		return $this->get_category();
@@ -1026,25 +1087,51 @@ class Post extends Core implements CoreInterface {
 	}
 
 	/**
-	 * Gets the comments on a Timber\Post and returns them as an array of [TimberComments](#TimberComment) (or whatever comment class you set).
+	 * Gets the comments on a `Timber\Post` and returns them as a `Timber\CommentThread`: a PHP
+	 * ArrayObject of [`Timber\Comment`](https://timber.github.io/docs/reference/timber-comment/)
+	 * (or whatever comment class you set).
 	 * @api
-	 * @param int $count Set the number of comments you want to get. `0` is analogous to "all"
-	 * @param string $order use ordering set in WordPress admin, or a different scheme
-	 * @param string $type For when other plugins use the comments table for their own special purposes, might be set to 'liveblog' or other depending on what's stored in yr comments table
-	 * @param string $status Could be 'pending', etc.
-	 * @param string $CommentClass What class to use when returning Comment objects. As you become a Timber pro, you might find yourself extending TimberComment for your site or app (obviously, totally optional)
+	 *
+	 * @param int    $count        Set the number of comments you want to get. `0` is analogous to
+	 *                             "all".
+	 * @param string $order        Use ordering set in WordPress admin, or a different scheme.
+	 * @param string $type         For when other plugins use the comments table for their own
+	 *                             special purposes. Might be set to 'liveblog' or other, depending
+	 *                             on what’s stored in your comments table.
+	 * @param string $status       Could be 'pending', etc.
+	 * @param string $CommentClass What class to use when returning Comment objects. As you become a
+	 *                             Timber Pro, you might find yourself extending `Timber\Comment`
+	 *                             for your site or app (obviously, totally optional).
+	 * @see \Timber\CommentThread for an example with nested comments
+	 * @return bool|\Timber\CommentThread
+	 *
 	 * @example
+	 *
+	 * **single.twig**
+	 *
 	 * ```twig
-	 * {# single.twig #}
-	 * <h4>Comments:</h4>
-	 * {% for comment in post.comments %}
-	 * 	<div class="comment-{{comment.ID}} comment-order-{{loop.index}}">
-	 * 		<p>{{comment.author.name}} said:</p>
-	 * 		<p>{{comment.content}}</p>
-	 * 	</div>
-	 * {% endfor %}
+	 * <div id="post-comments">
+	 *   <h4>Comments on {{ post.title }}</h4>
+	 *   <ul>
+	 *     {% for comment in post.comments() %}
+	 *       {% include 'comment.twig' %}
+	 *     {% endfor %}
+	 *   </ul>
+	 *   <div class="comment-form">
+	 *     {{ function('comment_form') }}
+	 *   </div>
+	 * </div>
 	 * ```
-	 * @return bool|array
+	 *
+	 * **comment.twig**
+	 *
+	 * ```twig
+	 * {# comment.twig #}
+	 * <li>
+	 *   <p class="comment-author">{{ comment.author.name }} says:</p>
+	 *   <div>{{ comment.content }}</div>
+	 * </li>
+	 * ```
 	 */
 	public function comments( $count = null, $order = 'wp', $type = 'comment', $status = 'approve', $CommentClass = 'Timber\Comment' ) {
 		global $overridden_cpage, $user_ID;
@@ -1060,11 +1147,15 @@ class Post extends Core implements CoreInterface {
 		if ( strtolower($order) == 'wp' || strtolower($order) == 'wordpress' ) {
 			$args['order'] = get_option('comment_order');
 		}
-
 		if ( $user_ID ) {
 			$args['include_unapproved'] = array($user_ID);
 		} elseif ( !empty($comment_author_email) ) {
 			$args['include_unapproved'] = array($comment_author_email);
+		} elseif ( function_exists('wp_get_unapproved_comment_author_email') ) {
+			$unapproved_email = wp_get_unapproved_comment_author_email();
+			if ( $unapproved_email ) {
+				$args['include_unapproved'] = array($unapproved_email);
+			}
 		}
 		$ct = new CommentThread($this->ID, false);
 		$ct->CommentClass = $CommentClass;
@@ -1168,7 +1259,7 @@ class Post extends Core implements CoreInterface {
 	 */
 	public function date( $date_format = '' ) {
 		$df = $date_format ? $date_format : get_option('date_format');
-		$the_date = (string) mysql2date($df, $this->post_date);
+		$the_date = date_i18n($df, strtotime($this->post_date));
 		return apply_filters('get_the_date', $the_date, $df);
 	}
 
@@ -1192,7 +1283,7 @@ class Post extends Core implements CoreInterface {
 	 */
 	public function time( $time_format = '' ) {
 		$tf = $time_format ? $time_format : get_option('time_format');
-		$the_time = (string) mysql2date($tf, $this->post_date);
+		$the_time = date_i18n($tf, strtotime($this->post_date));
 		return apply_filters('get_the_time', $the_time, $tf);
 	}
 
@@ -1367,18 +1458,16 @@ class Post extends Core implements CoreInterface {
 	 * @param array|WP_Post $data
 	 * @param string $class
 	 */
-	public function convert( $data, $class = '\Timber\Post' ) {
-		if ( $data instanceof WP_Post ) {
-			$data = new $class($data);
+	public function convert( $data ) {
+		if ( is_object($data) ) {
+			$data = Helper::convert_wp_object($data);
 		} else if ( is_array($data) ) {
 			$func = __FUNCTION__;
 			foreach ( $data as &$ele ) {
-				if ( gettype($ele) === 'array' ) {
-					$ele = $this->$func($ele, $class);
-				} else {
-					if ( $ele instanceof WP_Post ) {
-						$ele = new $class($ele);
-					}
+				if ( is_array($ele) ) {
+					$ele = $this->$func($ele);
+				} else if ( is_object($ele) ) {
+					$ele = Helper::convert_wp_object($ele);
 				}
 			}
 		}
@@ -1571,7 +1660,7 @@ class Post extends Core implements CoreInterface {
 	 * @deprecated since 1.0
 	 * @codeCoverageIgnore
 	 * @see Timber\Post::categories
-	 * @return array of TimberTerms
+	 * @return array of Timber\Terms
 	 */
 	public function get_categories() {
 		return $this->terms('category');
@@ -1593,7 +1682,7 @@ class Post extends Core implements CoreInterface {
 
 	/**
 	 * @param string $field
-	 * @return TimberImage
+	 * @return Timber\Image
 	 */
 	public function get_image( $field ) {
 		return new $this->ImageClass($this->$field);

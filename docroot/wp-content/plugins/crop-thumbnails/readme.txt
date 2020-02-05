@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
-Tested up to: 5.0
-Stable tag: 1.2.2
+Tested up to: 5.3.1
+Stable tag: 1.2.6
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -16,8 +16,20 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 The plugin provides the functionality to adjust the crop region of cropped images. It add buttons to the edit-pages and media-dialog to access a crop-editor.
 In the crop-editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-= How to define cropped image sizes? =
+The plugin is especially useful for theme developers who want to keep full control over cropped image sizes. If you want to dive even deeper, you can get informations about the hooks and filters on the [github page of the plugin](https://github.com/vollyimnetz/crop-thumbnails).
 
+== Installation ==
+
+You can use the built in installer and upgrader, or you can install the plugin manually.
+
+1. You can either use the automatic plugin installer or your FTP program to upload it to your wp-content/plugins directory the top-level folder. Don't just upload all the php files and put them in /wp-content/plugins/.
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Configure any settings from "Settings > Crop-Thumbnails".
+4. Use it.
+
+== Frequently Asked Questions ==
+
+= How to define cropped image sizes? =
 The plugin do not add additional image sizes, it only provides functionality to edit the crop area. 
 
 You can use "`add_image_size`" inside your functions.php to add additional cropped image sizes. [See "add_image_size" documentation](https://developer.wordpress.org/reference/functions/add_image_size/).
@@ -48,22 +60,15 @@ if ( has_post_thumbnail() ) {
 }
 `
 
-== Installation ==
-
-You can use the built in installer and upgrader, or you can install the plugin manually.
-
-1. You can either use the automatic plugin installer or your FTP program to upload it to your wp-content/plugins directory the top-level folder. Don't just upload all the php files and put them in /wp-content/plugins/.
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Configure any settings from "Settings > Crop-Thumbnails".
-4. Use it.
-
-== Frequently Asked Questions ==
-
 = What internal rules the plugin use for cropping? =
 * The plugin will only crop image-sizes where crop is set to "`true`" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
 * If you had set one image dimension in add_image_size() to "`0`", the plugin will crop it in the ratio of the original image.
 * If you had set one image dimension in add_image_size() to "`9999`", the plugin will change the 9999 to the actual size of the current original image.
 * You are able to crop all images with the same ratio at once (default) or and any imagesize (and ratio) seperate.
+
+= How to use this plugin on ACF taxonomy-images
+The "Adavanced Custom Fields" plugin has a functionality to add images to taxonomies. To add cropping functionality on these images you have to add a small code-snippet to your functions.php
+[Have a look on the github readme-page for details.](https://github.com/vollyimnetz/crop-thumbnails#filter-crop_thumbnails_activat_on_adminpages)
 
 = I've cropped the image, but the new version do not appear in the frontend. =
 If you had viewed your image on the site before, your browser has cached the image. You can hard refresh the page by hitting:
@@ -103,11 +108,7 @@ $('body').on('cropThumbnailModalClosed',function() {
 `
 
 = What languages are supported? =
-* English
-* German (de_DE)
-* brazilian portuguese (pt_BR) - thanks to Alex Meusburger
-* Ukrainian (uk) - thanks to Jurko Chervony from www.skinik.name
-* Italian (it) - thanks to akteon18
+You may have a look on the [Translation Page](https://translate.wordpress.org/projects/wp-plugins/crop-thumbnails).
 
 = I want to contribute code. =
 Fantastic, i published the code on [github](https://github.com/vollyimnetz/crop-thumbnails). But be warned, i am carefully evaluate new features.
@@ -123,6 +124,26 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.2.6 =
+* update dependencies
+* fix typo
+* fix a bug where the image name of the thumbnail changed to "imagename-scaled-..." cause of the new features of WordPress 5.3
+* extend the filter "crop_thumbnails_filename" by the image-metadata-array
+
+= 1.2.5 =
+* fix a bug that may occure on utf8-filenames
+* update vue.js and the other libraries to current version
+* refactoring vue-code and build
+
+= 1.2.4 =
+* change the enqueue-name of the vue.js-library provided with the plugin to "cpt_vue" to make it possible to prevent this specific include
+* update js-dev dependencies
+* add the filter "crop_thumbnails_filename" to make it possible to change the target path/filename (thanks to https://github.com/matzeeable)
+* improve readme
+
+= 1.2.3 =
+* fix a php-notice displayed on the settings-screen
+
 = 1.2.2 =
 * fix calling a non static function in a static statically (fixes a bug where the plugin do not run locally)
 
