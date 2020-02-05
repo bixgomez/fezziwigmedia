@@ -1,0 +1,8 @@
+name: fezziwigmedia
+recipe: wordpress
+config:
+  webroot: ./docroot
+  php: '7.2'
+  via: apache
+  database: mysql
+  xdebug: true
