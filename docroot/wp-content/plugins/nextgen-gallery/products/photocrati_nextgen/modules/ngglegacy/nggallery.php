@@ -9,9 +9,11 @@ class nggLoader
 	var $dbversion   = '1.8.1';
 	var $minimum_WP  = '3.6.1';
 	var $options     = '';
+    var $add_PHP5_notice = false;
+    var $plugin_name = '';
+
+	/** @var nggManageGallery|nggManageAlbum $manage_page */
 	var $manage_page;
-	var $add_PHP5_notice = false;
-	var $plugin_name = '';
 
 	function __construct()
 	{
@@ -46,9 +48,6 @@ class nggLoader
 
 		// Check for the header / footer
 		add_action( 'init', array(&$this, 'test_head_footer_init' ) );
-
-		// Show NextGEN version in header
-		add_action('wp_head', array('nggGallery', 'nextgen_version') );
 	}
 
 	function start_plugin() {
@@ -195,18 +194,6 @@ class nggLoader
 
 		// look for imagerotator
 		define('NGGALLERY_IREXIST', !empty( $this->options['irURL'] ));
-
-		// get value for safe mode
-		if ( (gettype( ini_get('safe_mode') ) == 'string') ) {
-			// if sever did in in a other way
-			if ( ini_get('safe_mode') == 'off' ) define('SAFE_MODE', FALSE);
-			else define( 'SAFE_MODE', ini_get('safe_mode') );
-		} else
-		define( 'SAFE_MODE', ini_get('safe_mode') );
-
-		if ( version_compare($wp_version, '3.2.999', '>') )
-			define('IS_WP_3_3', TRUE);
-
 	}
 
 	function load_dependencies() {
