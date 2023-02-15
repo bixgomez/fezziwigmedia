@@ -4,7 +4,7 @@ Plugin Name: PHP Code Widget
 Plugin URI: http://ottopress.com/wordpress-plugins/php-code-widget/
 Description: Like the Text widget, but it will take PHP code as well. Heavily derived from the Text widget code in WordPress.
 Author: Otto
-Version: 2.3
+Version: 2.4
 Text Domain: php-code-widget
 Author URI: http://ottodestruct.com
 */
@@ -59,4 +59,7 @@ class PHP_Code_Widget extends WP_Widget {
 	}
 }
 
-add_action('widgets_init', create_function('', 'return register_widget("PHP_Code_Widget");'));
+add_action('widgets_init', 'php_code_widget_register');
+function php_code_widget_register() {
+	register_widget('PHP_Code_Widget');
+}

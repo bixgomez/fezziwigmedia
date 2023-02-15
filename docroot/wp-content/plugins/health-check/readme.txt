@@ -1,10 +1,10 @@
 === Health Check & Troubleshooting ===
 Tags: health check
 Contributors: wordpressdotorg, westi, pento, Clorith
-Requires at least: 4.0
-Requires PHP: 5.2
-Tested up to: 5.3
-Stable tag: 1.4.2
+Requires at least: 4.4
+Requires PHP: 5.6
+Tested up to: 6.1
+Stable tag: 1.5.1
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,29 @@ At this time, the plugin has been tested with every version of PHP from 5.2 thro
 4. Troubleshooting mode enabled, showing your website Dashboard
 
 == Changelog ==
+
+= v1.5.1 (2022-11-02) =
+* Fixed a bug where if Health Check was disabled during troubleshooting, you would need to force-enable/disable other plugins or themes.
+
+= v1.5.0 (2022-09-10) =
+* Added a custom filter for the Health Check plugin PHP Compatibility check.
+* Added functions which will try to disable cache solutions during troubleshooting.
+* Added ability to force changes if loopbacks fail during troubleshooting.
+* Changed how JavaScript is built and bundled in the plugin.
+* Changed the location of the `phpinfo()` check to the Tools section.
+* Changed how troubleshooting mode implements its conditional actions and filters when enabled.
+* Fixed styling issues for troubleshooting mode in WordPress 5.9.
+* Removed Site Health Status from the plugin, as they were implemented in WordPress 5.2.
+
+= v1.4.5 =
+* Fix Troubleshooting Mode throwing errors in frontend on WordPress 5.5
+
+= v1.4.4 =
+* Fixed hidden JavaScript warning when using troubleshooting mode on the Dashboard
+* Fixed plugin and theme lists staying hidden in troubleshooting mode on the Dashboard
+
+= v1.4.3 =
+* Compatibility with WordPress 5.4
 
 = v1.4.2 =
 * Fix missing headers for a loopback request in the debug section

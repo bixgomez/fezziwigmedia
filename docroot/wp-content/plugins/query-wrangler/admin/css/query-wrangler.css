@@ -142,13 +142,22 @@ label.qw-field-checkbox input {
 	margin-left: 12px;
 }
 
-.qw-setting-header {
-	display: block;
-	padding: .4em .5em .4em 2em;
-}
-
 #qw-edit-query-form textarea {
 	font-family: monospace;
+}
+
+#row-style-settings h3.qw-setting-header {
+	padding-left: 0;
+}
+
+#row-style-settings .qw-setting-group {
+	padding-left: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: .5em;
+}
+#row-style-settings .qw-query-content:last-of-type .qw-setting-group {
+	border: none;
 }
 
 a.toplevel_page_query-wrangler {
@@ -218,8 +227,33 @@ a.toplevel_page_query-wrangler {
 	padding: 8px 0;
 }
 
-.ui-dialog .ui-dialog-titlebar-close span {
+.qw-dialog .ui-dialog-titlebar-close span {
 	margin: -8px 0 0 -8px;
+}
+
+.qw-dialog .ui-dialog-buttonset .ui-widget {
+	display: inline-block;
+	text-decoration: none;
+	font-size: 13px;
+	line-height: 1.5;
+	min-height: 30px;
+	margin: 0 0 0 6px;
+	padding: 0 6px;
+	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
+	-webkit-appearance: none;
+	border-radius: 3px;
+	white-space: nowrap;
+	box-sizing: border-box;
+	background: #f1f1f1;
+	border-color: #016087;
+	color: #016087;
+}
+.qw-dialog .ui-dialog-buttonset .ui-widget:first-of-type {
+	background: #0071a1;
+	border-color: #0071a1;
+	color: #fff;
 }
 
 .ui-autocomplete {

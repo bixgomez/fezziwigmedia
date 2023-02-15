@@ -31,16 +31,19 @@ class Redirection_Api_Plugin extends Redirection_Api_Route {
 			$this->get_route( WP_REST_Server::ALLMETHODS, 'route_test', [ $this, 'permission_callback_manage' ] ),
 		) );
 
-		register_rest_route( $namespace, '/plugin/database', array(
+		register_rest_route( $namespace, '/plugin/data', array(
 			$this->get_route( WP_REST_Server::EDITABLE, 'route_database', [ $this, 'permission_callback_manage' ] ),
-			'args' => array(
-				'description' => 'Upgrade parameter',
-				'type' => 'enum',
-				'enum' => array(
-					'stop',
-					'skip',
-				),
-			),
+			'args' => [
+				'upgrade' => [
+					'description' => 'Upgrade parameter',
+					'type' => 'string',
+					'enum' => array(
+						'stop',
+						'skip',
+						'retry',
+					),
+				],
+			],
 		) );
 	}
 
@@ -64,7 +67,7 @@ class Redirection_Api_Plugin extends Redirection_Api_Route {
 		if ( isset( $params['name'] ) && isset( $params['value'] ) ) {
 			global $wpdb;
 
-			$fixer->save_debug( $params['name'], $params['value'] );
+			$fixer->save_debug( sanitize_text_field( $params['name'] ), sanitize_text_field( $params['value'] ) );
 
 			$groups = intval( $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}redirection_groups" ), 10 );
 			if ( $groups === 0 ) {
@@ -86,8 +89,11 @@ class Redirection_Api_Plugin extends Redirection_Api_Route {
 		$plugin->plugin_uninstall();
 
 		$current = get_option( 'active_plugins' );
-		array_splice( $current, array_search( basename( dirname( REDIRECTION_FILE ) ) . '/' . basename( REDIRECTION_FILE ), $current ), 1 );
-		update_option( 'active_plugins', $current );
+		$plugin_position = array_search( basename( dirname( REDIRECTION_FILE ) ) . '/' . basename( REDIRECTION_FILE ), $current );
+		if ( $plugin_position !== false ) {
+			array_splice( $current, $plugin_position, 1 );
+			update_option( 'active_plugins', $current );
+		}
 
 		return array( 'location' => admin_url() . 'plugins.php' );
 	}
@@ -104,7 +110,7 @@ class Redirection_Api_Plugin extends Redirection_Api_Route {
 		$upgrade = false;
 
 		if ( isset( $params['upgrade'] ) && in_array( $params['upgrade'], [ 'stop', 'skip' ], true ) ) {
-			$upgrade = $params['upgrade'];
+			$upgrade = sanitize_text_field( $params['upgrade'] );
 		}
 
 		// Check upgrade

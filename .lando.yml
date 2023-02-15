@@ -2,7 +2,7 @@ name: fezziwigmedia
 recipe: wordpress
 config:
   webroot: ./docroot
-  php: '7.2'
+  php: '7.4'
   via: apache
   database: mysql
   xdebug: true

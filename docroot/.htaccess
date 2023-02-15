@@ -1,10 +1,15 @@
 
 # BEGIN WordPress
+<<<<<<< HEAD
 # The directives (lines) between `BEGIN WordPress` and `END WordPress` are
+=======
+# The directives (lines) between "BEGIN WordPress" and "END WordPress" are
+>>>>>>> da769a7f13796f06b36d556815ab20d9f2e60762
 # dynamically generated, and should only be modified via WordPress filters.
 # Any changes to the directives between these markers will be overwritten.
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
