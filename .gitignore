@@ -21,3 +21,5 @@ d/ocroot/wp-content/cache/
 /docroot/sitemap.xml.gz
 .idea
 node_modules
+*.sql.gz
+*.sql
