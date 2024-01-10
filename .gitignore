@@ -15,7 +15,7 @@
 /docroot/wp-content/wp-cache-config.php
 /docroot/wp-content/cache/*
 /docroot/wp-content/cache/supercache/*
-d/ocroot/wp-content/cache/
+/docroot/wp-content/cache/
 /docroot/wp-content/backups/
 /docroot/sitemap.xml
 /docroot/sitemap.xml.gz
@@ -23,3 +23,4 @@ d/ocroot/wp-content/cache/
 node_modules
 *.sql.gz
 *.sql
+cache/
