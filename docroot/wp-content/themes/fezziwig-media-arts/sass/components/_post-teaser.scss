@@ -1,0 +1,38 @@
+.post-teasers {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 1.25rem 0;
+}
+
+.post-teaser {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+}
+
+.teaser--inner {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.post-teaser-image {
+  width: 150px;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  position: relative;
+
+  .post-thumbnail {
+    display: contents;
+  }
+
+  img {
+    position: absolute;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}

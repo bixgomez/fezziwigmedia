@@ -1,0 +1,24 @@
+body.single-post {
+  .blog-author {
+    display: none;
+  }
+
+  .article-content {
+    display: block;
+    grid-column-gap: 1em;
+
+    @include breakpoint($md-up) {
+      display: grid;
+      grid-template-columns: 3fr 1.5fr;
+    }
+
+    .article-body {
+      padding-bottom: 1em;
+    }
+
+    .article-sidebar {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}

@@ -22,38 +22,64 @@
 
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
-<div id="page" class="site">
-	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'fezziwig-media-arts' ); ?></a>
 
-	<header id="masthead" class="site-header">
-		<div class="site-branding">
-			<?php
-			the_custom_logo();
-			if ( is_front_page() && is_home() ) :
-				?>
-				<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
-				<?php
-			else :
-				?>
-				<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-				<?php
-			endif;
-			$fezziwig_media_arts_description = get_bloginfo( 'description', 'display' );
-			if ( $fezziwig_media_arts_description || is_customize_preview() ) :
-				?>
-				<p class="site-description"><?php echo $fezziwig_media_arts_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-			<?php endif; ?>
-		</div><!-- .site-branding -->
+<div class="site-outer">
+	<div class="site-wrapper">
+		<div class="site-container">
+			<div id="page" class="site">
 
-		<nav id="site-navigation" class="main-navigation">
-			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'fezziwig-media-arts' ); ?></button>
-			<?php
-			wp_nav_menu(
-				array(
-					'theme_location' => 'menu-1',
-					'menu_id'        => 'primary-menu',
-				)
-			);
-			?>
-		</nav><!-- #site-navigation -->
-	</header><!-- #masthead -->
+				<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'fezziwig-media-arts' ); ?></a>
+				<header id="masthead" class="site-header">
+					<div id="masthead-inner" class="section-inner">
+						<div class="site-branding">
+							<div class="site-branding--titles">
+								<h1 class="site-title"><a href="/"><span class="fezziwig">Fezziwig</span> <span class="media-arts">Media Arts</span></a></h1>
+								<h2 class="site-subtitle-1">
+									<span class="drupal-wordpress">
+										<?php
+										if (rand(0, 1) === 0) {
+											echo 'Drupal and WordPress';
+										} else {
+											echo 'WordPress and Drupal';
+										}
+										?>
+									</span>
+									<span class="divider-dot">·</span>
+									<span class="design-dev">
+									  <?php
+										if (rand(0, 1) === 0) {
+											echo 'Design and Development';
+										} else {
+											echo 'Development and Design';
+										}
+										?>
+									</span>
+								</h2>        
+							</div>
+						</div><!-- .site-branding -->
+					</div>
+				</header><!-- #masthead -->
+
+				<section id="nav" role="main" class="section section-nav">
+					<div id="nav-inner" class="section-inner">
+						<nav id="site-navigation" class="main-navigation" role="navigation">
+							<ul class="menu">
+								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-890 current_page_item menu-item-892">
+									<a target="" href="/">Home</a>
+								</li>
+								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-880">
+									<a target="" href="/about-me/">About Me</a>
+								</li>
+								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-835">
+									<a target="" href="/category/websites/">Web Work</a>
+								</li>
+								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-835">
+									<a target="" href="/category/presentations/">Presentations</a>
+								</li>
+								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-950">
+									<a target="" href="/my-rates/">My Rates</a>
+								</li>
+						</ul>
+						</nav><!-- #site-navigation -->
+					</div><!-- .section-inner -->
+				</section>

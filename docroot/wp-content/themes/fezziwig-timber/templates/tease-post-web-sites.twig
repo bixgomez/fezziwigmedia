@@ -1,9 +1,0 @@
-<article
-	class="tease tease-{{post.post_type}}" 
-	id="tease-{{post.ID}}"
-	style="background-image:url({{post.thumbnail.src}})">
-	{% block content %}
-		<h2 class="h2"><a href="{{post.link}}">{{post.title}}</a></h2>
-		<p>{{post.preview}}</p>
-	{% endblock %}
-</article>

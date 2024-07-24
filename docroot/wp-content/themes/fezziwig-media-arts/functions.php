@@ -139,6 +139,13 @@ add_action( 'widgets_init', 'fezziwig_media_arts_widgets_init' );
  */
 function fezziwig_media_arts_scripts() {
 	wp_enqueue_style( 'fezziwig-media-arts-style', get_stylesheet_uri(), array(), _S_VERSION );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--1', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700|Arvo:400,700|Montserrat:400,500,600,700', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--2', '//fonts.googleapis.com/css?family=EB+Garamond:400,400i,600', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--3', '//fonts.googleapis.com/css?family=Josefin+Sans:100,300,400', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--4', '//fonts.googleapis.com/css?family=Ovo', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--5', '//fonts.googleapis.com/css?family=Playfair+Display+SC:400,700', false );
+	wp_enqueue_style( 'fezziwig-timber-google-fonts--6', '//fonts.googleapis.com/css?family=Vast+Shadow', false );
+	
 	wp_style_add_data( 'fezziwig-media-arts-style', 'rtl', 'replace' );
 
 	wp_enqueue_script( 'fezziwig-media-arts-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
@@ -176,3 +183,12 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
+/**
+ * Simplify the title of category pages (removes "Category:").
+ */
+add_filter( 'get_the_archive_title', function( $title ) {
+	if ( is_category() ) {
+			$title = single_cat_title( '', false );
+	}
+	return $title;
+});

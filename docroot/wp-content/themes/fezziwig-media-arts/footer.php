@@ -11,22 +11,24 @@
 
 ?>
 
-	<footer id="colophon" class="site-footer">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'fezziwig-media-arts' ) ); ?>">
-				<?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'fezziwig-media-arts' ), 'WordPress' );
-				?>
-			</a>
-			<span class="sep"> | </span>
-				<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'fezziwig-media-arts' ), 'fezziwig-media-arts', '<a href="http://underscores.me/">Underscores.me</a>' );
-				?>
-		</div><!-- .site-info -->
-	</footer><!-- #colophon -->
-</div><!-- #page -->
+				<footer id="footer" class="section section-footer">
+					<div id="footer-inner" class="section-inner">
+						
+					<?php echo "Copyright " . date('Y') . " Fezziwig Media Arts"; ?>
+
+					<h3 class="site-subtitle-2">
+							<span class="name">Richard Gilbert, Proprietor.</span>
+							<span class="email">fezziwigmedia@gmail.com</span>
+							<span class="telephone">206·437·5533</span>
+					</h3>
+
+					</div>
+				</footer><!-- #colophon -->
+
+			</div><!-- #page -->
+		</div>
+	</div>
+</div>
 
 <?php wp_footer(); ?>
 
