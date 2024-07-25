@@ -194,7 +194,7 @@ add_filter( 'get_the_archive_title', function( $title ) {
 });
 
 /**
- * Simplify the title of category pages (removes "Category:").
+ * Function to populate custom field with NGG galleries.
  */
 function fezziwig_media_arts_gallery_choices( $field ) {
 	// reset choices
