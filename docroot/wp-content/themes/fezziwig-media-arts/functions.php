@@ -192,3 +192,24 @@ add_filter( 'get_the_archive_title', function( $title ) {
 	}
 	return $title;
 });
+
+/**
+ * Simplify the title of category pages (removes "Category:").
+ */
+function fezziwig_media_arts_gallery_choices( $field ) {
+	// reset choices
+	$field['choices'] = array();
+	// get all NextGen galleries
+	global $wpdb;
+	$galleries = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}ngg_gallery" );
+	// loop through galleries and add to choices
+	if ( ! empty( $galleries ) ) {
+			foreach ( $galleries as $gallery ) {
+					$field['choices'][ $gallery->gid ] = $gallery->name;
+			}
+	}
+	// return the field
+	return $field;
+}
+add_filter('acf/load_field/name=gallery_id', 'fezziwig_media_arts_gallery_choices');
+
