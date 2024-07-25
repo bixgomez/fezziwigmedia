@@ -13,30 +13,30 @@ get_header();
 	<main id="content" role="main" class="section site-content">
 		<div id="content-inner" class="section-inner">
 
-			<?php
-			while ( have_posts() ) :
-				the_post();
+			<?php while ( have_posts() ) : the_post(); ?>
+				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+					<header class="entry-header">
+							<h1 class="entry-title"><?php the_title(); ?></h1>
+					</header>
+					<div class="entry-content">
+							<?php
+							// Display the post content
+							the_content();
 
-				get_template_part( 'template-parts/content', get_post_type() );
-
-				the_post_navigation(
-					array(
-						'prev_text' => '<span class="nav-subtitle">' . esc_html__( 'Previous:', 'fezziwig-media-arts' ) . '</span> <span class="nav-title">%title</span>',
-						'next_text' => '<span class="nav-subtitle">' . esc_html__( 'Next:', 'fezziwig-media-arts' ) . '</span> <span class="nav-title">%title</span>',
-					)
-				);
-
-				// If comments are open or we have at least one comment, load up the comment template.
-				if ( comments_open() || get_comments_number() ) :
-					comments_template();
-				endif;
-
-			endwhile; // End of the loop.
-			?>
+							// Get the selected gallery ID
+							if ( function_exists('get_field') ) {
+									$gallery_id = get_field('gallery_id');
+									if ( $gallery_id ) {
+											echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']");
+									}
+							}
+							?>
+					</div>
+				</article>
+			<?php endwhile; ?>
 
 		</div>
 	</main><!-- #main -->
 
 <?php
-get_sidebar();
 get_footer();
