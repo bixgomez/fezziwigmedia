@@ -197,24 +197,25 @@ add_filter( 'get_the_archive_title', function( $title ) {
  * Function to populate custom field with NGG galleries.
  */
 function fezziwig_media_arts_gallery_choices( $field ) {
-	// reset choices
+	// Reset choices
 	$field['choices'] = array();
 	
-	// add 'Select a gallery' option
-	$field['choices'][''] = 'Select a gallery';
+	// Add 'Select a gallery' option
+	$field['choices'][''] = 'Select a Gallery...';
 	
-	// get all NextGen galleries
+	// Get all NextGen galleries
 	global $wpdb;
-	$galleries = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}ngg_gallery" );
+	$galleries = $wpdb->get_results( "SELECT gid, title FROM {$wpdb->prefix}ngg_gallery" );
 	
-	// loop through galleries and add to choices
+	// Loop through galleries and add to choices
 	if ( ! empty( $galleries ) ) {
 			foreach ( $galleries as $gallery ) {
-					$field['choices'][ $gallery->gid ] = $gallery->name;
+					// Use the gallery ID as the value and the gallery title as the display text
+					$field['choices'][ $gallery->gid ] = $gallery->title;
 			}
 	}
 	
-	// return the field
+	// Return the field
 	return $field;
 }
 add_filter('acf/load_field/name=gallery_id', 'fezziwig_media_arts_gallery_choices');
