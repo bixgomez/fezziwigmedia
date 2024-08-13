@@ -6,37 +6,51 @@
  *
  * @package Fezziwig_Media_Arts
  */
-
-get_header();
 ?>
 
-	<main id="content" role="main" class="section site-content">
-		<div id="content-inner" class="section-inner">
-
-			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<header class="entry-header">
-							<h1 class="entry-title"><?php the_title(); ?></h1>
-					</header>
-					<div class="entry-content">
-							<?php
-							// Display the post content
-							the_content();
-
-							// Get the selected gallery ID
-							if ( function_exists('get_field') ) {
-									$gallery_id = get_field('gallery_id');
-									if ( $gallery_id ) {
-											echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']");
-									}
-							}
-							?>
-					</div>
-				</article>
-			<?php endwhile; ?>
-
-		</div>
-	</main><!-- #main -->
+<?php get_header(); ?>
 
 <?php
-get_footer();
+if ( have_posts() ) :
+    while ( have_posts() ) : the_post();
+        ?>
+        <main id="content" role="main" class="section site-content">
+            <div id="content-inner" class="section-inner">
+                <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+
+                    <div class="article-content">
+                        <div class="article-body">
+                            <header class="entry-header">
+                                <h1 class="entry-title"><?php the_title(); ?></h1>
+                            </header>
+                            <div class="entry-content">
+                                <?php the_content(); ?>
+                            </div>
+                        </div>
+                        <aside class="article-sidebar"> 
+                            <?php
+                            // Get the selected gallery ID
+                            if ( function_exists('get_field') ) {
+                                $gallery_id = get_field('gallery_id');
+                                if ( $gallery_id ) {
+                                    // Check if the post content already includes the gallery shortcode
+                                    $post_content = get_the_content();
+                                    if ( strpos($post_content, '[ngg') === false && strpos($post_content, '[gallery') === false ) {
+                                        // Only add the shortcode if it is not already present
+                                        echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']");
+                                    }
+                                }
+                            }
+                            ?>
+                        </aside>
+                    </div>
+                </article>
+            </div>
+        </main>
+        <?php
+    endwhile;
+endif;
+?>
+
+<?php get_footer();
+ 

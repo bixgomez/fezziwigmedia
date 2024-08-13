@@ -16,7 +16,7 @@
 
 	<?php fezziwig_media_arts_post_thumbnail(); ?>
 
-	<div class="entry-content">
+	<div class="entry-content entry-content--content-page">
 		<?php
 		the_content();
 

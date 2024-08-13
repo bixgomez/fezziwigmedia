@@ -9,6 +9,7 @@
 
 ?>
 
+<!-- content-teaser.php -->
 <article id="post-<?php the_ID(); ?>" <?php post_class( array( 'post-teaser' ) ); ?>>
 
 	<div class="post-teaser-image">
@@ -50,3 +51,4 @@
 	</div>
 
 </article><!-- #post-<?php the_ID(); ?> -->
+<!-- /content-teaser.php -->

@@ -219,3 +219,39 @@ function fezziwig_media_arts_gallery_choices( $field ) {
 	return $field;
 }
 add_filter('acf/load_field/name=gallery_id', 'fezziwig_media_arts_gallery_choices');
+
+/**
+ * Function to deregister the NGG "Add Gallery" button on post edit forms.
+ */
+function remove_ngg_add_gallery_button() {
+	remove_action('media_buttons', array('C_NextGen_Attach_to_Post', 'add_media_button'), 20);
+}
+add_action('admin_init', 'remove_ngg_add_gallery_button');
+
+/**
+ * Add custom image sizes.
+ */
+add_image_size( 'small', 300, 300, false );
+add_image_size( 'medium', 600, 600, false );
+add_image_size( 'large', 1000, 1000, false );
+add_image_size( 'small-square', 300, 300, true );
+add_image_size( 'medium-square', 600, 600, true );
+add_image_size( 'large-square', 1000, 1000, true );
+
+/**
+ * Function to register ACF blocks.
+ */
+function fezziwig_media_arts_acf_blocks_init() {
+    if( function_exists('acf_register_block_type') ) {
+        acf_register_block_type(array(
+            'name'              => 'post_teasers',
+            'title'             => __('Post Teasers'),
+            'description'       => __('Displays a list of post teasers from a selected category.'),
+            'category'          => 'formatting',
+            'icon'              => 'list-view',
+            'keywords'          => array('post', 'teaser', 'category'),
+            'render_template'   => 'template-parts/blocks/post-teasers.php',
+        ));
+    }
+}
+add_action('acf/init', 'fezziwig_media_arts_acf_blocks_init');
