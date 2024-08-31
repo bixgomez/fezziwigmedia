@@ -3,12 +3,14 @@
   flex-direction: column;
   gap: 2rem;
   margin: 1.25rem 0;
+  list-style: none;
+  padding: 0;
+  border: 2px dashed orange;
 }
 
 .post-teaser {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1rem;
+  display: block;
+  border: 2px dashed red;
 }
 
 .teaser--inner {
@@ -24,10 +26,6 @@
   aspect-ratio: 1/1;
   overflow: hidden;
   position: relative;
-
-  .post-thumbnail {
-    display: contents;
-  }
 
   img {
     position: absolute;
