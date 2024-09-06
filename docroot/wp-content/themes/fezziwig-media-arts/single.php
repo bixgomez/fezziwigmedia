@@ -25,6 +25,13 @@ if ( have_posts() ) :
                             </header>
                             <div class="entry-content">
                                 <?php the_content(); ?>
+
+<?php
+                              $external_link = get_field('external_link');
+                              if ( $external_link ) {
+                              echo 'HELLO!!!';
+                              }
+     ?>
                             </div>
                         </div>
                         <aside class="article-sidebar"> 

@@ -2,10 +2,10 @@
 echo '<!-- post-teasers.php -->';
 $category_id = get_field('post_teasers_category');
 if( $category_id ) :
-  $category = get_category($category_id); // Get the category object
+  $category = get_category($category_id);
   ?>
-  <h2><?php echo esc_html($category->name); ?></h2> <!-- Display category name -->
-  <p><?php echo esc_html($category->description); ?></p> <!-- Display category description -->
+  <h2><?php echo esc_html($category->name); ?></h2>
+  <p><?php echo esc_html($category->description); ?></p>
   <?php
   $args = array(
     'cat' => $category_id,
@@ -20,7 +20,10 @@ if( $category_id ) :
         </li>
       <?php endwhile; ?>
     </ul>
-    <?php wp_reset_postdata(); ?>
+    <?php
+    // Reset post data after the loop
+    wp_reset_postdata();
+    ?>
   <?php else : ?>
     <p>No posts found in this category.</p>
   <?php endif;

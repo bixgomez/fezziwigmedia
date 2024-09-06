@@ -63,23 +63,16 @@
 				<section id="nav" role="main" class="section section-nav">
 					<div id="nav-inner" class="section-inner">
 						<nav id="site-navigation" class="main-navigation" role="navigation">
-							<ul class="menu">
-								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-890 current_page_item menu-item-892">
-									<a target="" href="/">Home</a>
-								</li>
-								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-880">
-									<a target="" href="/about-me/">About Me</a>
-								</li>
-								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-835">
-									<a target="" href="/category/websites/">Web Work</a>
-								</li>
-								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-835">
-									<a target="" href="/category/presentations/">Presentations</a>
-								</li>
-								<li class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-950">
-									<a target="" href="/my-rates/">My Rates</a>
-								</li>
-						</ul>
+							<?php
+							wp_nav_menu(
+									array(
+											'theme_location' => 'primary',
+											'menu_id'        => 'primary-menu',
+											'container'      => false,
+											'menu_class'     => 'menu',
+									)
+							);
+							?>
 						</nav><!-- #site-navigation -->
-					</div><!-- .section-inner -->
-				</section>
+				  </div><!-- .section-inner -->
+		    </section>
