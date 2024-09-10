@@ -1,3 +1,7 @@
+
+
+<!-- post-teaser.php -->
+
 <div class="post-teaser">
   <h3 class="post-teaser-title">
     <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
