@@ -13,7 +13,7 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class( array( 'post-teaser' ) ); ?>>
 
 	<div class="post-teaser-image">
-		<?php fezziwig_media_arts_post_thumbnail(); ?>
+		<?php the_post_thumbnail('thumbnail'); ?>
 	</div>
 
 	<div class="post-teaser-text">
@@ -47,6 +47,21 @@
 				)
 			);
 			?>
+
+			<?php
+				$external_link = get_field('external_link', $post->ID);
+				if ( $external_link ) :
+					$link_url = $external_link['url']; // Get the URL
+					$link_text = $external_link['title'] ? $external_link['title'] : $link_url; // Use URL if no title
+					$link_target = $external_link['target'] ? $external_link['target'] : '_self'; // Get target, default to _self
+					?>
+					<p class="external-link">
+						<a href="<?php echo esc_url($link_url); ?>" target="<?php echo esc_attr($link_target); ?>" rel="noopener noreferrer">
+							<?php echo esc_html($link_text); ?>
+						</a>
+					</p>
+			<?php endif; ?>
+
 		</div><!-- .entry-content -->
 	</div>
 

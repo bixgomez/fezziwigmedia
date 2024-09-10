@@ -16,7 +16,7 @@ if( $category_id ) :
     <ul class="post-teasers">
       <?php while( $query->have_posts() ) : $query->the_post(); ?>
         <li>
-          <?php get_template_part('template-parts/blocks/post-teaser'); ?>
+          <?php get_template_part('template-parts/content-teaser'); ?>
         </li>
       <?php endwhile; ?>
     </ul>
