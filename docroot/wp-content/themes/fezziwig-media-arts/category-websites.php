@@ -10,7 +10,11 @@
 get_header();
 ?>
 
-<!-- category.php -->
+<?php
+$category = get_queried_object();
+?>
+
+<!-- category-websites.php -->
 <main id="content" role="main" class="section site-content">
 	<div id="content-inner" class="section-inner">
 
@@ -25,7 +29,7 @@ get_header();
 
 			<?php
 			/* Start the Loop */
-			echo '<div class="post-teasers post-teasers--' . $category->slug . '>';
+			echo '<div class="post-teasers-container"><div class="post-teasers post-teasers--' . $category->slug . '">';
 			while ( have_posts() ) :
 				the_post();
 
@@ -34,10 +38,10 @@ get_header();
 				* If you want to override this in a child theme, then include a file
 				* called content-___.php (where ___ is the Post Type name) and that will be used instead.
 				*/
-				get_template_part( 'template-parts/content-teaser' ); 
+				get_template_part( 'template-parts/content-teaser', 'websites' ); 
 
 			endwhile;
-			echo '</div>';
+			echo '</div></div>';
 
 			the_posts_navigation();
 

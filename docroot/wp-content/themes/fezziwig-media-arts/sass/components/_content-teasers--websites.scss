@@ -1,0 +1,51 @@
+.post-teasers-container {
+  container-type: inline-size;
+}
+
+.post-teasers--websites {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5cqi;
+  margin: 1.25rem 0;
+  list-style: none;
+  padding: 0;
+
+  @include breakpoint($md) {
+    grid-template-columns: 1fr 1fr;
+    gap: 4cqi;
+  }
+
+  @include breakpoint($lg) {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3.5cqi;
+  }
+
+  @include breakpoint($xl) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 2cqi;
+  }
+}
+
+.post-teaser--websites {
+  display: block;
+  width: 100cqi;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background-color: pink;
+
+  @include breakpoint($md) {
+    width: 48cqi;
+  }
+
+  @include breakpoint($lg) {
+    width: 31cqi;
+  }
+
+  @include breakpoint($xl) {
+    width: 23.5cqi;
+  }
+
+  * {
+    // display: none;
+  }
+}

@@ -18,7 +18,7 @@ if ( !empty( $categories ) ) {
 }
 ?>
 
-<!-- content-teaser.php -->
+<!-- content-teaser-websites.php -->
 <article id="post-<?php the_ID(); ?>" <?php post_class( array( 'post-teaser', 'post-teaser--' . $category_slug ) ); ?>>
 
 	<div class="post-teaser-image">
