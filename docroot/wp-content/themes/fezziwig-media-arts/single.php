@@ -25,13 +25,16 @@ if ( have_posts() ) :
                             </header>
                             <div class="entry-content">
                                 <?php the_content(); ?>
+                                <?php
+                                $external_link = get_field('external_link');
+                                if ( $external_link ) {
+                                    $url = $external_link['url'];
+                                    $title = $external_link['title'] ? $external_link['title'] : 'Click Here';
+                                    $target = $external_link['target'] ? $external_link['target'] : '_self';
 
-<?php
-                              $external_link = get_field('external_link');
-                              if ( $external_link ) {
-                              echo 'HELLO!!!';
-                              }
-     ?>
+                                    echo '<p><a href="' . esc_url( $url ) . '" target="' . esc_attr( $target ) . '">' . esc_html( $title ) . '</a></p>';
+                                }
+                                ?>
                             </div>
                         </div>
                         <aside class="article-sidebar"> 
