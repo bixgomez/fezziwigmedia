@@ -10,6 +10,26 @@
 
 <?php get_header(); ?>
 
+<!-- single.php -->
+
+<?php
+
+$has_gallery = 0;
+
+// Get the selected gallery ID
+if ( function_exists('get_field') ) {
+    $gallery_id = get_field('gallery_id');
+    if ( $gallery_id ) {
+        // Check if the post content already includes the gallery shortcode
+        $post_content = get_the_content();
+        if ( strpos($post_content, '[ngg') === false && strpos($post_content, '[gallery') === false ) {
+            $has_gallery = 1;
+            // Only add the shortcode if it is not already present
+        }
+    }
+}
+?>
+
 <?php
 if ( have_posts() ) :
     while ( have_posts() ) : the_post();
@@ -17,8 +37,7 @@ if ( have_posts() ) :
         <main id="content" role="main" class="section site-content">
             <div id="content-inner" class="section-inner">
                 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-                    <div class="article-content">
+                    <div class="article-content <?php echo $has_gallery ? 'has-gallery' : 'no-gallery'; ?>">   
                         <div class="article-body">
                             <header class="entry-header">
                                 <h1 class="entry-title"><?php the_title(); ?></h1>
@@ -36,23 +55,12 @@ if ( have_posts() ) :
                                 }
                                 ?>
                             </div>
-                        </div>
+                        </div>                        
+                        <?php if ( $has_gallery ) { ?>
                         <aside class="article-sidebar"> 
-                            <?php
-                            // Get the selected gallery ID
-                            if ( function_exists('get_field') ) {
-                                $gallery_id = get_field('gallery_id');
-                                if ( $gallery_id ) {
-                                    // Check if the post content already includes the gallery shortcode
-                                    $post_content = get_the_content();
-                                    if ( strpos($post_content, '[ngg') === false && strpos($post_content, '[gallery') === false ) {
-                                        // Only add the shortcode if it is not already present
-                                        echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']");
-                                    }
-                                }
-                            }
-                            ?>
+                            <?php echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']"); ?>
                         </aside>
+                        <?php } ?>
                     </div>
                 </article>
             </div>
@@ -61,6 +69,6 @@ if ( have_posts() ) :
     endwhile;
 endif;
 ?>
+<!-- /single.php -->
 
 <?php get_footer();
- 

@@ -36,4 +36,4 @@ if ( !empty( $categories ) ) {
 	</div>
 
 </a><!-- #post-<?php the_ID(); ?> -->
-<!-- /content-teaser.php -->
+<!-- /content-teaser-websites.php -->

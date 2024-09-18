@@ -9,6 +9,7 @@
 
 ?>
 
+<!-- content.php -->
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
 		<?php
@@ -61,3 +62,4 @@
 		<?php fezziwig_media_arts_entry_footer(); ?>
 	</footer><!-- .entry-footer -->
 </article><!-- #post-<?php the_ID(); ?> -->
+<!-- /content.php -->
