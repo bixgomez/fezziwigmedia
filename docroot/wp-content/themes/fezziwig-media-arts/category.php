@@ -25,18 +25,27 @@ get_header();
 
 			<?php
 			/* Start the Loop */
-			echo '<div class="post-teasers post-teasers--' . $category->slug . '>';
+
+			$category = get_queried_object();
+			$category_slug = $category->slug;
+
+			echo '<div class="post-teasers post-teasers--' . $category->slug . '">';
+
 			while ( have_posts() ) :
 				the_post();
-
-				/*
-				* Include the Post-Type-specific template for the content.
-				* If you want to override this in a child theme, then include a file
-				* called content-___.php (where ___ is the Post Type name) and that will be used instead.
-				*/
-				get_template_part( 'template-parts/content-teaser' ); 
-
+				// First, try to include the template part specific to the current category
+				if ( locate_template( 'template-parts/content-teaser-' . $category_slug . '.php', false, false ) ) {
+					// Include the category-specific template (like content-teaser-presentations.php)
+					get_template_part( 'template-parts/content-teaser', $category_slug );
+				} elseif ( locate_template( 'template-parts/content-teaser.php', false, false ) ) {
+						// Fallback to the general teaser template
+						get_template_part( 'template-parts/content-teaser' );
+				} else {
+						// Final fallback if neither exist
+						get_template_part( 'template-parts/content' );
+				}
 			endwhile;
+
 			echo '</div>';
 
 			the_posts_navigation();
