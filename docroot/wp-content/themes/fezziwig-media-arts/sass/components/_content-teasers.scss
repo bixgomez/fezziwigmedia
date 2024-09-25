@@ -7,11 +7,35 @@
   padding: 0;
 }
 
+// All objects with post-teaser class
 .post-teaser {
   display: block;
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 8rem auto;
+}
+
+// Only post teasers which are links (probably all)
+a.post-teaser {
+  text-decoration: none;
+  color: $color-blue--darker;
+  transition: color 0.25s ease-in-out;
+
+  &:hover {
+    color: $color-orange--dark;
+  }
+  .post-teaser-image img {
+    filter: saturate(100%);
+    opacity: .8;
+    transition: filter 0.25s ease-in-out, opacity 0.25s ease-in-out;
+  }
+
+  &:hover {
+    .post-teaser-image img {
+      filter: saturate(0%);
+      opacity: 1;
+    }
+  }
 }
 
 .teaser--inner {

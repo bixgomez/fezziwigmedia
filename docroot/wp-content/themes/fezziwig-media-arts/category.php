@@ -33,17 +33,7 @@ get_header();
 
 			while ( have_posts() ) :
 				the_post();
-				// First, try to include the template part specific to the current category
-				if ( locate_template( 'template-parts/content-teaser-' . $category_slug . '.php', false, false ) ) {
-					// Include the category-specific template (like content-teaser-presentations.php)
-					get_template_part( 'template-parts/content-teaser', $category_slug );
-				} elseif ( locate_template( 'template-parts/content-teaser.php', false, false ) ) {
-						// Fallback to the general teaser template
-						get_template_part( 'template-parts/content-teaser' );
-				} else {
-						// Final fallback if neither exist
-						get_template_part( 'template-parts/content' );
-				}
+				get_template_part( 'template-parts/content-teaser' );
 			endwhile;
 
 			echo '</div>';
