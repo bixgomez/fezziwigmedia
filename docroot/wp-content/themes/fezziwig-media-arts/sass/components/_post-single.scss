@@ -10,7 +10,13 @@ body.single-post {
   .article-body {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     gap: 1.25rem;
+    height: 100%;
+
+    > *:last-child {
+      margin-top: auto;
+    }
   }
 
   .article-content {
