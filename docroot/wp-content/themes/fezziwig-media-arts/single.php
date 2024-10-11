@@ -55,6 +55,32 @@ if ( have_posts() ) :
                                 }
                                 ?>
                             </div>
+
+
+
+                            <div class="post-navigation">
+    <?php
+    // Get previous and next posts in the same category
+    $prev_post = get_previous_post(true, '', 'category');
+    $next_post = get_next_post(true, '', 'category');
+    ?>
+    
+    <div class="prev-post">
+        <?php if (!empty($prev_post)) : ?>
+            <a href="<?php echo get_permalink($prev_post->ID); ?>">&larr; Previous: <?php echo get_the_title($prev_post->ID); ?></a>
+        <?php endif; ?>
+    </div>
+    
+    <div class="next-post">
+        <?php if (!empty($next_post)) : ?>
+            <a href="<?php echo get_permalink($next_post->ID); ?>">Next: <?php echo get_the_title($next_post->ID); ?> &rarr;</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+
+
                         </div>                        
                         <?php if ( $has_gallery ) { ?>
                         <aside class="article-sidebar"> 
