@@ -3,6 +3,16 @@ body.single-post {
     display: none;
   }
 
+  .entry-title {
+    margin: 0;
+  }
+
+  .article-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
   .article-content {
     display: block;
 
@@ -17,6 +27,7 @@ body.single-post {
       .article-sidebar {
         display: flex;
         justify-content: flex-end;
+        height: min-content;
       }
     }
   }
