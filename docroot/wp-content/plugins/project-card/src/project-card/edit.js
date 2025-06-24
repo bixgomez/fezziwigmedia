@@ -1,38 +1,75 @@
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
- */
 import { __ } from '@wordpress/i18n';
+import { useBlockProps, RichText, MediaUpload, MediaUploadCheck, URLInputButton } from '@wordpress/block-editor';
+import { Button } from '@wordpress/components';
 
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
- */
-import { useBlockProps } from '@wordpress/block-editor';
+export default function Edit({ attributes, setAttributes }) {
+	const {
+		title,
+		subtitle,
+		description,
+		imageUrl,
+		linkUrl,
+		linkText
+	} = attributes;
 
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
-import './editor.scss';
+	const onSelectImage = (media) => {
+		setAttributes({ imageUrl: media.url });
+	};
 
-/**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
- *
- * @return {Element} Element to render.
- */
-export default function Edit() {
 	return (
-		<p { ...useBlockProps() }>
-			{ __( 'Project Card – hello from the editor!', 'project-card' ) }
-		</p>
+		<div { ...useBlockProps() } className="project-card-block">
+			<MediaUploadCheck>
+				<MediaUpload
+					onSelect={onSelectImage}
+					allowedTypes={['image']}
+					render={({ open }) => (
+						<Button onClick={open} className="project-card-block__image-button">
+							{ imageUrl ? (
+								<img src={imageUrl} alt="Project thumbnail" />
+							) : (
+								__('Upload Image', 'project-card')
+							)}
+						</Button>
+					)}
+				/>
+			</MediaUploadCheck>
+
+			<RichText
+				tagName="h3"
+				value={title}
+				placeholder={__('Project Title', 'project-card')}
+				onChange={(value) => setAttributes({ title: value })}
+			/>
+
+			<RichText
+				tagName="p"
+				className="project-card-block__subtitle"
+				value={subtitle}
+				placeholder={__('Subtitle or Tags', 'project-card')}
+				onChange={(value) => setAttributes({ subtitle: value })}
+			/>
+
+			<RichText
+				tagName="p"
+				className="project-card-block__description"
+				value={description}
+				multiline="p"
+				placeholder={__('Project description...', 'project-card')}
+				onChange={(value) => setAttributes({ description: value })}
+			/>
+
+			<div className="project-card-block__link">
+				<URLInputButton
+					url={linkUrl}
+					onChange={(url) => setAttributes({ linkUrl: url })}
+				/>
+				<RichText
+					tagName="span"
+					value={linkText}
+					placeholder={__('Link text', 'project-card')}
+					onChange={(value) => setAttributes({ linkText: value })}
+				/>
+			</div>
+		</div>
 	);
 }

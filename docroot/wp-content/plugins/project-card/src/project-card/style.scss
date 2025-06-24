@@ -1,12 +1,45 @@
-/**
- * The following styles get applied both on the front of your site
- * and in the editor.
- *
- * Replace them with your own styles or remove the file completely.
- */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fcf;
+  max-width: 400px;
 
-.wp-block-create-block-project-card {
-	background-color: #21759b;
-	color: #fff;
-	padding: 2px;
+  &__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-style: italic;
+    color: #666;
+    margin: 0;
+  }
+
+  &__description {
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  &__link {
+    margin-top: auto;
+    font-weight: 600;
+    color: #0073aa;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

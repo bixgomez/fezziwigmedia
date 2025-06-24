@@ -8,15 +8,44 @@ return array(
 		'version' => '0.1.0',
 		'title' => 'Project Card',
 		'category' => 'widgets',
-		'icon' => 'smiley',
-		'description' => 'Example block scaffolded with Create Block tool.',
-		'example' => array(
-			
+		'icon' => 'portfolio',
+		'description' => 'A custom block to showcase a project with image, text, and a link.',
+		'keywords' => array(
+			'project',
+			'portfolio',
+			'card',
+			'work'
+		),
+		'textdomain' => 'project-card',
+		'attributes' => array(
+			'imageUrl' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'title' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'subtitle' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'description' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'linkUrl' => array(
+				'type' => 'string',
+				'default' => ''
+			),
+			'linkText' => array(
+				'type' => 'string',
+				'default' => 'Learn More'
+			)
 		),
 		'supports' => array(
 			'html' => false
 		),
-		'textdomain' => 'project-card',
 		'editorScript' => 'file:./index.js',
 		'editorStyle' => 'file:./index.css',
 		'style' => 'file:./style-index.css',

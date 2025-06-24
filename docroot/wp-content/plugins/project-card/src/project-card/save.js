@@ -1,24 +1,57 @@
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
- */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, RichText } from '@wordpress/block-editor';
 
-/**
- * The save function defines the way in which the different attributes should
- * be combined into the final markup, which is then serialized by the block
- * editor into `post_content`.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
- *
- * @return {Element} Element to render.
- */
-export default function save() {
+export default function save({ attributes }) {
+	const {
+		imageUrl,
+		title,
+		subtitle,
+		description,
+		linkUrl,
+		linkText
+	} = attributes;
+
 	return (
-		<p { ...useBlockProps.save() }>
-			{ 'Project Card – hello from the saved content!' }
-		</p>
+		<div { ...useBlockProps.save() } className="project-card">
+			{ imageUrl && (
+				<div className="project-card__image">
+					<img src={imageUrl} alt="" />
+				</div>
+			) }
+
+			<div className="project-card__content">
+				{ title && (
+					<RichText.Content
+						tagName="h3"
+						className="project-card__title"
+						value={title}
+					/>
+				)}
+
+				{ subtitle && (
+					<RichText.Content
+						tagName="p"
+						className="project-card__subtitle"
+						value={subtitle}
+					/>
+				)}
+
+				{ description && (
+					<RichText.Content
+						tagName="p"
+						className="project-card__description"
+						value={description}
+					/>
+				)}
+
+				{ linkUrl && (
+					<a
+						className="project-card__link"
+						href={linkUrl}
+					>
+						{ linkText || 'Learn More' }
+					</a>
+				)}
+			</div>
+		</div>
 	);
 }

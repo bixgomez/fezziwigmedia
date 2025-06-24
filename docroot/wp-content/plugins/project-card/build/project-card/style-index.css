@@ -1,1 +1,44 @@
-.wp-block-create-block-project-card{background-color:#21759b;color:#fff;padding:2px}
+/*!****************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/project-card/style.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************/
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fcf;
+  max-width: 400px;
+}
+.project-card__image img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.project-card__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+.project-card__subtitle {
+  font-style: italic;
+  color: #666;
+  margin: 0;
+}
+.project-card__description {
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+.project-card__link {
+  margin-top: auto;
+  font-weight: 600;
+  color: #0073aa;
+  text-decoration: none;
+}
+.project-card__link:hover {
+  text-decoration: underline;
+}
+
+/*# sourceMappingURL=style-index.css.map*/

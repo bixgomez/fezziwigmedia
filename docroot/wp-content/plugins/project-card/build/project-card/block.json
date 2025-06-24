@@ -5,13 +5,44 @@
   "version": "0.1.0",
   "title": "Project Card",
   "category": "widgets",
-  "icon": "smiley",
-  "description": "Example block scaffolded with Create Block tool.",
-  "example": {},
+  "icon": "portfolio",
+  "description": "A custom block to showcase a project with image, text, and a link.",
+  "keywords": [
+    "project",
+    "portfolio",
+    "card",
+    "work"
+  ],
+  "textdomain": "project-card",
+  "attributes": {
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitle": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "linkUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "linkText": {
+      "type": "string",
+      "default": "Learn More"
+    }
+  },
   "supports": {
     "html": false
   },
-  "textdomain": "project-card",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
