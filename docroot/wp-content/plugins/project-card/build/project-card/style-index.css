@@ -3,18 +3,39 @@
   \****************************************************************************************************************************************************************************************************************************************************/
 .project-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  container-type: inline-size;
   gap: 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 1rem;
-  background-color: #fcf;
-  max-width: 400px;
+  background-color: #fff;
+}
+.project-card__image {
+  display: block;
+  flex-shrink: 1;
+  width: 20cqi;
+  height: auto;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  container-type: inline-size;
+  position: relative;
+  padding: 0;
+  margin: 0;
 }
 .project-card__image img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  border-radius: 6px;
+  height: 100%;
+  border-radius: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.project-card__content {
+  flex-grow: 1;
+  container-type: inline-size;
 }
 .project-card__title {
   font-size: 1.25rem;
