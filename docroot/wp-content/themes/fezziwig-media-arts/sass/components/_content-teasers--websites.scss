@@ -5,40 +5,42 @@
 .post-teasers--websites {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 5cqi;
+  gap: 3cqi;
   margin: 1.25rem 0;
   list-style: none;
   padding: 0;
+  container-type: inline-size;
 
   @include breakpoint($md) {
-    grid-template-columns: 1fr 1fr;
-    gap: 4cqi;
+    // grid-template-columns: 1fr 1fr;
+    // gap: 3cqi;
   }
 
   @include breakpoint($lg) {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 3.5cqi;
+    // grid-template-columns: 1fr 1fr 1fr;
+    // gap: 3.5cqi;
   }
 
   @include breakpoint($xl) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 2cqi;
+    // grid-template-columns: 1fr 1fr 1fr 1fr;
+    // gap: 2cqi;
   }
 }
 
 .post-teaser--websites {
-  display: block;
+  display: flex;
+  gap: 2cqi;
   width: 100cqi;
-  aspect-ratio: 1/1;
   overflow: hidden;
   position: relative;
-  container-type: inline-size;
 
   .post-teaser-image {
-    display: contents;
+    display: block;
+    width: 30cqi;
 
     img {
-      position: absolute;
+      display: block;
+      position: relative;
       left: 0;
       top: 0;
       width: 100%;
@@ -51,15 +53,15 @@
   }
 
   .post-teaser-text {
-    position: absolute;
+    position: relative;
     z-index: 200;
     background-color: rgba($color-beige-light, 0.85);
     width: 100%;
     bottom: 0;
     left: 0;
-    padding: 5cqi;
-    font-size: 6cqi;
-    opacity: 0;
+    padding: 2cqi;
+    font-size: clamp(12px, 2.25cqi, 18px);
+    opacity: 90;
     transition: opacity 0.25s linear;
 
     .entry-header {
@@ -67,7 +69,7 @@
     }
 
     .entry-title {
-      font-size: 1.125em;
+      font-size: 1.25em;
 
       a {
         text-decoration: none;
@@ -77,21 +79,21 @@
     }
 
     .entry-content {
-      font-size: 0.9em;
+      font-size: 1em;
       color: $color-blue--dark;
     }
   }
 
   @include breakpoint($md) {
-    width: 48cqi;
+    // width: 48cqi;
   }
 
   @include breakpoint($lg) {
-    width: 31cqi;
+    // width: 31cqi;
   }
 
   @include breakpoint($xl) {
-    width: 23.5cqi;
+    // width: 23.5cqi;
   }
 
   &:hover {

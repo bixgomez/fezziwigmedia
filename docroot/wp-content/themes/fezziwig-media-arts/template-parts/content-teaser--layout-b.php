@@ -47,4 +47,4 @@ if ( $external_link ) {
 	</div>
 
 </a><!-- #post-<?php the_ID(); ?> -->
-<!-- /content-teaser-demos.php -->
+<!-- /content-teaser--layout-b.php -->

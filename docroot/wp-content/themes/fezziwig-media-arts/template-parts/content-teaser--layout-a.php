@@ -18,7 +18,7 @@ if ( !empty( $categories ) ) {
 }
 ?>
 
-<!-- content-teaser-websites.php -->
+<!-- content-teaser--layout-a.php -->
 <a href="<?php echo esc_url( get_permalink() ); ?>" id="post-<?php the_ID(); ?>" <?php post_class( array( 'post-teaser', 'post-teaser--' . $category_slug ) ); ?>>
 
 	<div class="post-teaser-image">
@@ -36,4 +36,4 @@ if ( !empty( $categories ) ) {
 	</div>
 
 </a><!-- #post-<?php the_ID(); ?> -->
-<!-- /content-teaser-websites.php -->
+<!-- /content-teaser--layout-a.php -->
