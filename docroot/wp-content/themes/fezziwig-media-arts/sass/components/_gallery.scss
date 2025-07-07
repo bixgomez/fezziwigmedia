@@ -1,20 +1,21 @@
-// Overrides!
-div.ngg-galleryoverview {
-  div.ngg-gallery-thumbnail-box {
-  }
+html body div.modula.modula-gallery {
+  display: block;
 }
 
-// Layout
-div.ngg-galleryoverview {
+html body div.modula div.modula-items {
   margin: 0;
   clear: none;
-  width: auto;
   overflow: visible;
   display: grid !important;
   justify-items: stretch;
   grid-template-columns: 1fr;
   grid-gap: 0.5em;
   width: 100%;
+  height: auto !important;
+  transition: width 1s, height 1s, background-color 1s, transform 1s;
+  min-height: 100px;
+  position: relative;
+  z-index: 1;
 
   @include breakpoint(480px) {
     grid-template-columns: 1fr 1fr;
@@ -36,53 +37,76 @@ div.ngg-galleryoverview {
     display: none;
   }
 
-  div.ngg-gallery-thumbnail-box {
+  div.modula-item {
+    display: block;
+    position: relative;
     float: none;
     padding: 0;
     margin: 0;
     background-color: mix(black, transparent, 10%);
     transition: 0.125s ease-in-out;
+    width: auto !important;
+    height: auto !important;
+    aspect-ratio: 1/1;
+    top: unset !important;
+    left: unset !important;
 
     &:hover {
       background-color: white;
       box-shadow: 0px 0px 0.5em mix(black, transparent, 20%);
     }
 
-    .ngg-gallery-thumbnail {
+    .modula-item-content {
       background-color: transparent;
       border: none;
       margin: 0;
       padding: 0;
       max-width: none;
 
-      a {
+      > a.modula-item-link {
+        display: block;
         padding-bottom: 100%;
-        position: relative;
+        position: absolute;
+        width: 100%;
+        height: 100%;
         margin: 0;
-
-        img {
-          display: block;
-          position: absolute;
-          top: 4%;
-          left: 4%;
-          width: 92%;
-          height: 92%;
-          opacity: 0.9;
-          object-fit: cover;
-          transition: 0.125s ease-in-out;
-        }
-
-        &:hover {
-          img {
-            top: 2%;
-            left: 2%;
-            width: 96%;
-            height: 96%;
-            opacity: 1;
-            box-shadow: 0px 0px 0.25em mix(black, transparent, 25%);
-          }
-        }
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background-color: transparent;
       }
+
+      > img.pic {
+        display: block;
+        position: absolute;
+        top: 4% !important;
+        left: 4% !important;
+        width: 92% !important;
+        height: 92% !important;
+        opacity: 0.9;
+        object-fit: cover;
+        transition: 0.125s ease-in-out;
+        margin: 0 !important;
+      }
+
+      &:hover {
+        > img.pic {
+          top: 2% !important;
+          left: 2% !important;
+          width: 96% !important;
+          height: 96% !important;
+          opacity: 1;
+          box-shadow: 0px 0px 0.25em mix(black, transparent, 25%);
+        }
+      }      
     }
   }
+}
+
+.modula-best-grid-gallery div.fancybox__backdrop {
+  background-color: rgba(#000, .75);
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image > div.fancybox__content {
+  padding: 1vh 1vw;
 }
