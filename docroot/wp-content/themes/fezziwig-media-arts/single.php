@@ -22,7 +22,7 @@ if ( function_exists('get_field') ) {
     if ( $gallery_id ) {
         // Check if the post content already includes the gallery shortcode
         $post_content = get_the_content();
-        if ( strpos($post_content, '[ngg') === false && strpos($post_content, '[gallery') === false ) {
+        if ( strpos($post_content, '[modula') === false ) {
             $has_gallery = 1;
             // Only add the shortcode if it is not already present
         }
@@ -75,7 +75,7 @@ if ( have_posts() ) :
                         </div>                        
                         <?php if ( $has_gallery ) { ?>
                         <aside class="article-sidebar"> 
-                            <?php echo do_shortcode("[ngg src='galleries' ids='{$gallery_id}' display='basic_thumbnail']"); ?>
+                            <?php echo do_shortcode("[modula id='{$gallery_id}']"); ?>
                         </aside>
                         <?php } ?>
                     </div>
