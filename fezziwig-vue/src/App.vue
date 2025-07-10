@@ -7,6 +7,18 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data() {
+    return {
+      posts: []
+    }
+  },
+  mounted() {
+    fetch('https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts')
+      .then(response => response.json())
+      .then(data => {
+        this.posts = data
+      })
+  }
 }
 </script>
