@@ -1,7 +1,7 @@
 <template>
   <div>
     <SiteMenu />
-    <h1>My Portfolio</h1>
+    <router-view />
   </div>
 </template>
 
