@@ -254,3 +254,14 @@ function fezziwig_media_arts_acf_blocks_init() {
     }
 }
 add_action('acf/init', 'fezziwig_media_arts_acf_blocks_init');
+
+// Make menu endpoints public
+add_filter( 'rest_endpoints', function( $endpoints ) {
+    if ( isset( $endpoints['/wp/v2/menus'] ) ) {
+        $endpoints['/wp/v2/menus'][0]['permission_callback'] = '__return_true';
+    }
+    if ( isset( $endpoints['/wp/v2/menu-items'] ) ) {
+        $endpoints['/wp/v2/menu-items'][0]['permission_callback'] = '__return_true';
+    }
+    return $endpoints;
+});
