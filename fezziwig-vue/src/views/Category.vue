@@ -1,23 +1,26 @@
 <template>
-  <div v-if="category">
-    <h1 v-html="category.name" />
-    <p v-html="category.description" />
-    
+  <div>
+    <h1>{{ categoryTitle }}</h1>
     <div v-if="posts.length > 0">
-      <article v-for="post in posts" :key="post.id">
+      <div v-for="post in posts" :key="post.id" class="post">
         <router-link :to="`/${post.slug}`">
           <h2 v-html="post.title.rendered" />
         </router-link>
+        <img
+          v-if="getFeaturedImageData(post)"
+          :src="getFeaturedImageData(post).src"
+          :alt="post.title.rendered || 'Image'"
+          loading="lazy"
+        />
         <div v-html="post.excerpt.rendered" />
         <router-link :to="`/${post.slug}`" class="read-more">
           Read more →
         </router-link>
-      </article>
+      </div>
     </div>
-    <p v-else>No posts in this category yet.</p>
-  </div>
-  <div v-else>
-    <p>Loading...</p>
+    <div v-else>
+      <p>Loading posts...</p>
+    </div>
   </div>
 </template>
 
@@ -26,22 +29,57 @@ export default {
   name: 'Category',
   data() {
     return {
-      category: null,
-      posts: []
+      posts: [],
+      categoryTitle: ''
     }
   },
-  async mounted() {
+  mounted() {
     const slug = this.$route.params.slug
-    
-    // First, get the category info by slug
-    const catResponse = await fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/categories?slug=${slug}`)
-    const catData = await catResponse.json()
-    this.category = catData[0]
-    
-    // Then fetch posts in this category
-    if (this.category) {
-      const postsResponse = await fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts?categories=${this.category.id}&per_page=100`)
-      this.posts = await postsResponse.json()
+
+    // Getting category by slug to find the ID
+    fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/categories?slug=${slug}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.length) return
+        const category = data[0]
+        this.categoryTitle = category.name
+
+        // Fetching posts in that category, with embedded featured media
+        return fetch(
+          `https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts?categories=${category.id}&_embed`
+        )
+      })
+      .then(res => res.json())
+      .then(data => {
+        this.posts = data || []
+      })
+      .catch(err => {
+        console.error('Error fetching category or posts:', err)
+      })
+  },
+  methods: {
+    getFeaturedImageData(post) {
+      if (!post._embedded?.['wp:featuredmedia']?.[0]) {
+        return null
+      }
+      
+      const media = post._embedded['wp:featuredmedia'][0]
+      
+      // Check if small size exists
+      if (media.media_details?.sizes?.small) {
+        return {
+          src: media.media_details.sizes.small.source_url,
+          width: media.media_details.sizes.small.width,
+          height: media.media_details.sizes.small.height
+        }
+      }
+      
+      // Fall back to full size
+      return {
+        src: media.source_url,
+        width: media.media_details?.width,
+        height: media.media_details?.height
+      }
     }
   }
 }

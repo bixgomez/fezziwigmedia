@@ -1,17 +1,9 @@
 <template>
-  <div>
-    <SiteMenu />
+  <Layout>
     <router-view />
-  </div>
+  </Layout>
 </template>
 
-<script>
-import SiteMenu from './components/SiteMenu.vue'
-
-export default {
-  name: 'App',
-  components: {
-    SiteMenu
-  }
-}
+<script setup>
+import Layout from './components/Layout.vue'
 </script>
