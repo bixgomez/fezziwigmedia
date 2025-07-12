@@ -5,8 +5,13 @@
     
     <div v-if="posts.length > 0">
       <article v-for="post in posts" :key="post.id">
-        <h2 v-html="post.title.rendered" />
+        <router-link :to="`/${post.slug}`">
+          <h2 v-html="post.title.rendered" />
+        </router-link>
         <div v-html="post.excerpt.rendered" />
+        <router-link :to="`/${post.slug}`" class="read-more">
+          Read more →
+        </router-link>
       </article>
     </div>
     <p v-else>No posts in this category yet.</p>
