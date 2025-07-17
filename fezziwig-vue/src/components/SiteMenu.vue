@@ -1,7 +1,7 @@
 <template>
   <nav>
-    <a 
-      v-for="item in menuItems" 
+    <a
+      v-for="item in menuItems"
       :key="item.id"
       :href="getRelativeUrl(item.url)"
     >
@@ -15,21 +15,29 @@ export default {
   name: 'SiteMenu',
   data() {
     return {
-      menuItems: []
+      menuItems: [],
     }
   },
   mounted() {
     fetch('https://fezziwigmedia.ddev.site/wp-json/wp/v2/menu-items')
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         this.menuItems = data.sort((a, b) => a.menu_order - b.menu_order)
       })
   },
   methods: {
     getRelativeUrl(url) {
       // Remove the domain to make it relative
-      return url.replace('https://fezziwigmedia.ddev.site', '')
-    }
-  }
+      try {
+        // Create a URL object to parse the URL automatically
+        const urlObject = new URL(url)
+        // Return just the pathname and search parameters
+        return urlObject.pathname + urlObject.search
+      } catch (error) {
+        // If the URL is malformed, return it as-is
+        return url
+      }
+    },
+  },
 }
 </script>

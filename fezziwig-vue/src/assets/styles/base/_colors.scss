@@ -1,0 +1,31 @@
+$color-blue--base: #5c697a;
+$color-blue--pale: mix($color-blue--base, transparent, 70%);
+$color-blue--paler: mix($color-blue--pale, transparent, 70%);
+$color-blue--palest: mix($color-blue--paler, transparent, 70%);
+$color-blue--dark: darken($color-blue--base, 5%);
+$color-blue--darker: darken($color-blue--dark, 5%);
+$color-blue--darkest: darken($color-blue--darker, 5%);
+
+$color-orange--base: #f67f60;
+$color-orange--pale: mix($color-orange--base, transparent, 70%);
+$color-orange--paler: mix($color-orange--pale, transparent, 70%);
+$color-orange--palest: mix($color-orange--paler, transparent, 70%);
+$color-orange--dark: darken($color-orange--base, 5%);
+$color-orange--darker: darken($color-orange--dark, 5%);
+$color-orange--darkest: darken($color-orange--darker, 5%);
+
+$color-beige-base: #ecdcc0;
+// $color-beige-base: #ebddc5;
+$color-beige-base: desaturate($color-beige-base, 10%);
+
+$color-beige-light: lighten($color-beige-base, 6%);
+$color-beige-lighter: lighten($color-beige-light, 3.5%);
+$color-beige-lightest: lighten($color-beige-lighter, 2.75%);
+
+$color-outer-bg: $color-beige-base;
+// $color-inner-bg: mix(white, transparent, 30%);
+$color-inner-bg: $color-beige-light;
+
+$text-color: $color-blue--base;
+$link-color: darken(saturate($text-color, 70%), 5%);
+$link-color--hover: mix($link-color, transparent, 80%);
