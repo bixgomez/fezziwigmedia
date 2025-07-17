@@ -1,12 +1,12 @@
 <template>
-  <nav>
-    <a
-      v-for="item in menuItems"
-      :key="item.id"
-      :href="getRelativeUrl(item.url)"
-    >
-      {{ item.title.rendered }}
-    </a>
+  <nav class="main-navigation">
+    <ul class="menu">
+      <li v-for="item in menuItems" :key="item.id">
+        <a :href="getRelativeUrl(item.url)">
+          {{ item.title.rendered }}
+        </a>
+      </li>
+    </ul>
   </nav>
 </template>
 
