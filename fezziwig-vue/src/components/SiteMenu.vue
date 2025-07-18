@@ -19,7 +19,7 @@ export default {
     }
   },
   mounted() {
-    fetch('${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/menu-items')
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/menu-items`)
       .then((response) => response.json())
       .then((data) => {
         this.menuItems = data.sort((a, b) => a.menu_order - b.menu_order)

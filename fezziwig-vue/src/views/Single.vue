@@ -21,7 +21,7 @@ export default {
 
     // Try pages first
     const pages = await fetch(
-      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/pages?slug=${slug}`,
+      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/pages?slug=${slug}`,
     ).then((r) => r.json())
     if (pages.length) {
       this.content = pages[0]
@@ -30,7 +30,7 @@ export default {
 
     // Then try posts
     const posts = await fetch(
-      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}`,
+      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}`,
     ).then((r) => r.json())
     this.content = posts[0] || null
   },

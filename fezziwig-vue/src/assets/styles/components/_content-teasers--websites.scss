@@ -48,7 +48,7 @@
       z-index: 100;
       object-fit: cover;
       filter: saturate(100%);
-      transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      // transition: filter 0.25s ease-in-out, opacity 0.25s ease-in-out;
     }
   }
 
@@ -62,7 +62,7 @@
     padding: 2cqi;
     font-size: clamp(12px, 2.25cqi, 18px);
     opacity: 90;
-    transition: opacity 0.25s linear;
+    // transition: opacity 0.25s linear;
 
     .entry-header {
       display: contents;

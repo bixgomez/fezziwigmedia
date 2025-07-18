@@ -38,7 +38,7 @@ export default {
 
     // Getting category by slug to find the ID
     fetch(
-      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/categories?slug=${slug}`,
+      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/categories?slug=${slug}`,
     )
       .then((res) => res.json())
       .then((data) => {
@@ -48,7 +48,7 @@ export default {
 
         // Fetching posts in that category, with embedded featured media
         return fetch(
-          `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/posts?categories=${category.id}&_embed`,
+          `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/posts?categories=${category.id}&_embed`,
         )
       })
       .then((res) => res.json())

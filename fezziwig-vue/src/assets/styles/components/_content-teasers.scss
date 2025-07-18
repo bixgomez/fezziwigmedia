@@ -19,7 +19,7 @@
 a.post-teaser {
   text-decoration: none;
   color: $color-blue--darker;
-  transition: color 0.25s ease-in-out;
+  // transition: color 0.25s ease-in-out;
 
   &:hover {
     color: $color-orange--dark;
@@ -27,7 +27,7 @@ a.post-teaser {
   .post-teaser-image img {
     filter: saturate(100%);
     opacity: .8;
-    transition: filter 0.25s ease-in-out, opacity 0.25s ease-in-out;
+    // transition: filter 0.25s ease-in-out, opacity 0.25s ease-in-out;
   }
 
   &:hover {
