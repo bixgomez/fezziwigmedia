@@ -30,30 +30,32 @@ export default {
   data() {
     return {
       posts: [],
-      categoryTitle: ''
+      categoryTitle: '',
     }
   },
   mounted() {
     const slug = this.$route.params.slug
 
     // Getting category by slug to find the ID
-    fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/categories?slug=${slug}`)
-      .then(res => res.json())
-      .then(data => {
+    fetch(
+      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/categories?slug=${slug}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
         if (!data.length) return
         const category = data[0]
         this.categoryTitle = category.name
 
         // Fetching posts in that category, with embedded featured media
         return fetch(
-          `https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts?categories=${category.id}&_embed`
+          `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/posts?categories=${category.id}&_embed`,
         )
       })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         this.posts = data || []
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error fetching category or posts:', err)
       })
   },
@@ -62,25 +64,25 @@ export default {
       if (!post._embedded?.['wp:featuredmedia']?.[0]) {
         return null
       }
-      
+
       const media = post._embedded['wp:featuredmedia'][0]
-      
+
       // Check if small size exists
       if (media.media_details?.sizes?.small) {
         return {
           src: media.media_details.sizes.small.source_url,
           width: media.media_details.sizes.small.width,
-          height: media.media_details.sizes.small.height
+          height: media.media_details.sizes.small.height,
         }
       }
-      
+
       // Fall back to full size
       return {
         src: media.source_url,
         width: media.media_details?.width,
-        height: media.media_details?.height
+        height: media.media_details?.height,
       }
-    }
-  }
+    },
+  },
 }
 </script>

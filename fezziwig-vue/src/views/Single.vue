@@ -13,22 +13,26 @@ export default {
   name: 'Single',
   data() {
     return {
-      content: null
+      content: null,
     }
   },
   async mounted() {
     const slug = this.$route.params.slug
-    
+
     // Try pages first
-    const pages = await fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/pages?slug=${slug}`).then(r => r.json())
+    const pages = await fetch(
+      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/pages?slug=${slug}`,
+    ).then((r) => r.json())
     if (pages.length) {
       this.content = pages[0]
       return
     }
-    
+
     // Then try posts
-    const posts = await fetch(`https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts?slug=${slug}`).then(r => r.json())
+    const posts = await fetch(
+      `${process.env.VUE_APP_API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}`,
+    ).then((r) => r.json())
     this.content = posts[0] || null
-  }
+  },
 }
 </script>
