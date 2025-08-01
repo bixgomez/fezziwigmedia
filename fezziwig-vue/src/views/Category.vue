@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import PostTeaser from './PostTeaser.vue'
+import PostTeaser from '../components/PostTeaser.vue'
 
 export default {
   name: 'Category',
