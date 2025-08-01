@@ -6,12 +6,12 @@ import Category from '../views/Category.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/category/:slug', component: Category },
-  { path: '/:slug', component: Page } // catch-all for WP pages by slug
+  { path: '/:slug', component: Page }, // catch-all for WP pages by slug
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 })
 
 export default router

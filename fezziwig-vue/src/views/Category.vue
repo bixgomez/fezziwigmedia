@@ -11,8 +11,13 @@
 </template>
 
 <script>
+import PostTeaser from './PostTeaser.vue'
+
 export default {
   name: 'Category',
+  components: {
+    PostTeaser,
+  },
   data() {
     return {
       posts: [],
@@ -44,31 +49,6 @@ export default {
       .catch((err) => {
         console.error('Error fetching category or posts:', err)
       })
-  },
-  methods: {
-    getFeaturedImageData(post) {
-      if (!post._embedded?.['wp:featuredmedia']?.[0]) {
-        return null
-      }
-
-      const media = post._embedded['wp:featuredmedia'][0]
-
-      // Check if small size exists
-      if (media.media_details?.sizes?.small) {
-        return {
-          src: media.media_details.sizes.small.source_url,
-          width: media.media_details.sizes.small.width,
-          height: media.media_details.sizes.small.height,
-        }
-      }
-
-      // Fall back to full size
-      return {
-        src: media.source_url,
-        width: media.media_details?.width,
-        height: media.media_details?.height,
-      }
-    },
   },
 }
 </script>
