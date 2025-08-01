@@ -2,21 +2,7 @@
   <div>
     <h1>{{ categoryTitle }}</h1>
     <div v-if="posts.length > 0">
-      <div v-for="post in posts" :key="post.id" class="post">
-        <router-link :to="`/${post.slug}`">
-          <h2 v-html="post.title.rendered" />
-        </router-link>
-        <img
-          v-if="getFeaturedImageData(post)"
-          :src="getFeaturedImageData(post).src"
-          :alt="post.title.rendered || 'Image'"
-          loading="lazy"
-        />
-        <div v-html="post.excerpt.rendered" />
-        <router-link :to="`/${post.slug}`" class="read-more">
-          Read more →
-        </router-link>
-      </div>
+      <PostTeaser v-for="post in posts" :key="post.id" :post="post" />
     </div>
     <div v-else>
       <p>Loading posts...</p>
