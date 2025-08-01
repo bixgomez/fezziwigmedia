@@ -1,7 +1,8 @@
 <template>
   <div>
     <h1>{{ categoryTitle }}</h1>
-    <div v-if="posts.length > 0">
+    <div v-if="categoryDescription" v-html="categoryDescription"></div>
+    <div class="post-teasers" v-if="posts.length > 0">
       <PostTeaser v-for="post in posts" :key="post.id" :post="post" />
     </div>
     <div v-else>
@@ -9,6 +10,20 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/base/base';
+
+.post-teasers {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3cqi;
+  margin: 1.25rem 0;
+  list-style: none;
+  padding: 0;
+  container-type: inline-size;
+}
+</style>
 
 <script>
 import PostTeaser from '../components/PostTeaser.vue'
@@ -22,6 +37,7 @@ export default {
     return {
       posts: [],
       categoryTitle: '',
+      categoryDescription: '',
     }
   },
   mounted() {
@@ -36,6 +52,7 @@ export default {
         if (!data.length) return
         const category = data[0]
         this.categoryTitle = category.name
+        this.categoryDescription = category.description
 
         // Fetching posts in that category, with embedded featured media
         return fetch(

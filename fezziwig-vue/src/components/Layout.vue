@@ -41,6 +41,10 @@
     width: calc($lg * 0.9);
     max-width: ($xl * 0.9);
   }
+
+  @include breakpoint($xl-up) {
+    width: calc($xl * 0.9);
+  }
 }
 
 .site-wrapper {
