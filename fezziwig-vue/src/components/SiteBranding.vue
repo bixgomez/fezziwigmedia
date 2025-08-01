@@ -1,18 +1,22 @@
 <template>
   <div class="site-branding">
-    <div class="site-branding--titles">
-      <h1 class="site-title">
-        <a class="site-title-link" href="/">
-          <span class="fezziwig">Fezziwig</span>
-          <span class="media">Media</span>
-          <span class="arts">Arts</span>
-        </a>
-      </h1>
-      <h2 class="site-subtitle-1">
-        <span class="drupal-wordpress">Drupal and WordPress</span>
-        <span class="divider-dot">·</span>
-        <span class="design-dev">Design and Development</span>
-      </h2>
+    <div class="site-branding-titles">
+      <div class="site-branding-title">
+        <h1 class="site-title">
+          <a class="site-title-link" href="/">
+            <span class="fezziwig">Fezziwig</span>
+            <span class="media">Media</span>
+            <span class="arts">Arts</span>
+          </a>
+        </h1>
+      </div>
+      <div class="site-branding-title">
+        <h2 class="site-subtitle">
+          <span class="drupal-wordpress">Drupal and WordPress</span>
+          <span class="divider-dot">·</span>
+          <span class="design-dev">Design and Development</span>
+        </h2>
+      </div>
     </div>
   </div>
 </template>
@@ -24,57 +28,21 @@
   container-type: inline-size;
 }
 
-.site-title-link {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-
-  .fezziwig {
-    font-size: 12.75cqi;
-    grid-column: 1 / 3;
-  }
-
-  .media {
-    font-size: 9.875cqi;
-  }
-
-  .arts {
-    font-size: 9.875cqi;
-  }
-
-  @include breakpoint($md) {
-    grid-template-columns: auto auto auto;
-    grid-template-rows: auto;
-    gap: 2.25cqi;
-    justify-content: center;
-    align-items: center;
-    padding: 1.125cqi 0 0.25cqi;
-
-    .fezziwig,
-    .media,
-    .arts {
-      grid-column: auto;
-      font-size: 5.125cqi;
-    }
-  }
-}
-
-.site-branding--titles {
+.site-branding-titles {
   text-align: center;
   padding: 0;
   margin: 0;
-  font-size: 1em;
+  font-size: 1cqi;
+  width: 100%;
+}
 
-  @include breakpoint($md) {
-    font-size: 1.04em;
-  }
+.site-branding-title {
+  padding: 2.5cqi;
+  width: 100cqi;
+  /* background-color: rgba(orange, 0.5); */
 
-  @include breakpoint($lg) {
-    font-size: 1.29em;
-  }
-
-  @include breakpoint($xl) {
-    font-size: 1.5em;
+  &:first-of-type {
+    border-bottom: 1cqi double $color-orange--paler;
   }
 }
 
@@ -82,16 +50,11 @@
   font-family: 'Vast Shadow', 'Arial Black', sans-serif;
   text-transform: uppercase;
   color: $color-blue--dark;
-  font-size: 2.11em;
-  letter-spacing: 0.115em;
-  padding-bottom: 0;
-  margin: 0;
-  /* margin-top: -0.18em; */
-  /* margin-bottom: -0.125em; */
   line-height: 1;
+  margin: 0;
+  padding: 0;
 
   @include breakpoint($md-up) {
-    border-bottom: 4px double $color-orange--pale;
     padding-bottom: 0.175em;
     margin-bottom: 0.3em;
     letter-spacing: 0.138em;
@@ -109,97 +72,106 @@
       color: $color-blue--darkest;
     }
   }
-
-  /* @include breakpoint($sm-down) {
-    .fezziwig {
-      display: block;
-      font-size: 1.65em;
-    }
-
-    .media-arts {
-      display: block;
-      font-size: 1.27em;
-      margin-top: -0.05em;
-    }
-  }
-
-  @include breakpoint($xs-down) {
-    .fezziwig {
-      display: block;
-      font-size: 0.88em;
-    }
-
-    .media-arts {
-      display: block;
-      font-size: 0.65em;
-      margin-top: -0.01em;
-    }
-  } */
 }
 
-.site-subtitle-1 {
+.site-title-link {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  container-type: inline-size;
+
+  .fezziwig {
+    font-size: 13.75cqi;
+    letter-spacing: 0.725cqi;
+    margin-top: -2.3cqi;
+    margin-left: -0.9cqi;
+    margin-bottom: -0.25cqi;
+    grid-column: 1 / 3;
+  }
+
+  .media,
+  .arts {
+    font-size: 10cqi;
+    letter-spacing: 0.9cqi;
+    margin-bottom: -1.25cqi;
+  }
+
+  .media {
+    margin-left: -0.5cqi;
+  }
+
+  .arts {
+    margin-left: 8cqi;
+  }
+
+  @include breakpoint($md) {
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto;
+    gap: 2.25cqi;
+    justify-content: center;
+    align-items: center;
+    padding: 1.125cqi 0 0.25cqi;
+
+    .fezziwig,
+    .media,
+    .arts {
+      grid-column: auto;
+      font-size: 5.125cqi;
+      letter-spacing: 0.9cqi;
+      margin: -1.5cqi 0;
+    }
+  }
+}
+
+.site-subtitle {
   font-family: 'Playfair Display SC', Georgia, serif;
-  color: mix($color-blue--darkest, $color-orange--darkest, 60%);
-  font-size: 1.1em;
+  font-weight: 600;
+  color: mix($color-blue--darkest, $color-orange--darkest, 40%);
+  font-size: 5cqi;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  margin: 0;
   padding: 0;
   margin: 0 auto;
   display: flex;
   width: 100%;
+  flex-direction: column;
 
   span {
     flex: 1;
     white-space: nowrap;
+
+    &.drupal-wordpress {
+      margin-bottom: 2cqi;
+      letter-spacing: 1.75cqi;
+
+      @include breakpoint($md) {
+        margin-bottom: 0;
+        letter-spacing: 0.4cqi;
+      }
+    }
+
+    &.design-dev {
+      margin-bottom: 0.5cqi;
+      letter-spacing: 1.3cqi;
+
+      @include breakpoint($md) {
+        margin-bottom: 0;
+        letter-spacing: 0.4cqi;
+      }
+    }
   }
 
-  @include breakpoint($sm-down) {
+  @include breakpoint($md) {
+    flex-direction: row;
+    font-size: 2.75cqi;
+  }
+
+  .divider-dot {
     display: none;
 
-    .divider-dot {
-      display: none;
-    }
-
-    .drupal-wordpress {
+    @include breakpoint($md) {
       display: block;
-    }
-
-    .design-dev {
-      display: block;
-    }
-  }
-}
-
-.site-subtitle-2 {
-  font-family: 'Playfair Display SC', Georgia, serif;
-  letter-spacing: 0.115em;
-  text-transform: none;
-  color: $color-blue--dark;
-  font-size: 0.8em;
-  line-height: 1;
-  padding-top: 0.5em;
-
-  @include breakpoint($sm-down) {
-    span.name {
-      display: block;
-      margin-bottom: 0.5em;
-    }
-  }
-}
-
-.site-subtitle-2 {
-  display: block;
-
-  span {
-    white-space: nowrap;
-
-    &.name {
-      padding-right: 1em;
-    }
-
-    &.telephone {
-      padding-left: 1em;
     }
   }
 }
