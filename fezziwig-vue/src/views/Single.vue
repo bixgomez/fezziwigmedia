@@ -15,12 +15,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { parse } from '@wordpress/block-serialization-default-parser'
-import UnhandledBlock       from '@/components/UnhandledBlock.vue'
-import PostTeaserSection    from '@/components/PostTeaserSection.vue'
-import RawHtmlBlock         from '@/components/RawHtmlBlock.vue'
+import UnhandledBlock from '@/components/UnhandledBlock.vue'
+import PostTeaserSection from '@/components/PostTeaserSection.vue'
+import RawHtmlBlock from '@/components/RawHtmlBlock.vue'
 
 const blocks = ref([])
-const slug   = ref('')
+const slug = ref('')
 
 function resolveComponent(blockName) {
   switch (blockName) {
@@ -38,9 +38,7 @@ onMounted(async () => {
   const apiBase = import.meta.env.VITE_API_BASE_URL
 
   // 1) hit our custom proxy endpoint for raw block comments
-  const res = await fetch(
-    `${apiBase}/wp-json/fezziwig/v1/blocks/${slug.value}`
-  )
+  const res = await fetch(`${apiBase}/wp-json/fezziwig/v1/blocks/${slug.value}`)
   const { blocks: raw } = await res.json()
 
   // 2) parse them into structured block objects

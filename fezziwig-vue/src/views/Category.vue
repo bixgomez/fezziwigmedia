@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="post-teaser-section">
     <h1>{{ categoryTitle }}</h1>
     <div v-if="categoryDescription" v-html="categoryDescription"></div>
     <div class="post-teasers" v-if="posts.length > 0">
