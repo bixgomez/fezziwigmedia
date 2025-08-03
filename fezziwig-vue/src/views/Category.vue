@@ -25,47 +25,47 @@
 }
 </style>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import PostTeaser from '../components/PostTeaser.vue'
 
-export default {
-  name: 'Category',
-  components: {
-    PostTeaser,
-  },
-  data() {
-    return {
-      posts: [],
-      categoryTitle: '',
-      categoryDescription: '',
-    }
-  },
-  mounted() {
-    const slug = this.$route.params.slug
+// reactive state
+const posts = ref([])
+const categoryTitle = ref('')
+const categoryDescription = ref('')
+const loading = ref(true)
+const error = ref(null)
 
-    // Getting category by slug to find the ID
-    fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/categories?slug=${slug}`,
+// grab slug and API base
+const route = useRoute()
+const slug = route.params.slug
+const apiBase = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
+
+// fetcher
+async function loadCategory() {
+  loading.value = true
+  try {
+    // 1) fetch the category by slug (with embed so we can pull name/description)
+    const catRes = await fetch(
+      `${apiBase}/wp-json/wp/v2/categories?slug=${slug}&_embed`,
     )
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.length) return
-        const category = data[0]
-        this.categoryTitle = category.name
-        this.categoryDescription = category.description
+    const [cat] = await catRes.json()
+    categoryTitle.value = cat.name
+    categoryDescription.value = cat.description
 
-        // Fetching posts in that category, with embedded featured media
-        return fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/posts?categories=${category.id}&_embed`,
-        )
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        this.posts = data || []
-      })
-      .catch((err) => {
-        console.error('Error fetching category or posts:', err)
-      })
-  },
+    // 2) fetch posts in that category (with embed so teasers get featured media)
+    const postRes = await fetch(
+      `${apiBase}/wp-json/wp/v2/posts?categories=${cat.id}&per_page=10&_embed`,
+    )
+    posts.value = await postRes.json()
+  } catch (e) {
+    error.value = e
+  } finally {
+    loading.value = false
+  }
 }
+
+// kick off the load on mount
+onMounted(loadCategory)
 </script>
