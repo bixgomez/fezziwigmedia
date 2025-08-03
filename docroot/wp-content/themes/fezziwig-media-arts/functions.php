@@ -273,3 +273,38 @@ add_filter('rest_endpoints', function ($endpoints) {
   }
   return $endpoints;
 });
+
+/**
+ * Endpoint callback: GET /wp-json/fezziwig/v1/blocks/{slug}
+ *
+ * Fetches the raw Gutenberg block content for a given post or page,
+ * identified by its URL slug. Only published posts/pages are returned.
+ * This bypasses the default REST post endpoint to deliver unrendered
+ * block markup (or you could swap in parse_blocks() for a parsed array),
+ * enabling the front-end to handle block rendering client-side.
+ *
+ * @param WP_REST_Request $request
+ *   The incoming request, expecting a 'slug' parameter matching the
+ *   post_name of the desired page or post.
+ * @return WP_REST_Response
+ *   - 200: JSON object with a 'blocks' key containing the raw content
+ *   - 404: JSON error if the slug doesn’t match any published post/page
+ */
+add_action('rest_api_init', function () {
+  register_rest_route('fezziwig/v1', '/blocks/(?P<slug>[^/]+)', [
+    'methods'  => 'GET',
+    'callback' => function ($request) {
+      $slug = sanitize_title($request['slug']);
+      $post = get_page_by_path($slug, OBJECT, ['page', 'post']);
+
+      if (! $post || $post->post_status !== 'publish') {
+        return new WP_REST_Response(['error' => 'Not found'], 404);
+      }
+
+      return new WP_REST_Response([
+        'blocks' => $post->post_content,  // or use parse_blocks($post->post_content)
+      ]);
+    },
+    'permission_callback' => '__return_true', // tighten this up as needed
+  ]);
+});
