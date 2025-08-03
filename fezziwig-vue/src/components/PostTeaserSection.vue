@@ -40,7 +40,7 @@ onMounted(async () => {
   // Fetch posts in this category (limit to 5; adjust as needed)
   const apiBase = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
   const res = await fetch(
-    `${apiBase}/wp-json/wp/v2/posts?categories=${catId}&per_page=5`,
+    `${apiBase}/wp-json/wp/v2/posts?categories=${catId}&_embed`,
   )
   posts.value = await res.json()
 })
