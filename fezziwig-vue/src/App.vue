@@ -8,8 +8,6 @@
 @import '@/assets/styles/base/base';
 </style> -->
 
-
-
 <script setup>
 import Layout from './components/Layout.vue'
 </script>
