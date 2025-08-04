@@ -1,0 +1,64 @@
+╭─gilbert@Feuillade ~/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue ‹main●›
+╰─$ tree -I "node_modules|vendor"
+.
+├── dist
+│   ├── assets
+│   │   ├── index-B5M7hkJw.js
+│   │   └── index-DPEIb0E2.css
+│   ├── favicon.ico
+│   └── index.html
+├── index.html
+├── jsconfig.json
+├── package-lock.json
+├── package.json
+├── public
+│   └── favicon.ico
+├── README.md
+├── single-vue.patch
+├── src
+│   ├── App.vue
+│   ├── assets
+│   │   └── styles
+│   │       ├── base
+│   │       │   ├── _base.scss
+│   │       │   ├── _basics.scss
+│   │       │   ├── _breakpoints.scss
+│   │       │   ├── _colors.scss
+│   │       │   ├── _mixins.scss
+│   │       │   ├── _typography.scss
+│   │       │   ├── _variables.scss
+│   │       │   └── _vendors.scss
+│   │       ├── components
+│   │       │   ├── _components.scss
+│   │       │   ├── _gallery.scss
+│   │       │   ├── _nav.scss
+│   │       │   ├── _post-navigation.scss
+│   │       │   └── _post-single.scss
+│   │       ├── layout
+│   │       │   ├── _home-page.scss
+│   │       │   ├── _layout.scss
+│   │       │   ├── _misc.scss
+│   │       │   └── _overall.scss
+│   │       └── style.scss
+│   ├── components
+│   │   ├── Layout.vue
+│   │   ├── PostTeaser.vue
+│   │   ├── PostTeaserSection.vue
+│   │   ├── RawHtmlBlock.vue
+│   │   ├── SiteBranding.vue
+│   │   ├── SiteFooter.vue
+│   │   ├── SiteHeader.vue
+│   │   ├── SiteMain.vue
+│   │   ├── SiteMenu.vue
+│   │   ├── SiteNav.vue
+│   │   └── UnhandledBlock.vue
+│   ├── main.js
+│   ├── router
+│   │   └── index.js
+│   └── views
+│       ├── Category.vue
+│       ├── Home.vue
+│       └── Single.vue
+└── vite.config.js
+
+13 directories, 47 files

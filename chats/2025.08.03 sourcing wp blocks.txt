@@ -1,0 +1,1518 @@
+You said:
+This is giving me grief:
+Single.vue:32  GET https://fezziwigmedia.ddev.site/wp-json/wp/v2/posts?slug=presentations&context=edit 401 (Unauthorized)
+
+
+Is there a better way to do this?  Can you tell what I need to do?  I need my blocks-based WordPress Block Editor page to give me the blocks"
+
+
+ChatGPT said:
+The issue you're running into is due to requesting the /wp/v2/posts?...&context=edit endpoint without proper authentication. The context=edit parameter requires elevated permissions — meaning it’s only accessible to logged-in users with the correct capabilities (e.g., via a nonce or application password/token).
+
+🔧 What you're likely trying to do
+If you're trying to fetch the block data from a public page (like one built in the Block Editor), you don’t need context=edit. You can either:
+
+Use the context=view (which is the default).
+
+Use the ?_embed parameter if you want rendered content and media references.
+
+Query the page by slug from the pages endpoint instead of posts if this is a page, not a post.
+
+✅ Recommendation
+Replace:
+
+js
+Copy
+Edit
+/wp/v2/posts?slug=presentations&context=edit
+with:
+
+js
+Copy
+Edit
+/wp/v2/pages?slug=presentations&_fields=content.rendered
+Or for posts:
+
+js
+Copy
+Edit
+/wp/v2/posts?slug=presentations&_fields=content.rendered
+That way:
+
+You're not hitting authentication errors.
+
+You’re getting the rendered block HTML from the content.rendered field.
+
+🔒 If you really need context=edit
+You’ll need to authenticate the request. For front-end JavaScript, the usual way is via:
+
+A WordPress nonce passed from wp_localize_script (classic)
+
+REST API Application Passwords or JWT tokens (headless / decoupled use)
+
+Let me know if you need help authenticating, but in most public-facing cases, just remove context=edit.
+
+Want me to help adjust your Single.vue code accordingly?
+
+
+
+
+
+
+You said:
+Single.vue
+File
+But this gives me errors too:
+Single.vue:39 [Vue warn]: Unhandled error during execution of render function 
+  at <Single onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< 
+Proxy(Object) {hasCustomBlocks: false, …}
+ > > 
+  at <RouterView > 
+  at <SiteMain > 
+  at <Layout > 
+  at <App>
+Single.vue:39 [Vue warn]: Unhandled error during execution of component update 
+  at <Single onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< 
+Proxy(Object) {hasCustomBlocks: false, …}
+ > > 
+  at <RouterView > 
+  at <SiteMain > 
+  at <Layout > 
+  at <App>
+
+Single.vue:3 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'rendered')
+    at Proxy._sfc_render (Single.vue:3:31)
+
+
+ChatGPT said:
+Thanks for the updated context and file. Based on the error:
+
+bash
+Copy
+Edit
+Cannot read properties of undefined (reading 'rendered')
+this suggests that the data you’re expecting from the API (content.rendered) is either missing or the structure isn’t what you assumed.
+
+🔍 Diagnosis
+You're calling the REST API with something like:
+
+js
+Copy
+Edit
+/wp/v2/pages?slug=presentations&_fields=content.rendered
+This returns an array — even if there's only one result. You probably need to access:
+
+js
+Copy
+Edit
+response.data[0].content.rendered
+instead of:
+
+js
+Copy
+Edit
+response.data.content.rendered
+🛠️ Fix
+In your Single.vue, you likely have something like this in your template:
+
+vue
+Copy
+Edit
+<div v-html="page.content.rendered"></div>
+But page is probably coming from:
+
+js
+Copy
+Edit
+const page = ref(null)
+
+axios.get('/wp-json/wp/v2/pages?slug=presentations&_fields=content.rendered')
+  .then(res => {
+    page.value = res.data[0]  // ✅ access the first item
+  })
+And then conditionally render like this:
+
+vue
+Copy
+Edit
+<div v-if="page" v-html="page.content.rendered"></div>
+✅ Summary
+✅ Use /wp-json/wp/v2/pages?slug=presentations&_fields=content.rendered
+
+✅ Make sure you access res.data[0]
+
+✅ Always check that page is defined before rendering
+
+🚫 Don’t use context=edit unless you're authenticated
+
+Want me to patch the code in Single.vue directly?
+
+
+
+
+
+
+You said:
+I keep sending you my Single.vue file, so why are you saying I "likely" have something -- can't you read?
+
+
+ChatGPT said:
+
+Thought
+You're right — thanks for the nudge. The file was uploaded, but it looks like it wasn't parsed correctly, so I couldn't read its contents directly. That’s why I fell back on assumptions instead of working from the actual file. Let’s fix that.
+
+Please either:
+
+Re-upload Single.vue, or
+
+Paste the relevant portion here — especially the <script setup> section and any v-html or block-rendering logic in the <template>.
+
+Once I can see what’s actually in the file, I’ll give you a direct, surgical fix — no guessing.
+
+
+
+
+
+
+You said:
+<template>
+  <div v-if="content">
+    <h1 v-html="content.title.rendered" />
+    <div v-html="content.content.rendered" />
+  </div>
+  <div v-else>
+    <p>Loading...</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Single',
+  data() {
+    return {
+      content: null,
+    }
+  },
+  async mounted() {
+    const slug = this.$route.params.slug
+    let content = null
+
+    // Try pages first
+    const pages = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/pages?slug=${slug}&_fields=content.rendered`,
+    ).then((r) => r.json())
+
+    if (pages.length) {
+      content = pages[0]
+    } else {
+      // Then try posts
+      const posts = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}&_fields=content.rendered`,
+      ).then((r) => r.json())
+      content = posts[0] || null
+    }
+
+    // Set the content once we've determined what it should be
+    this.content = content
+
+    // Now run block detection for any content we found
+    if (content && content.content.raw) {
+      try {
+        const blocks = JSON.parse(content.content.raw)
+        this.hasCustomBlocks = blocks.some(
+          (block) => block.blockName === 'custom/post-teaser-section',
+        )
+      } catch (e) {
+        this.hasCustomBlocks = false
+      }
+    } else {
+      this.hasCustomBlocks = false
+    }
+  },
+}
+</script>
+
+
+ChatGPT said:
+Thanks — this clears it up. The error is because you’re trying to render:
+
+vue
+Copy
+Edit
+<h1 v-html="content.title.rendered" />
+But in your fetch, you never requested title.rendered — only content.rendered.
+
+🔧 Two Options to Fix
+✅ Option 1: Ask for the title
+Update your fetch URLs to include title.rendered:
+
+js
+Copy
+Edit
+/wp/v2/pages?slug=${slug}&_fields=title.rendered,content.rendered
+and similarly for posts.
+
+That way, content.title.rendered will be defined when Vue renders it.
+
+🧹 Option 2: Don’t render title
+If you're not showing the title (or don't want to), remove or comment this line:
+
+vue
+Copy
+Edit
+<h1 v-html="content.title.rendered" />
+⚠️ Bonus: block parsing logic
+You’re doing:
+
+js
+Copy
+Edit
+if (content && content.content.raw) {
+  const blocks = JSON.parse(content.content.raw)
+But content.content.raw isn’t part of the response unless you use context=edit, which requires authentication. You're only fetching content.rendered.
+
+So either:
+
+Switch to using @wordpress/block-serialization-default-parser on the rendered HTML, or
+
+Remove the block detection unless you're authenticated.
+
+✅ Final Recommended Fix
+diff
+Copy
+Edit
+// In both fetches:
+- _fields=content.rendered
++ _fields=title.rendered,content.rendered
+And either remove or fix your use of content.content.raw.
+
+Let me know if you want a fully cleaned-up version of the file.
+
+
+
+
+
+
+You said:
+I would love a cleaned up version.  Again:  I am looking for this to render individual blocks, which I can then pass to individual components
+
+
+ChatGPT said:
+Got it. Since you're working with a front-end that needs individual Gutenberg blocks (not just rendered HTML), and you're not authenticated, you won’t get content.raw. But the Gutenberg block structure is serialized inside the content.rendered HTML as block comments.
+
+To parse those into usable blocks, you'll want to:
+
+Fetch content.rendered
+
+Parse the block structure from HTML
+
+Loop through and render them with your custom Vue components
+
+Here’s a cleaned-up version of Single.vue that does that:
+
+✅ Single.vue (cleaned and component-ready)
+vue
+Copy
+Edit
+<template>
+  <div v-if="blocks.length">
+    <component
+      v-for="(block, index) in blocks"
+      :key="index"
+      :is="resolveComponent(block.blockName)"
+      :block="block"
+    />
+  </div>
+  <div v-else>
+    <p>Loading...</p>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import parse from '@wordpress/block-serialization-default-parser'
+
+// Example: import your block components here
+import PostTeaserSection from '@/components/PostTeaserSection.vue'
+
+const blocks = ref([])
+const slug = ref('')
+const content = ref(null)
+
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'custom/post-teaser-section':
+      return PostTeaserSection
+    default:
+      return {
+        template: `<div class="unhandled-block">Unhandled block: {{ block.blockName }}</div>`,
+        props: ['block'],
+      }
+  }
+}
+
+onMounted(async () => {
+  slug.value = window.location.pathname.split('/').filter(Boolean).pop()
+  const apiBase = import.meta.env.VITE_API_BASE_URL
+
+  const fetchPageOrPost = async (type) => {
+    const res = await fetch(
+      `${apiBase}/wp-json/wp/v2/${type}?slug=${slug.value}&_fields=content.rendered`
+    )
+    const data = await res.json()
+    return data?.[0] || null
+  }
+
+  content.value = await fetchPageOrPost('pages') || await fetchPageOrPost('posts')
+
+  if (content.value?.content?.rendered) {
+    try {
+      blocks.value = parse(content.value.content.rendered)
+    } catch (e) {
+      console.error('Block parse error:', e)
+    }
+  }
+})
+</script>
+📦 Dependency
+Install the parser:
+
+bash
+Copy
+Edit
+npm install @wordpress/block-serialization-default-parser
+🧠 Notes
+This uses @wordpress/block-serialization-default-parser to extract block data from content.rendered.
+
+The resolveComponent() function maps block names to Vue components.
+
+You can expand resolveComponent() as needed.
+
+Let me know if you want to scaffold some default components or structure a system to auto-import blocks.
+
+
+
+
+
+
+You said:
+[plugin:vite:import-analysis] Failed to resolve import "@/components/PostTeaserSection.vue" from "src/views/Single.vue". Does the file exist?
+/Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/src/views/Single.vue:20:31
+17 |  
+18 |  // Example: import your block components here
+19 |  import PostTeaserSection from '@/components/PostTeaserSection.vue'
+   |                                 ^
+20 |  
+21 |
+    at TransformPluginContext._formatLog (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:31435:43)
+    at TransformPluginContext.error (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:31432:14)
+    at normalizeUrl (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:29978:18)
+    at async file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:30036:32
+    at async Promise.all (index 3)
+    at async TransformPluginContext.transform (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:30004:4)
+    at async file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite-plugin-vue-devtools/node_modules/vite-plugin-inspect/dist/index.mjs:1128:17
+    at async EnvironmentPluginContainer.transform (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:31249:14)
+    at async loadAndTransform (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:26419:26)
+    at async viteTransformMiddleware (file:///Users/gilbert/Sites/LINODE/var/www/html/fezziwigmedia/fezziwig-vue/node_modules/vite/dist/node/chunks/dep-DZ2tZksn.js:27504:20)
+
+
+ChatGPT said:
+That error means Vite can't resolve the alias @/components/PostTeaserSection.vue.
+
+✅ Fix Options
+Option 1: Make sure the file exists
+Check that src/components/PostTeaserSection.vue exists.
+
+The path should be relative to your src/ directory.
+
+If the file doesn’t exist yet, you can create a minimal version for testing:
+
+vue
+Copy
+Edit
+<!-- src/components/PostTeaserSection.vue -->
+<template>
+  <div class="post-teaser-section">
+    <pre>{{ block }}</pre>
+  </div>
+</template>
+
+<script setup>
+defineProps(['block'])
+</script>
+Option 2: Configure the @ alias if not already set
+Vite expects aliases to be defined in vite.config.js:
+
+js
+Copy
+Edit
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    }
+  }
+})
+Then restart the dev server:
+
+bash
+Copy
+Edit
+npm run dev
+If you'd like, I can help auto-discover and map custom block components — let me know.
+
+
+
+
+
+
+You said:
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueDevTools(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+})
+
+
+ChatGPT said:
+Perfect — your alias config is valid:
+
+js
+Copy
+Edit
+'@': fileURLToPath(new URL('./src', import.meta.url))
+So the remaining cause of that error is simply:
+
+🚨 The file src/components/PostTeaserSection.vue does not exist yet.
+✅ Quick Fix
+Create the file at:
+
+bash
+Copy
+Edit
+src/components/PostTeaserSection.vue
+And use this minimal starter:
+
+vue
+Copy
+Edit
+<template>
+  <section class="post-teaser-section">
+    <h2>Post Teaser Section</h2>
+    <pre>{{ block }}</pre>
+  </section>
+</template>
+
+<script setup>
+defineProps({
+  block: Object
+})
+</script>
+Once that’s in place, the import will resolve cleanly:
+
+js
+Copy
+Edit
+import PostTeaserSection from '@/components/PostTeaserSection.vue'
+Let me know if you want to dynamically register components or expand this one.
+
+
+
+
+
+
+You said:
+Single.vue:17 Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/@wordpress_block-serialization-default-parser.js?v=41365a1f' does not provide an export named 'default' (at Single.vue:17:8)
+
+
+ChatGPT said:
+That error means you’re trying to do:
+
+js
+Copy
+Edit
+import parse from '@wordpress/block-serialization-default-parser'
+But the package doesn’t export a default. It only exports named exports, specifically parse.
+
+✅ Fix
+Change this line:
+
+js
+Copy
+Edit
+import parse from '@wordpress/block-serialization-default-parser'
+To:
+
+js
+Copy
+Edit
+import { parse } from '@wordpress/block-serialization-default-parser'
+🔍 Why this matters
+In CommonJS, some packages export a default. In ESM (which Vite uses), if a package has only named exports, trying to import it as default will fail. The @wordpress/block-serialization-default-parser package uses only named exports.
+
+Let me know if you want help breaking down or handling the parsed blocks too.
+
+
+
+
+
+
+You said:
+[Vue warn]: Component provided template option but runtime compilation is not supported in this build of Vue. Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js". 
+  at <Anonymous key=0 block= {blockName: null, attrs: {…}, innerBlocks: Array(0), innerHTML: '\x3C!-- post-teasers.php -->  <h2>Presentations</h2>\n…out-b.php -->        </li>\n          </ul>\n      ', innerContent: Array(1)} > 
+  at <Single onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) {__v_skip: true} > > 
+  at <RouterView > 
+  at <SiteMain > 
+  at <Layout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ chunk-VZXQDS5F.js?v=41365a1f:2125
+finishComponentSetup @ chunk-VZXQDS5F.js?v=41365a1f:10171
+setupStatefulComponent @ chunk-VZXQDS5F.js?v=41365a1f:10086
+setupComponent @ chunk-VZXQDS5F.js?v=41365a1f:10011
+mountComponent @ chunk-VZXQDS5F.js?v=41365a1f:7340
+processComponent @ chunk-VZXQDS5F.js?v=41365a1f:7306
+patch @ chunk-VZXQDS5F.js?v=41365a1f:6820
+mountChildren @ chunk-VZXQDS5F.js?v=41365a1f:7054
+processFragment @ chunk-VZXQDS5F.js?v=41365a1f:7236
+patch @ chunk-VZXQDS5F.js?v=41365a1f:6794
+mountChildren @ chunk-VZXQDS5F.js?v=41365a1f:7054
+mountElement @ chunk-VZXQDS5F.js?v=41365a1f:6977
+processElement @ chunk-VZXQDS5F.js?v=41365a1f:6942
+patch @ chunk-VZXQDS5F.js?v=41365a1f:6808
+componentUpdateFn @ chunk-VZXQDS5F.js?v=41365a1f:7531
+run @ chunk-VZXQDS5F.js?v=41365a1f:488
+runIfDirty @ chunk-VZXQDS5F.js?v=41365a1f:526
+callWithErrorHandling @ chunk-VZXQDS5F.js?v=41365a1f:2272
+flushJobs @ chunk-VZXQDS5F.js?v=41365a1f:2480
+Promise.then
+queueFlush @ chunk-VZXQDS5F.js?v=41365a1f:2394
+queueJob @ chunk-VZXQDS5F.js?v=41365a1f:2389
+effect2.scheduler @ chunk-VZXQDS5F.js?v=41365a1f:7573
+trigger @ chunk-VZXQDS5F.js?v=41365a1f:516
+endBatch @ chunk-VZXQDS5F.js?v=41365a1f:574
+notify @ chunk-VZXQDS5F.js?v=41365a1f:836
+trigger @ chunk-VZXQDS5F.js?v=41365a1f:810
+set value @ chunk-VZXQDS5F.js?v=41365a1f:1682
+(anonymous) @ Single.vue:55
+await in (anonymous)
+(anonymous) @ chunk-VZXQDS5F.js?v=41365a1f:4931
+callWithErrorHandling @ chunk-VZXQDS5F.js?v=41365a1f:2272
+callWithAsyncErrorHandling @ chunk-VZXQDS5F.js?v=41365a1f:2279
+hook.__weh.hook.__weh @ chunk-VZXQDS5F.js?v=41365a1f:4911
+flushPostFlushCbs @ chunk-VZXQDS5F.js?v=41365a1f:2457
+flushJobs @ chunk-VZXQDS5F.js?v=41365a1f:2499
+Promise.then
+queueFlush @ chunk-VZXQDS5F.js?v=41365a1f:2394
+queuePostFlushCb @ chunk-VZXQDS5F.js?v=41365a1f:2408
+queueEffectWithSuspense @ chunk-VZXQDS5F.js?v=41365a1f:9466
+baseWatchOptions.scheduler @ chunk-VZXQDS5F.js?v=41365a1f:8346
+effect2.scheduler @ chunk-VZXQDS5F.js?v=41365a1f:2018
+trigger @ chunk-VZXQDS5F.js?v=41365a1f:516
+endBatch @ chunk-VZXQDS5F.js?v=41365a1f:574
+notify @ chunk-VZXQDS5F.js?v=41365a1f:836
+trigger @ chunk-VZXQDS5F.js?v=41365a1f:810
+set value @ chunk-VZXQDS5F.js?v=41365a1f:1682
+finalizeNavigation @ vue-router.js?v=41365a1f:2676
+(anonymous) @ vue-router.js?v=41365a1f:2586
+Promise.then
+pushWithRedirect @ vue-router.js?v=41365a1f:2554
+push @ vue-router.js?v=41365a1f:2480
+install @ vue-router.js?v=41365a1f:2835
+use @ chunk-VZXQDS5F.js?v=41365a1f:5972
+(anonymous) @ main.js:7Understand this warning
+
+
+ChatGPT said:
+You're seeing:
+
+[Vue warn]: Component provided template option but runtime compilation is not supported in this build of Vue...
+
+This means one of the components you're using (likely your fallback component returned in resolveComponent()) is trying to use an inline template string, but your Vue build does not include the template compiler.
+
+⚠️ Why this happens
+In Vue 3 + Vite projects, the default build is the "runtime-only" version of Vue — which means you can’t use components with inline template: '...' strings unless you switch to a compiler-included build.
+
+This line in resolveComponent() is the culprit:
+
+js
+Copy
+Edit
+return {
+  template: `<div class="unhandled-block">Unhandled block: {{ block.blockName }}</div>`,
+  props: ['block'],
+}
+This won't work unless you use the compiler build of Vue, which is unnecessary and heavier.
+
+✅ Fix: use <script setup> SFC component instead
+Create a fallback component as a proper .vue file:
+
+src/components/UnhandledBlock.vue
+vue
+Copy
+Edit
+<template>
+  <div class="unhandled-block">
+    <strong>Unhandled block:</strong> {{ block.blockName }}
+  </div>
+</template>
+
+<script setup>
+defineProps({
+  block: Object
+})
+</script>
+Then update resolveComponent() in Single.vue:
+
+js
+Copy
+Edit
+import UnhandledBlock from '@/components/UnhandledBlock.vue'
+
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'custom/post-teaser-section':
+      return PostTeaserSection
+    default:
+      return UnhandledBlock
+  }
+}
+🧼 Summary
+You can't use template: '...' in inline JS component definitions unless you alias Vue to its compiler build (not recommended for production).
+
+Move fallback or test components into .vue SFCs instead.
+
+This also improves maintainability and separation of concerns.
+
+Let me know if you want to go the "compiler-included Vue build" route instead, but this SFC fix is the cleanest.
+
+
+
+
+
+
+You said:
+
+umm.....
+
+ChatGPT said:
+You're seeing “Unhandled block” because the parsed block has blockName: null. That means it’s not a structured block like core/paragraph or custom/post-teaser-section — it's likely just raw HTML.
+
+This happens when the Block Editor includes non-block-wrapped HTML, template comments, or shortcode residue — especially if you’ve included custom PHP templates inside the editor.
+
+🔍 What the block looks like
+The parser turns something like this:
+
+html
+Copy
+Edit
+<!-- post-teasers.php -->
+<h2>Presentations</h2>
+...
+<!-- /some-block.php -->
+into:
+
+js
+Copy
+Edit
+{
+  blockName: null,
+  attrs: {},
+  innerHTML: '...',     // your raw HTML
+  innerContent: [ '...' ],
+  innerBlocks: []
+}
+✅ Fix: Add a fallback renderer for raw HTML blocks
+In your resolveComponent() function, instead of discarding null blockNames, route them to a RawHtmlBlock component:
+
+src/components/RawHtmlBlock.vue
+vue
+Copy
+Edit
+<template>
+  <div v-html="block.innerHTML" />
+</template>
+
+<script setup>
+defineProps({ block: Object })
+</script>
+Then update your switch:
+
+js
+Copy
+Edit
+import RawHtmlBlock from '@/components/RawHtmlBlock.vue'
+
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'custom/post-teaser-section':
+      return PostTeaserSection
+    case null:
+      return RawHtmlBlock
+    default:
+      return UnhandledBlock
+  }
+}
+✅ Result
+That will cleanly render raw blocks without showing "Unhandled block", and allow you to mix rendered HTML with structured block components.
+
+Let me know if you want to auto-style or log which null blocks come from specific template comments — that’s doable too.
+
+
+
+
+
+
+You said:
+ok, the errors are gone, but now how do I parse out my blocks-heavy page(s)?
+
+
+ChatGPT said:
+Now that you're parsing the content.rendered HTML using @wordpress/block-serialization-default-parser and you're correctly rendering block components, the path forward is this:
+
+✅ To Parse and Render Block-Based Pages
+1. Make sure your WordPress content is actually block content
+If you're editing with the Block Editor and not using shortcodes or custom templates hardcoded into the post, then content.rendered will contain serialized blocks like:
+
+html
+Copy
+Edit
+<!-- wp:paragraph -->
+<p>Hello World</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:custom/post-teaser-section -->
+<div class="...">...</div>
+<!-- /wp:custom/post-teaser-section -->
+This is what parse() can extract into a structured array.
+
+2. You're already doing this part well
+You're doing:
+
+js
+Copy
+Edit
+import { parse } from '@wordpress/block-serialization-default-parser'
+
+const blocks = ref([])
+
+if (content.value?.content?.rendered) {
+  blocks.value = parse(content.value.content.rendered)
+}
+That gives you structured block objects like:
+
+js
+Copy
+Edit
+{
+  blockName: 'custom/post-teaser-section',
+  attrs: { /* ACF or block attributes */ },
+  innerBlocks: [],
+  innerContent: [ /* original HTML */ ],
+  innerHTML: '<section>…</section>'
+}
+3. Next step: Add components for each block type
+Right now, you have:
+
+js
+Copy
+Edit
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'custom/post-teaser-section':
+      return PostTeaserSection
+    case null:
+      return RawHtmlBlock
+    default:
+      return UnhandledBlock
+  }
+}
+So now, you can start building components for specific blocks like:
+
+core/paragraph → ParagraphBlock.vue
+
+core/image → ImageBlock.vue
+
+custom/your-block-name → your custom blocks
+
+Each of these receives the block prop, e.g.:
+
+vue
+Copy
+Edit
+<template>
+  <p v-html="block.innerHTML" />
+</template>
+
+<script setup>
+defineProps({ block: Object })
+</script>
+4. Auto-register block components (optional)
+Later, you can automate this with import.meta.glob:
+
+js
+Copy
+Edit
+const blockComponents = import.meta.glob('@/components/blocks/*.vue', { eager: true })
+
+function resolveComponent(blockName) {
+  const match = Object.entries(blockComponents).find(([path]) =>
+    path.includes(blockName.replace('/', '-'))
+  )
+  return match?.[1].default || UnhandledBlock
+}
+For that to work, you’d save components like:
+
+swift
+Copy
+Edit
+/src/components/blocks/core-paragraph.vue
+/src/components/blocks/custom-post-teaser-section.vue
+Summary
+✅ You're already parsing the block content correctly.
+
+✅ You're handling raw blocks and fallback states.
+
+🔜 Now you can expand support by adding Vue components that match each block type (block.blockName).
+
+🧠 Blocks with blockName: null are raw HTML fragments — already handled.
+
+✅ You can test parsing coverage by logging out blocks in the console.
+
+Want help building a component for a specific block type?
+
+
+
+
+
+
+You said:
+You are super duper completely utterly confusing me.  Can you take a look at some files if I upload them here?
+
+
+ChatGPT said:
+Absolutely — upload whatever files you're working with (e.g. the rendered HTML, the parsed block JSON, your current Vue block components), and I’ll walk through exactly what’s happening and what needs to change.
+
+We’ll go one step at a time, no hand-waving.
+
+
+
+
+
+
+You said:
+Here is my current Single.vue file:
+<template>
+  <div v-if="blocks.length">
+    <component
+      v-for="(block, index) in blocks"
+      :key="index"
+      :is="resolveComponent(block.blockName)"
+      :block="block"
+    />
+  </div>
+  <div v-else>
+    <p>Loading...</p>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { parse } from '@wordpress/block-serialization-default-parser'
+import UnhandledBlock from '@/components/UnhandledBlock.vue'
+import PostTeaserSection from '@/components/PostTeaserSection.vue'
+import RawHtmlBlock from '@/components/RawHtmlBlock.vue'
+
+const blocks = ref([])
+const slug = ref('')
+const content = ref(null)
+
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'custom/post-teaser-section':
+      return PostTeaserSection
+    case null:
+      return RawHtmlBlock
+    default:
+      return UnhandledBlock
+  }
+}
+
+onMounted(async () => {
+  slug.value = window.location.pathname.split('/').filter(Boolean).pop()
+  const apiBase = import.meta.env.VITE_API_BASE_URL
+
+  const fetchPageOrPost = async (type) => {
+    const res = await fetch(
+      `${apiBase}/wp-json/wp/v2/${type}?slug=${slug.value}&_fields=content.rendered`,
+    )
+    const data = await res.json()
+    return data?.[0] || null
+  }
+
+  content.value =
+    (await fetchPageOrPost('pages')) || (await fetchPageOrPost('posts'))
+
+  if (content.value?.content?.rendered) {
+    try {
+      blocks.value = parse(content.value.content.rendered)
+    } catch (e) {
+      console.error('Block parse error:', e)
+    }
+  }
+})
+</script>
+
+
+ChatGPT said:
+Thanks — this is tight and nearly there. Here's exactly where you're at and what we’ll clear up:
+
+🧠 CURRENT STATE
+You're:
+
+Fetching a page or post by slug from the WP REST API
+
+Pulling content.rendered, which contains Gutenberg block HTML
+
+Parsing that with @wordpress/block-serialization-default-parser
+
+Looping over parsed blocks, and rendering them via a resolveComponent() lookup
+
+✔️ Great structure
+✔️ Real-time page lookup
+✔️ Correct use of block parser
+✔️ Handling null blocks
+✔️ Separation of components
+
+😵 WHERE IT GETS CONFUSING
+You’re likely expecting your actual Gutenberg blocks (like your teaser collections, text blocks, etc) to render properly — but you’re only seeing raw or “Unhandled block” placeholders.
+
+That’s because your resolveComponent() only recognizes:
+
+js
+Copy
+Edit
+case 'custom/post-teaser-section':
+…and sends all else to UnhandledBlock or RawHtmlBlock.
+
+✅ NEXT STEP
+Let’s look at an actual parsed block object.
+
+Please upload:
+
+The content.rendered HTML string from your WordPress page (just copy it from the REST API or your page HTML)
+
+OR the JSON output of parse(content.rendered) — even just a console.log(blocks) copy-paste.
+
+Once I see that, I’ll tell you:
+
+Exactly what blockNames you’re getting
+
+What Vue components you should create to handle each
+
+How to extend resolveComponent() to cover them
+
+This will ground it all. Just send me that sample output.
+
+
+
+
+
+
+You said:
+where can I stick onsole.log(blocks)
+
+
+ChatGPT said:
+You can add this inside your onMounted() function, right after parsing:
+
+js
+Copy
+Edit
+if (content.value?.content?.rendered) {
+  try {
+    blocks.value = parse(content.value.content.rendered)
+    console.log('Parsed blocks:', blocks.value) // 👈 Add this line
+  } catch (e) {
+    console.error('Block parse error:', e)
+  }
+}
+Then open your browser’s dev tools (Console tab), load a page, and copy/paste the printed block data here — or screenshot it.
+
+That’ll show us exactly what WordPress is sending and how to handle it block by block.
+
+
+
+
+
+
+You said:
+Parsed blocks: Proxy(Array) {0: {…}}[[Handler]]: MutableReactiveHandler_isReadonly: false_isShallow: false[[Prototype]]: BaseReactiveHandlerconstructor: class extendsdeleteProperty: ƒ deleteProperty(target, key)has: ƒ has(target, key)ownKeys: ƒ ownKeys(target)set: ƒ set(target, key, value, receiver)[[Prototype]]: Object[[Target]]: Array(1)0: attrs: {}blockName: nullinnerBlocks: Array(0)length: 0[[Prototype]]: Array(0)innerContent: Array(1)0: "<!-- post-teasers.php -->  <h2>Presentations</h2>length: 1[[Prototype]]: Array(0)innerHTML: "<!-- post-teasers.php -->  <h2>Presentations</h2>[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()length: 1[[Prototype]]: Array(0)[[IsRevoked]]: false
+
+
+ChatGPT said:
+Perfect — and this tells us everything we need.
+
+🧱 What You Just Logged
+The first (and only) parsed block is:
+
+js
+Copy
+Edit
+{
+  blockName: null,
+  attrs: {},
+  innerBlocks: [],
+  innerHTML: "<!-- post-teasers.php -->  <h2>Presentations</h2>...",
+  innerContent: [ "<!-- post-teasers.php -->  <h2>Presentations</h2>..." ]
+}
+This means:
+→ The page does not contain structured Gutenberg blocks (like core/paragraph, custom/post-teaser-section, etc)
+→ Instead, it contains raw HTML — possibly inserted by a custom template, ACF field, or shortcode.
+
+So blockName: null is expected here — this is just a static HTML blob.
+
+✅ What to Do Now
+You're already handling this properly with:
+
+js
+Copy
+Edit
+case null:
+  return RawHtmlBlock
+And your RawHtmlBlock.vue:
+
+vue
+Copy
+Edit
+<template>
+  <div v-html="block.innerHTML" />
+</template>
+
+<script setup>
+defineProps({ block: Object })
+</script>
+So... nothing’s broken.
+
+But: if you're expecting a custom block like custom/post-teaser-section to be present — it isn't. WordPress didn't output one.
+
+🔍 Next Diagnostic Step
+✅ Check the WordPress page:
+Edit your “Presentations” page and verify:
+
+Is it using custom blocks?
+
+Or is it using a classic editor, a shortcode, or a hardcoded PHP template?
+
+If you’re using a block like <!-- wp:custom/post-teaser-section /--> you’ll see:
+
+js
+Copy
+Edit
+{
+  blockName: 'custom/post-teaser-section',
+  ...
+}
+But if not — if your template just echoes HTML — the parser will treat the whole thing as blockName: null.
+
+🧪 Quick Test
+In WordPress:
+
+Edit the page using the Block Editor
+
+Insert a Paragraph block and type something simple like "Hello from block"
+
+Save and refresh your Vue frontend
+
+If console.log(blocks) now shows a blockName: "core/paragraph" — your pipeline is working. You’re just not seeing blocks because the page has none.
+
+Want help checking that your ACF block or post-teaser-section block is registered properly and actually being saved into post_content?
+
+
+
+
+
+
+You said:
+This page IS USING FUCKING GUTENBERG BLOCKS 
+
+
+ChatGPT said:
+Got it. You’re not imagining things — if you're building the page in the Block Editor, but only seeing blockName: null, something’s off in how the data is coming through the API.
+
+Let’s walk through exactly what might be happening:
+
+🔍 Possibility 1: The page is using custom PHP templates, not saved blocks
+If your theme uses a page-presentations.php template or an acf_render_block() in a template file (instead of real blocks saved in the post_content), the front-end might show block-like output — but content.rendered from the REST API will not include the block structure.
+
+Check this:
+
+Go to the WP admin.
+
+Edit the “Presentations” page.
+
+Click the three-dot menu → "Code Editor"
+
+See what’s actually in the editor.
+
+If you don’t see something like:
+
+html
+Copy
+Edit
+<!-- wp:custom/post-teaser-section /-->
+Then it’s not saved as a block — even if the page looks like it’s built with blocks.
+
+🔍 Possibility 2: You’re using ACF Blocks rendered via PHP
+If you’re building with ACF block types and rendering them in PHP templates, they only show up as structured blocks if they are:
+
+Registered via acf_register_block_type()
+
+Actually inserted into the page content
+
+Saved as block comment syntax (e.g., <!-- wp:acf/post-teaser-section { "field": "value" } /-->)
+
+If you're using ACF Flexible Content or a post_object field to include block output, that content might be saved only in meta, not post_content.
+
+✅ Quick Way to Debug
+Call this directly in the browser:
+
+bash
+Copy
+Edit
+https://fezziwigmedia.ddev.site/wp-json/wp/v2/pages?slug=presentations
+Look at the full JSON. Does the content.rendered field contain block comments?
+
+Example of what you should see:
+html
+Copy
+Edit
+<!-- wp:paragraph -->
+<p>This is a paragraph block.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:custom/post-teaser-section /-->
+If you don't see any <!-- wp: style comments, then you're not getting actual block data, regardless of how it looks in the WP admin.
+
+🧨 Bottom Line
+If WordPress doesn’t return block comments in content.rendered, then @wordpress/block-serialization-default-parser can’t reconstruct blocks.
+
+You're not doing anything wrong in your Vue code. The issue is that the backend is either:
+
+Not saving the blocks as actual block content, or
+
+Outputting raw HTML via a template or field instead of structured blocks
+
+Want to send me a paste of the full JSON for that page from the REST API response? I’ll tell you exactly what’s in post_content and what’s missing.
+
+
+
+
+
+
+You said:
+<!-- wp:acf/post-teasers {"name":"acf/post-teasers","data":{"post_teasers_category":"54","_post_teasers_category":"field_66bafa0c0a183","heading":"","_heading":"field_66bb76e9bd626","use_category_title":"1","_use_category_title":"field_66bb7720bd628","description":"","_description":"field_66bb7704bd627","use_category_description":"1","_use_category_description":"field_66bb7744bd629"},"mode":"edit"} /-->
+
+<!-- wp:acf/post-teasers {"name":"acf/post-teasers","data":{"post_teasers_category":"57","_post_teasers_category":"field_66bafa0c0a183","heading":"","_heading":"field_66bb76e9bd626","use_category_title":"1","_use_category_title":"field_66bb7720bd628","description":"","_description":"field_66bb7704bd627","use_category_description":"1","_use_category_description":"field_66bb7744bd629"},"mode":"edit"} /-->
+
+<!-- wp:acf/post-teasers {"name":"acf/post-teasers","data":{"post_teasers_category":"55","_post_teasers_category":"field_66bafa0c0a183","heading":"","_heading":"field_66bb76e9bd626","use_category_title":"1","_use_category_title":"field_66bb7720bd628","description":"","_description":"field_66bb7704bd627","use_category_description":"1","_use_category_description":"field_66bb7744bd629"},"mode":"edit"} /-->
+
+
+ChatGPT said:
+Perfect. This confirms it: your page does contain proper Gutenberg blocks — specifically ACF blocks of type acf/post-teasers.
+
+✅ What That Means
+Each block looks like this:
+
+html
+Copy
+Edit
+<!-- wp:acf/post-teasers { "name": "acf/post-teasers", "data": { ... } } /-->
+So when you call:
+
+js
+Copy
+Edit
+const blocks = parse(content.value.content.rendered)
+you should get structured output like:
+
+js
+Copy
+Edit
+{
+  blockName: 'acf/post-teasers',
+  attrs: {
+    name: 'acf/post-teasers',
+    data: {
+      post_teasers_category: '54',
+      ...
+    }
+  },
+  ...
+}
+Your current resolveComponent() only looks for:
+
+js
+Copy
+Edit
+case 'custom/post-teaser-section':
+but you need:
+
+js
+Copy
+Edit
+case 'acf/post-teasers':
+  return PostTeaserSection
+That’s why these were falling through to UnhandledBlock or RawHtmlBlock.
+
+🔧 Fix your resolveComponent() function
+Update:
+
+js
+Copy
+Edit
+function resolveComponent(blockName) {
+  switch (blockName) {
+    case 'acf/post-teasers': // ✅ this is your block
+      return PostTeaserSection
+    case null:
+      return RawHtmlBlock
+    default:
+      return UnhandledBlock
+  }
+}
+🧪 Bonus: Want to see the attrs.data?
+Inside your PostTeaserSection.vue, you’ll now get block.attrs.data, which contains all your ACF field values:
+
+vue
+Copy
+Edit
+<script setup>
+const props = defineProps({ block: Object })
+console.log('PostTeaserSection block:', props.block)
+</script>
+Now you can use:
+
+js
+Copy
+Edit
+props.block.attrs.data.post_teasers_category
+To fetch related posts or control rendering.
+
+🧵 Next Steps
+You're now getting structured blocks. From here you can:
+
+Write logic in <PostTeaserSection.vue> to pull in posts by category ID
+
+Handle heading, description, etc from the ACF fields
+
+Build out per-block templates
+
+Let me know if you want to stub out PostTeaserSection.vue with working logic.
+
+
+
+
+
+
+You said:
+Parsed blocks: Proxy(Array) {0: {…}}[[Handler]]: MutableReactiveHandler[[Target]]: Array(1)0: {blockName: null, attrs: {…}, innerBlocks: Array(0), innerHTML: '\x3C!-- post-teasers.php -->  <h2>Presentations</h2>\n…out-b.php -->        </li>\n          </ul>\n      ', innerContent: Array(1)}length: 1[[Prototype]]: Array(0)[[IsRevoked]]: false
+
+
+ChatGPT said:
+Thanks for confirming — and this is the crux of the issue.
+
+Despite your page having valid <!-- wp:acf/post-teasers ... /--> block comments in the editor, your content.rendered is giving you only:
+
+js
+Copy
+Edit
+{
+  blockName: null,
+  innerHTML: '<!-- post-teasers.php -->  <h2>Presentations</h2>…',
+}
+So: the blocks are saved in the post content, but the rendered output you’re parsing no longer includes the <!-- wp: markers — which means the block parser has nothing to work with.
+
+🧨 The Core Issue
+You're parsing content.rendered, but the block comments (<!-- wp:... -->) are being stripped during rendering.
+
+This happens when:
+
+You're using ACF PHP templates that echo HTML with no <!-- wp: markers
+
+The rendered content has already been run through render_block(), which removes block comments
+
+You’re using filters or plugins that sanitize the output
+
+✅ The Real Fix: use the raw block content
+You need to request:
+
+http
+Copy
+Edit
+/wp-json/wp/v2/pages?slug=presentations&context=edit&_fields=content.raw
+This gives you the unrendered content — with the full <!-- wp:acf/post-teasers ... /--> intact.
+
+🔒 But This Requires Authentication
+Because context=edit exposes raw post content, WordPress protects it.
+
+✅ Your options:
+Option A: Use REST API authentication
+Create a REST API Application Password
+
+Add Basic Auth header:
+
+js
+Copy
+Edit
+headers: {
+  Authorization: 'Basic ' + btoa(`${username}:${appPassword}`)
+}
+Option B: Use wp_localize_script to pass a nonce
+If your Vue frontend is bundled into WordPress, you can enqueue it and do:
+
+php
+Copy
+Edit
+wp_localize_script( 'your-handle', 'wpApiSettings', [
+  'root' => esc_url_raw( rest_url() ),
+  'nonce' => wp_create_nonce( 'wp_rest' ),
+] );
+And in your fetch:
+
+js
+Copy
+Edit
+headers: {
+  'X-WP-Nonce': wpApiSettings.nonce
+}
+Option C: Build an internal proxy endpoint
+If you want to avoid auth in the browser, you can create a custom REST endpoint or proxy in functions.php that returns content.raw for public posts.
+
+TL;DR
+You do have Gutenberg blocks.
+
+The parser works — but you’re feeding it content.rendered, which is already stripped of block markers.
+
+You must fetch content.raw using context=edit, which requires authentication.
+
+Once you do that, your blocks will parse correctly.
+
+Want help adding Basic Auth or setting up a quick functions.php proxy endpoint for your dev site?
+
+
+
+
+
+
+You said:
+which option is the most secure?
+
+
+ChatGPT said:
+Here's a breakdown of the three main options from a security perspective, focused on production-readiness, exposure surface, and developer control:
+
+✅ Option C: Internal Proxy Endpoint (Recommended)
+Security: ★★★★☆
+Best for: Full control, no public API exposure, clean separation
+
+How it works:
+You create a custom REST endpoint in WordPress that internally loads the post and returns post_content (or parsed blocks) only for public posts or trusted slugs.
+
+Why it's secure:
+
+No client-side credentials or nonces exposed
+
+You can strictly limit what it returns (e.g., specific post types, slugs, fields)
+
+Easy to audit and harden
+
+Sample PHP:
+
+php
+Copy
+Edit
+add_action('rest_api_init', function () {
+  register_rest_route('fezziwig/v1', '/blocks/(?P<slug>[^/]+)', [
+    'methods'  => 'GET',
+    'callback' => function ($request) {
+      $slug = sanitize_title($request['slug']);
+      $post = get_page_by_path($slug, OBJECT, ['page', 'post']);
+
+      if (!$post || $post->post_status !== 'publish') {
+        return new WP_REST_Response(['error' => 'Not found'], 404);
+      }
+
+      return new WP_REST_Response([
+        'blocks' => $post->post_content, // or parse_blocks() if you prefer
+      ]);
+    },
+    'permission_callback' => '__return_true', // optional: tighten this up if needed
+  ]);
+});
+Fetch from Vue:
+
+js
+Copy
+Edit
+const res = await fetch(`${apiBase}/wp-json/fezziwig/v1/blocks/presentations`)
+const json = await res.json()
+const blocks = parse(json.blocks)
+⚠️ Option A: Basic Auth with Application Passwords
+Security: ★★★☆☆
+Best for: Short-term use in private dev environments
+
+Why it’s risky:
+
+Basic Auth transmits a base64-encoded username and password on every request
+
+If used in the browser, these credentials are exposed in network traffic and dev tools
+
+Even with HTTPS, it’s vulnerable to leakage (e.g., CORS misconfigurations)
+
+Mitigation: Never use in public-facing front-ends. Acceptable in Postman or CURL during dev.
+
+⚠️ Option B: Nonce via wp_localize_script
+Security: ★★☆☆☆
+Best for: Coupled themes/plugins where Vue is loaded inside WordPress
+
+Why it’s weaker:
+
+Nonces are tied to logged-in users; they only work if the current user is authenticated in the browser
+
+That makes it not suitable for public/unauthenticated access
+
+Good when:
+
+You're building a Vue interface for site admins (like a block-based admin UI)
+
+You're already inside the WP environment
+
+🏁 Final Recommendation
+Go with Option C (custom proxy endpoint):
+
+You control exactly what gets exposed
+
+You avoid exposing sensitive credentials or nonces
+
+You can progressively enhance it (e.g., cache, sanitize, restrict fields)
+
+Want help implementing that now, or expanding it to return parsed blocks instead of raw content?

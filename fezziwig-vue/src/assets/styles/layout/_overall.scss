@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: $color-outer-bg;
+  color: $text-color;
+  margin: 0;
+  padding: 0;
+}
+
+.section {
+  padding: 0;
+}
+
+.section-nav {
+  padding: 0;
+  background-color: $color-beige-lighter;
+}
+
+.entry-content {
+  margin: 0;
+}
