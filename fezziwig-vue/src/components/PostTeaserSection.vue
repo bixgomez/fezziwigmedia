@@ -30,7 +30,8 @@ import { ref, onMounted } from 'vue'
 import PostTeaser from './PostTeaser.vue'
 
 const props = defineProps({
-  block: { type: Object, required: true },
+  block: { type: Object, required: false },
+  categorySlug: { type: String, required: false },
 })
 
 const posts = ref([])
@@ -38,19 +39,29 @@ const categoryTitle = ref('')
 const categoryDescription = ref('')
 
 onMounted(async () => {
-  const data = props.block.attrs.data
-  const catId = data.post_teasers_category
   const apiBase = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
+  let catId, category
 
-  // Fetch category data by ID
-  const catRes = await fetch(`${apiBase}/wp-json/wp/v2/categories/${catId}`)
-  const category = await catRes.json()
+  if (props.categorySlug) {
+    // Route-based: fetch by slug first
+    const catRes = await fetch(
+      `${apiBase}/wp-json/wp/v2/categories?slug=${props.categorySlug}`,
+    )
+    const [cat] = await catRes.json()
+    category = cat
+    catId = cat.id
+  } else {
+    // Block-based: use ID from block data
+    const data = props.block.attrs.data
+    catId = data.post_teasers_category
+    const catRes = await fetch(`${apiBase}/wp-json/wp/v2/categories/${catId}`)
+    category = await catRes.json()
+  }
 
-  // Handle the heading logic
   categoryTitle.value = category.name
   categoryDescription.value = category.description
 
-  // Fetch posts in this category
+  // Fetch posts (same for both cases)
   const postRes = await fetch(
     `${apiBase}/wp-json/wp/v2/posts?categories=${catId}&_embed`,
   )
