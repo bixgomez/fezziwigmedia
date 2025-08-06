@@ -1,3 +1,7 @@
+.post-teasers-container {
+  container-type: inline-size;
+}
+
 .post-teasers {
   display: flex;
   flex-direction: column;
@@ -15,7 +19,7 @@
   grid-template-columns: 8rem auto;
 }
 
-// Only post teasers which are links (probably all)
+.post-teaser,
 a.post-teaser {
   text-decoration: none;
   color: $color-blue--darker;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The template for displaying archive pages
  *
@@ -10,44 +11,43 @@
 get_header();
 ?>
 
+<?php
+$category = get_queried_object();
+$category_slug = $category->slug;
+?>
+
 <!-- category.php -->
 <main id="content" role="main" class="section site-content">
-	<div id="content-inner" class="section-inner">
+  <div id="content-inner" class="section-inner">
 
-		<?php if ( have_posts() ) : ?>
+    <?php if (have_posts()) : ?>
 
-			<header class="page-header">
-				<?php
-				the_archive_title( '<h1 class="page-title">', '</h1>' );
-				the_archive_description( '<div class="archive-description">', '</div>' );
-				?>
-			</header><!-- .page-header -->
+      <header class="page-header">
+        <?php
+        the_archive_title('<h1 class="page-title">', '</h1>');
+        the_archive_description('<div class="archive-description">', '</div>');
+        ?>
+      </header><!-- .page-header -->
 
-			<?php
-			/* Start the Loop */
+    <?php
+      /* Start the Loop */
+      echo '<div class="post-teasers-container"><div class="post-teasers post-teasers--' . $category->slug . '">';
+      while (have_posts()) :
+        the_post();
+        get_template_part('template-parts/content-teaser');
+      endwhile;
+      echo '</div></div>';
 
-			$category = get_queried_object();
-			$category_slug = $category->slug;
+      the_posts_navigation();
 
-			echo '<div class="post-teasers post-teasers--' . $category->slug . '">';
+    else :
 
-			while ( have_posts() ) :
-				the_post();
-				get_template_part( 'template-parts/content-teaser' );
-			endwhile;
+      get_template_part('template-parts/content', 'none');
 
-			echo '</div>';
+    endif;
+    ?>
 
-			the_posts_navigation();
-
-		else :
-
-			get_template_part( 'template-parts/content', 'none' );
-
-		endif;
-		?>
-
-	</div>
+  </div>
 </main><!-- #main -->
 
 <?php
