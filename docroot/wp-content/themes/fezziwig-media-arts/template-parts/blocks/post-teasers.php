@@ -1,9 +1,9 @@
 <?php
 echo '<!-- post-teasers.php -->';
 
-$category_id = get_field('post_teasers_category');
-$show_title = get_field('show_title');
-$show_description = get_field('show_description');
+$category_id = get_field('post_teasers_category', $block['id']);
+$show_title = get_field('show_title', $block['id']);
+$show_description = get_field('show_description', $block['id']);
 
 if ($category_id) :
   $category = get_category($category_id);
