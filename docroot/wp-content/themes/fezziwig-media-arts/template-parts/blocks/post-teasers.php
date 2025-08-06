@@ -1,35 +1,45 @@
 <?php
 echo '<!-- post-teasers.php -->';
+
 $category_id = get_field('post_teasers_category');
-if( $category_id ) :
+$show_title = get_field('show_title');
+$show_description = get_field('show_description');
+
+if ($category_id) :
   $category = get_category($category_id);
   $category_slug = $category->slug;
   $category_name = $category->name;
   $category_description = $category->description;
-  ?>
-  <h2><?php echo esc_html($category_name); ?></h2>
-  <p><?php echo esc_html($category_description); ?></p>
+?>
+
+  <?php if ($show_title) : ?>
+    <h2><?php echo esc_html($category_name); ?></h2>
+  <?php endif; ?>
+  <?php if ($show_description) : ?>
+    <p><?php echo esc_html($category_description); ?></p>
+  <?php endif; ?>
+
   <?php
   $args = array(
     'cat' => $category_id,
     'posts_per_page' => 5,
   );
-  $query = new WP_Query( $args );
-  if( $query->have_posts() ) : ?>
+  $query = new WP_Query($args);
+  if ($query->have_posts()) : ?>
     <ul class="post-teasers">
-      <?php while( $query->have_posts() ) : $query->the_post(); ?>
+      <?php while ($query->have_posts()) : $query->the_post(); ?>
         <li>
-          <?php 
+          <?php
           // First, try to include the template part specific to the current category
-          if ( locate_template( 'template-parts/content-teaser-' . $category_slug . '.php', false, false ) ) {
+          if (locate_template('template-parts/content-teaser-' . $category_slug . '.php', false, false)) {
             // Include the category-specific template (like content-teaser-presentations.php)
-            get_template_part( 'template-parts/content-teaser', $category_slug );
-          } elseif ( locate_template( 'template-parts/content-teaser.php', false, false ) ) {
+            get_template_part('template-parts/content-teaser', $category_slug);
+          } elseif (locate_template('template-parts/content-teaser.php', false, false)) {
             // Fallback to the general teaser template
-            get_template_part( 'template-parts/content-teaser' );
+            get_template_part('template-parts/content-teaser');
           } else {
             // Final fallback if neither exist
-            get_template_part( 'template-parts/content' );
+            get_template_part('template-parts/content');
           }
           ?>
         </li>
@@ -41,7 +51,7 @@ if( $category_id ) :
     ?>
   <?php else : ?>
     <p>No posts found in this category.</p>
-  <?php endif;
+<?php endif;
 else :
   echo '<p>No category selected.</p>';
 endif;

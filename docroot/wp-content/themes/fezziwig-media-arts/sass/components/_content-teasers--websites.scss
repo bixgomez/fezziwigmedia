@@ -10,21 +10,6 @@
   list-style: none;
   padding: 0;
   container-type: inline-size;
-
-  @include breakpoint($md) {
-    // grid-template-columns: 1fr 1fr;
-    // gap: 3cqi;
-  }
-
-  @include breakpoint($lg) {
-    // grid-template-columns: 1fr 1fr 1fr;
-    // gap: 3.5cqi;
-  }
-
-  @include breakpoint($xl) {
-    // grid-template-columns: 1fr 1fr 1fr 1fr;
-    // gap: 2cqi;
-  }
 }
 
 .post-teaser--websites {
@@ -84,18 +69,6 @@
     }
   }
 
-  @include breakpoint($md) {
-    // width: 48cqi;
-  }
-
-  @include breakpoint($lg) {
-    // width: 31cqi;
-  }
-
-  @include breakpoint($xl) {
-    // width: 23.5cqi;
-  }
-
   &:hover {
     .post-teaser-image {
       img {
@@ -109,3 +82,5 @@
     }
   }
 }
+
+
