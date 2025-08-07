@@ -31,12 +31,12 @@ if ($category_id) :
         <li>
           <?php
           // First, try to include the template part specific to the current category
-          if (locate_template('template-parts/content-teaser-' . $category_slug . '.php', false, false)) {
-            // Include the category-specific template (like content-teaser-presentations.php)
-            get_template_part('template-parts/content-teaser', $category_slug);
-          } elseif (locate_template('template-parts/content-teaser.php', false, false)) {
+          if (locate_template('template-parts/post-teaser-' . $category_slug . '.php', false, false)) {
+            // Include the category-specific template (like post-teaser-presentations.php)
+            get_template_part('template-parts/post-teaser', $category_slug);
+          } elseif (locate_template('template-parts/post-teaser.php', false, false)) {
             // Fallback to the general teaser template
-            get_template_part('template-parts/content-teaser');
+            get_template_part('template-parts/post-teaser');
           } else {
             // Final fallback if neither exist
             get_template_part('template-parts/content');

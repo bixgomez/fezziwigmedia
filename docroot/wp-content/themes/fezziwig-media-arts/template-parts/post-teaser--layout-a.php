@@ -7,6 +7,7 @@
  *
  * @package Fezziwig_Media_Arts
  */
+
 ?>
 
 <?php
@@ -18,8 +19,8 @@ if (!empty($categories)) {
 }
 ?>
 
-<!-- content-teaser--default.php -->
-<a href="<?php echo esc_url(get_permalink()); ?>" class="post-teaser post-teaser--<?php echo $category_slug; ?>">
+<!-- post-teaser--layout-a.php -->
+<a href="<?php echo esc_url(get_permalink()); ?>" id="post-<?php the_ID(); ?>" <?php post_class(array('post-teaser', 'post-teaser--' . $category_slug)); ?>>
 
   <div class="post-teaser-image">
     <?php the_post_thumbnail('thumbnail'); ?>
@@ -28,16 +29,12 @@ if (!empty($categories)) {
   <div class="post-teaser-text">
     <header class="entry-header">
       <?php the_title('<h2 class="entry-title">', '</h2>'); ?>
-    </header>
+    </header><!-- .entry-header -->
 
     <div class="entry-content">
       <?php the_excerpt(); ?>
-    </div>
-
-    <div class="read-more-link">
-      READ MORE
-    </div>
+    </div><!-- .entry-content -->
   </div>
 
 </a><!-- #post-<?php the_ID(); ?> -->
-<!-- /content-teaser--default.php -->
+<!-- /post-teaser--layout-a.php -->

@@ -34,7 +34,7 @@ $category_slug = $category->slug;
       echo '<div class="post-teasers-container"><div class="post-teasers post-teasers--' . $category->slug . '">';
       while (have_posts()) :
         the_post();
-        get_template_part('template-parts/content-teaser');
+        get_template_part('template-parts/post-teaser');
       endwhile;
       echo '</div></div>';
 
