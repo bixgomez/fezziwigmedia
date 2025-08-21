@@ -26,6 +26,8 @@ function resolveComponent(blockName) {
   switch (blockName) {
     case 'acf/post-teasers':
       return PostTeaserSection
+    case 'core/post-terms':
+      return RawHtmlBlock
     case null:
       return RawHtmlBlock
     default:
