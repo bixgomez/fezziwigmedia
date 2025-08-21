@@ -41,23 +41,22 @@ onMounted(async () => {
   slug.value = window.location.pathname.split('/').filter(Boolean).pop()
   const apiBase = import.meta.env.VITE_API_BASE_URL
 
-  // 1) Fetch page data for title
+  // Fetch blocks and title in parallel
   try {
-    const pageRes = await fetch(`${apiBase}/wp-json/wp/v2/pages?slug=${slug.value}`)
+    const [blocksRes, pageRes] = await Promise.all([
+      fetch(`${apiBase}/wp-json/fezziwig/v1/blocks/${slug.value}`),
+      fetch(`${apiBase}/wp-json/wp/v2/pages?slug=${slug.value}`)
+    ])
+    
+    const { blocks: raw } = await blocksRes.json()
     const [pageData] = await pageRes.json()
+    
+    // Set the title
     if (pageData) {
       pageTitle.value = pageData.title.rendered
     }
-  } catch (e) {
-    console.error('Page fetch error:', e)
-  }
-
-  // 2) hit our custom proxy endpoint for raw block comments
-  try {
-    const res = await fetch(`${apiBase}/wp-json/fezziwig/v1/blocks/${slug.value}`)
-    const { blocks: raw } = await res.json()
-
-    // 3) parse them into structured block objects
+    
+    // Parse the blocks
     blocks.value = parse(raw)
     console.log('Parsed blocks:', blocks.value)
   } catch (e) {

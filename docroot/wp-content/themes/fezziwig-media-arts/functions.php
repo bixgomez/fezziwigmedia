@@ -302,7 +302,8 @@ add_action('rest_api_init', function () {
       }
 
       return new WP_REST_Response([
-        'blocks' => $post->post_content,  // or use parse_blocks($post->post_content)
+        'blocks' => $post->post_content,
+        'title' => apply_filters('the_title', $post->post_title),
       ]);
     },
     'permission_callback' => '__return_true', // tighten this up as needed
