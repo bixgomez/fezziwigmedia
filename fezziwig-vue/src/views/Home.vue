@@ -1,7 +1,21 @@
 <template>
   <div v-if="page">
-    <h1 v-html="page.title.rendered" />
-    <div v-html="page.content.rendered" />
+    <section class="layout--home-page">
+      <div class="image">
+        <div class="inner">
+          <div v-if="featuredImage" class="featured-image">
+            <img
+              :src="featuredImage.source_url"
+              :alt="featuredImage.alt_text"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="page-content">
+        <h1 v-html="page.title.rendered" />
+        <div v-html="page.content.rendered" />
+      </div>
+    </section>
   </div>
   <div v-else>
     <p>Loading...</p>
@@ -16,6 +30,11 @@ export default {
       page: null,
     }
   },
+  computed: {
+    featuredImage() {
+      return this.page?._embedded?.['wp:featuredmedia']?.[0]
+    },
+  },
   async mounted() {
     // First, get the site settings
     const settingsResponse = await fetch(
@@ -25,7 +44,7 @@ export default {
 
     // Then fetch the actual home page by ID
     const pageResponse = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/pages/${settings.page_on_front}`,
+      `${import.meta.env.VITE_API_BASE_URL}/wp-json/wp/v2/pages/${settings.page_on_front}?_embed`,
     )
     this.page = await pageResponse.json()
   },
