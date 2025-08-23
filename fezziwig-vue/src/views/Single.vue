@@ -43,16 +43,20 @@ onMounted(async () => {
 
   // Fetch blocks and title in parallel
   try {
-    const [blocksRes, pageRes] = await Promise.all([
+    const [blocksRes, pageRes, postRes] = await Promise.all([
       fetch(`${apiBase}/wp-json/fezziwig/v1/blocks/${slug.value}`),
-      fetch(`${apiBase}/wp-json/wp/v2/pages?slug=${slug.value}`)
+      fetch(`${apiBase}/wp-json/wp/v2/pages?slug=${slug.value}`),
+      fetch(`${apiBase}/wp-json/wp/v2/posts?slug=${slug.value}`)
     ])
     
     const { blocks: raw } = await blocksRes.json()
     const [pageData] = await pageRes.json()
+    const [postData] = await postRes.json()
     
-    // Set the title
-    if (pageData) {
+    // Set the title - check posts first, then pages
+    if (postData) {
+      pageTitle.value = postData.title.rendered
+    } else if (pageData) {
       pageTitle.value = pageData.title.rendered
     }
     
