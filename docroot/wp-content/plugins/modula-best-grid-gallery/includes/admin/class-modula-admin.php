@@ -348,8 +348,8 @@ class Modula_Admin {
 		</h2>
 		<?php
 
-		if ( 'extensions' == $active_tab ) {
-			$addons = Modula_Addons::get_instance();
+		if ( 'extensions' === $active_tab ) {
+			$addons  = Modula_Addons::get_instance();
 			$pro_ext = false;
 
 			if ( ! isset( $_GET['extensions'] ) || 'pro' === $_GET['extensions'] ) {
@@ -541,6 +541,18 @@ class Modula_Admin {
 				wp_send_json_error( esc_html__( 'You must select a gallery where the images should be added.', 'modula-best-grid-gallery' ) );
 			}
 
+			die();
+		}
+
+		$gallery_post = get_post( $gallery_id );
+
+		if ( ! $gallery_post || 'modula-gallery' !== $gallery_post->post_type ) {
+			wp_send_json_error( esc_html__( 'Selected ID is not a Modula gallery', 'modula-best-grid-gallery' ) );
+			die();
+		}
+
+		if ( ! current_user_can( 'edit_post', $gallery_id ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to edit this gallery.', 'modula-best-grid-gallery' ) );
 			die();
 		}
 

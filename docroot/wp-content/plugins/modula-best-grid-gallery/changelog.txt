@@ -1,3 +1,62 @@
+= 2.13.4 - 08.12.2025 =
+Fixed: Security issues.
+
+= 2.13.3 - 02.12.2025 =
+Fixed: Vulnerability in zip import.
+
+= 2.13.2 - 19.11.2025 =
+Updated: Performance improvements.
+
+= 2.13.1 - 14.11.2025 =
+Added: Enhancements for zip import.
+
+= 2.13.0 - 12.11.2025 =
+Added: Yoast/Rank Math/SEOPress image sitemaps.
+
+= 2.12.29 - 07.11.2025 =
+Fixed: Security issue.
+
+= 2.12.28 - 05.11.2025 =
+Added: Filters to exclude Modula JS files from third-party optimization plugins.
+Added: Black Friday upsells & notifications updates.
+Fixed: Missing data-image-id on lightbox link.
+
+= 2.12.27 - 24.10.2025 =
+Fixed: Left/Right thumbnail navigation.
+Fixed: Lightbox image display.
+Fixed: Custom gallery Guttenberg preview.
+Fixed: Divi builder compatibility.
+
+= 2.12.26 - 20.10.2025 =
+Updated: Fancybox Lightbox to version 5.0.36.
+Changed: Enabled the Custom Responsiveness setting by default for a better out of the box experience.
+Fixed: Missing text domains in some strings.
+Fixed: Load in view setting causing gallery images to remain hidden.
+Added: Debounce on window resize.
+Added: Interactive elements now include proper button roles and visible focus indicators, improving WCAG 2.1 compliance.
+
+= 2.12.25 - 18.09.2025 =
+Update: Better fit for social icons when using smaller images.
+
+= 2.12.24 - 29.08.2025 =
+Fixed: Should not show expand icon if no social share buttons are enabled.
+
+= 2.12.23 - 29.08.2025 =
+Update: Share icons.
+Added: Collapsable social buttons for desktop and set default to be collapsed.
+
+= 2.12.22 - 28.08.2025 =
+Fixed: Social icons hover display issue.
+
+= 2.12.21 - 27.08.2025 =
+Fixed: Loading effect 'in view' setting not properly working.
+
+= 2.12.20 - 20.08.2025 =
+Fixed: Gallery jumping/scrolling issue in Elementor due to lazy load re-rendering.
+
+= 2.12.19 - 12.08.2025 =
+Fixed: Broken lightbox images when original image type was .heic
+
 = 2.12.18 - 28.07.2025 =
 Added: Filter `modula_show_alignment_options` to allow enabling image alignment options.
 Fixed: Inconsistency between masonry script responsive breakpoints and CSS breakpoints.

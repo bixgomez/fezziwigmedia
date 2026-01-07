@@ -409,16 +409,23 @@ class Modula_Gallery_Upload {
 	 * @return void
 	 */
 	public function check_folder( $folder ) {
-		// If no folder is specified, return false
 		if ( empty( $folder ) ) {
 			return false;
 		}
-		// If not dir, return false
-		if ( ! is_dir( $folder ) ) {
+
+		$real_path  = realpath( $folder );
+		$upload_dir = wp_upload_dir();
+		$base_path  = realpath( $upload_dir['basedir'] );
+
+		if ( ! $real_path || ! $base_path || 0 !== strpos( $real_path, $base_path ) ) {
 			return false;
 		}
-		// If the folder does not exist, return false
-		$files_folders = scandir( $folder );
+
+		if ( ! is_dir( $real_path ) ) {
+			return false;
+		}
+
+		$files_folders = scandir( $real_path );
 		if ( ! $files_folders ) {
 			return false;
 		}
@@ -564,14 +571,30 @@ class Modula_Gallery_Upload {
 			wp_send_json_error( __( 'No files were provided.', 'modula-best-grid-gallery' ) );
 		}
 
-		$file        = wp_unslash( $_POST['file'] );
-		$delete_file = 'false' === sanitize_text_field( wp_unslash( $_POST['delete_files'] ) ) ? false : true;
+		$file = wp_unslash( $_POST['file'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-		$attachment_id = $this->upload_image( $file, $delete_file );
+		$real_path    = realpath( $file );
+		$uploads_dir  = wp_upload_dir();
+		$allowed_base = realpath( $uploads_dir['basedir'] );
+
+		if ( false === $real_path || false === $allowed_base || 0 !== strpos( $real_path, $allowed_base ) ) {
+			wp_send_json_error( __( 'Invalid file path.', 'modula-best-grid-gallery' ) );
+		}
+
+		if ( ! file_exists( $real_path ) || ! is_readable( $real_path ) ) {
+			wp_send_json_error( __( 'File does not exist or is not readable.', 'modula-best-grid-gallery' ) );
+		}
+
+		$delete_file = isset( $_POST['delete_files'] ) && 'false' !== sanitize_text_field( wp_unslash( $_POST['delete_files'] ) ) ? true : false;
+
+		$attachment_id = $this->upload_image( $real_path, $delete_file );
 		if ( ! $attachment_id ) {
-			$prev_uploaded_files       = $this->get_uploaded_error_files( absint( $_POST['post_ID'] ) );
-			$uploaded_files['files'][] = $_POST['file'];
-			$this->update_uploaded_error_files( absint( $_POST['post_ID'] ), array_merge( $prev_uploaded_files, $uploaded_files ) );
+			$post_id = isset( $_POST['post_ID'] ) ? absint( $_POST['post_ID'] ) : 0;
+			if ( $post_id > 0 ) {
+				$prev_uploaded_files       = $this->get_uploaded_error_files( $post_id );
+				$uploaded_files['files'][] = $file;
+				$this->update_uploaded_error_files( $post_id, array_merge( $prev_uploaded_files, $uploaded_files ) );
+			}
 			wp_send_json_error( __( 'The file could not be uploaded.', 'modula-best-grid-gallery' ) );
 		}
 		// Return the image ID
@@ -1031,72 +1054,175 @@ class Modula_Gallery_Upload {
 
 		$zip        = new ZipArchive();
 		$zip_opened = $zip->open( $file );
-		if ( $zip_opened !== true ) {
+		if ( true !== $zip_opened ) {
 			$this->delete_atachment( $file_id, true );
 			wp_send_json_error( __( 'Could not open ZIP file.', 'modula-best-grid-gallery' ) );
 		}
 
-		// Get allowed mime types
 		$allowed_mime_types = $this->define_allowed_mime_types();
 
-		// Check each file in the zip
-		$valid_files = true;
-		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
-			$stat      = $zip->statIndex( $i );
-			$file_name = basename( $stat['name'] );
-
-			// Skip directories
-			if ( substr( $file_name, -1 ) === '/' ) {
-				continue;
-			}
-
-			// Check file extension against allowed mime types
-			$file_type = wp_check_filetype( $file_name, $allowed_mime_types );
-			if ( empty( $file_type['type'] ) ) {
-				$valid_files = false;
-				break;
-			}
-		}
-
-		$zip->close();
-
-		if ( ! $valid_files ) {
-			$this->delete_atachment( $file_id, true );
-			wp_send_json_error( __( 'ZIP file contains invalid or disallowed file types. Only image files are permitted.', 'modula-best-grid-gallery' ) );
-		}
-
-		// Get the base path.
 		$base       = pathinfo( $file, PATHINFO_DIRNAME );
 		$file_name  = pathinfo( $file, PATHINFO_FILENAME );
 		$timestamp  = time();
 		$unzip_path = $base . '/' . $file_name . $timestamp;
 
-		// Set the WP_Filesystem.
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
+		global $wp_filesystem;
 
-		// Unzip the file.
-		$response = unzip_file( $file, $unzip_path );
-		if ( is_wp_error( $response ) ) {
+		if ( ! $wp_filesystem->mkdir( $unzip_path, FS_CHMOD_DIR ) ) {
+			$zip->close();
 			$this->delete_atachment( $file_id, true );
-			wp_send_json_error( $response->get_error_message() );
+			wp_send_json_error( __( 'Could not create extraction directory.', 'modula-best-grid-gallery' ) );
 		}
 
-		// Delete the original zip file
-		$this->delete_atachment( $file_id, true );
+		$unzip_path = realpath( $unzip_path );
+		if ( false === $unzip_path ) {
+			$zip->close();
+			$this->delete_atachment( $file_id, true );
+			wp_send_json_error( __( 'Invalid extraction path.', 'modula-best-grid-gallery' ) );
+		}
 
-		$folders = array( $unzip_path );
-		// Check if the folder has subfolders.
+		$has_valid_files = false;
+		$valid_files     = array();
+
+		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+			$stat      = $zip->statIndex( $i );
+			$full_path = $stat['name'];
+
+			if ( substr( $full_path, -1 ) === '/' ) {
+				continue;
+			}
+
+			$file_name = basename( $full_path );
+			if ( empty( $file_name ) ) {
+				continue;
+			}
+
+			if ( substr( $file_name, 0, 2 ) === '._' ) {
+				continue;
+			}
+
+			if ( strpos( $full_path, '__MACOSX/' ) === 0 ) {
+				continue;
+			}
+
+			$file_type = wp_check_filetype( $file_name, $allowed_mime_types );
+			if ( empty( $file_type['type'] ) ) {
+				continue;
+			}
+
+			$sanitized_path = $this->sanitize_zip_path( $full_path, $unzip_path );
+			if ( false === $sanitized_path ) {
+				continue;
+			}
+
+			$has_valid_files = true;
+			$valid_files[]   = array(
+				'index' => $i,
+				'path'  => $sanitized_path,
+			);
+		}
+
+		if ( ! $has_valid_files ) {
+			$zip->close();
+			$wp_filesystem->rmdir( $unzip_path, true );
+			$this->delete_atachment( $file_id, true );
+			wp_send_json_error( __( 'ZIP file does not contain any valid image files. Only image files are permitted.', 'modula-best-grid-gallery' ) );
+		}
+
+		foreach ( $valid_files as $file_data ) {
+			$content = $zip->getFromIndex( $file_data['index'] );
+			if ( false === $content ) {
+				continue;
+			}
+
+			$target_file = $file_data['path'];
+			$target_dir  = dirname( $target_file );
+
+			if ( ! $wp_filesystem->is_dir( $target_dir ) ) {
+				if ( ! $wp_filesystem->mkdir( $target_dir, FS_CHMOD_DIR, true ) ) {
+					continue;
+				}
+			}
+
+			if ( ! $wp_filesystem->put_contents( $target_file, $content, FS_CHMOD_FILE ) ) {
+				continue;
+			}
+		}
+
+		$zip->close();
+
+		$this->delete_atachment( $file_id, true );
+		$this->remove_empty_folders( $unzip_path, $unzip_path );
+
+		$folders    = array( $unzip_path );
 		$subfolders = $this->list_folders( $unzip_path, true );
 		if ( ! empty( $subfolders ) ) {
 			foreach ( $subfolders as $subfolder ) {
-				// Add the subfolder path to the folders array.
 				$folders[] = $subfolder['path'];
 			}
 		}
 
 		// Send the unzip path.
 		wp_send_json_success( $folders );
+	}
+
+	/**
+	 * Sanitize ZIP file path to prevent path traversal attacks
+	 *
+	 * @param string $zip_path The path from the ZIP archive
+	 * @param string $base_path The base extraction directory
+	 * @return string|false The sanitized absolute path, or false if path traversal detected
+	 *
+	 * @since 2.11.0
+	 */
+	private function sanitize_zip_path( $zip_path, $base_path ) {
+		$zip_path = str_replace( "\0", '', $zip_path );
+		$zip_path = str_replace( '\\', '/', $zip_path );
+		$zip_path = ltrim( $zip_path, './' );
+		$parts    = explode( '/', $zip_path );
+
+		$sanitized_parts = array();
+		foreach ( $parts as $part ) {
+			if ( '' === $part ) {
+				continue;
+			}
+
+			if ( '.' === $part ) {
+				continue;
+			}
+
+			if ( '..' === $part ) {
+				return false;
+			}
+
+			if ( preg_match( '/^[a-zA-Z]:$/', $part ) ) {
+				return false;
+			}
+
+			$sanitized_parts[] = $part;
+		}
+
+		$sanitized_relative = implode( '/', $sanitized_parts );
+		$full_path          = $base_path . '/' . $sanitized_relative;
+
+		$normalized = realpath( dirname( $full_path ) );
+		if ( false === $normalized ) {
+			return false;
+		}
+
+		$final_path = $normalized . '/' . basename( $full_path );
+		$base_real  = realpath( $base_path );
+		if ( false === $base_real ) {
+			return false;
+		}
+
+		if ( 0 !== strpos( $final_path, $base_real . '/' ) && $final_path !== $base_real ) {
+			return false;
+		}
+
+		return $final_path;
 	}
 
 	/**
@@ -1151,7 +1277,49 @@ class Modula_Gallery_Upload {
 		$this->update_uploaded_error_files( $gallery_id, array() );
 	}
 
-	private function delete_atachment( $file_id, $force ){
+	/**
+	 * Recursively remove empty folders
+	 *
+	 * @param string $dir Directory path to clean
+	 * @param string $root_dir Root directory to preserve (don't delete)
+	 * @return void
+	 *
+	 * @since 2.11.0
+	 */
+	private function remove_empty_folders( $dir, $root_dir ) {
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem->is_dir( $dir ) ) {
+			return;
+		}
+
+		$items = $wp_filesystem->dirlist( $dir, false, false );
+		if ( empty( $items ) ) {
+			if ( $dir === $root_dir ) {
+				return;
+			}
+			$wp_filesystem->rmdir( $dir, false );
+			return;
+		}
+
+		foreach ( $items as $item ) {
+			if ( isset( $item['type'] ) && 'd' === $item['type'] ) {
+				$subdir = trailingslashit( $dir ) . $item['name'];
+				$this->remove_empty_folders( $subdir, $root_dir );
+			}
+		}
+
+		$items = $wp_filesystem->dirlist( $dir, false, false );
+		if ( empty( $items ) ) {
+			if ( $dir === $root_dir ) {
+				return;
+			}
+
+			$wp_filesystem->rmdir( $dir, false );
+		}
+	}
+
+	private function delete_atachment( $file_id, $force ) {
 		if ( ! current_user_can( 'delete_post', $file_id ) ) {
 			return false;
 		}

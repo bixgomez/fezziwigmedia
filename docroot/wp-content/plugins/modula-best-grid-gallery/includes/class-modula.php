@@ -94,7 +94,8 @@ class Modula {
 		require_once MODULA_PATH . 'includes/class-scripts.php';
 		require_once MODULA_PATH . 'includes/ai/class-client.php';
 		require_once MODULA_PATH . 'includes/admin/class-gallery-listing-output.php';
-
+		// Yoast/Rank Math/seopress image sitemaps
+		require_once MODULA_PATH . 'includes/class-modula-image-sitemaps.php';
 		if ( is_admin() ) {
 			require_once MODULA_PATH . 'includes/admin/class-modula-readme-parser.php'; //added by Cristi in 2.7.8
 			require_once MODULA_PATH . 'includes/admin/class-modula-importer-exporter.php';
@@ -220,6 +221,7 @@ class Modula {
 	}
 
 	private function define_public_hooks() {
+		new Modula_Image_Sitemaps();
 	}
 
 	/* Enqueue Admin Scripts */
@@ -618,8 +620,8 @@ class Modula {
 
 		$now = new DateTime( 'now', $timezone );
 
-		$bf_start = new DateTime( '2024-11-01 00:00:00', $timezone );
-		$bf_end   = new DateTime( '2024-12-09 10:00:00', $timezone );
+		$bf_start = new DateTime( '2025-11-03 00:00:00', $timezone );
+		$bf_end   = new DateTime( '2025-12-03 10:00:00', $timezone );
 
 		$cym_start = new DateTime( '2024-12-09 10:01:00', $timezone );
 		$cym_end   = new DateTime( '2024-12-13 16:00:00', $timezone );
@@ -644,7 +646,7 @@ class Modula {
 		preg_match_all( '~<a(.*?)href="([^"]+)"(.*?)>~', $buttons, $matches );
 
 		$buttons  = '<a target="_blank" href="' . esc_url( $matches[2][0] ) . '" class="button">' . esc_html__( 'Free vs Premium', 'modula-best-grid-gallery' ) . '</a>';
-		$buttons .= '<a target="_blank" href="' . esc_url( $matches[2][1] ) . '" style="margin-top:10px;" class="wpchill-bf-upsell button">' . esc_html__( '40% OFF for Black Friday', 'modula-best-grid-gallery' ) . '</a>';
+		$buttons .= '<a target="_blank" href="' . esc_url( $matches[2][1] ) . '" style="margin-top:10px;" class="wpchill-bf-upsell button">' . esc_html__( '65% OFF for Black Friday', 'modula-best-grid-gallery' ) . '</a>';
 		return $buttons;
 	}
 
