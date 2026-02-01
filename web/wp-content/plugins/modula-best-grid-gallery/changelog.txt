@@ -1,3 +1,18 @@
+= 2.13.8 - 29.01.2026 =
+Fixed: Compatibility with Imagify plugin.
+Fixed: Core gallery importer.
+Added: Support for shortcodes dropdown in gallery edit screen.
+
+= 2.13.7 - 27.01.2026 =
+Fixed: Security issues.
+
+= 2.13.6 - 20.01.2026 =
+Fixed: Gutenberg block editor was throwing an error due to circular references.
+
+= 2.13.5 - 14.12.2025 =
+Fixed: Fatal error when the theme enqueues styles for all widgets.
+Fixed: Security issues.
+
 = 2.13.4 - 08.12.2025 =
 Fixed: Security issues.
 

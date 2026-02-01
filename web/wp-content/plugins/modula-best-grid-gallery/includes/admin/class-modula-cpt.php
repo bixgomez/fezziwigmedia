@@ -224,12 +224,39 @@ class Modula_CPT {
 
 		$modula_images = $this->sanitize_images( $value );
 
-		$this->batch_update_images( $modula_images, $obj->ID );
+		// Validate and filter out invalid attachment IDs before processing
+		$valid_images = array();
+		foreach ( $modula_images as $image ) {
+			if ( ! isset( $image['id'] ) || empty( $image['id'] ) ) {
+				continue;
+			}
 
+			$attachment_id = absint( $image['id'] );
+			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			// Security check: Verify the ID is an attachment
+			if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+				continue;
+			}
+
+			// Security check: Verify user has permission to edit this attachment
+			if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
+				continue;
+			}
+
+			$valid_images[] = $image;
+		}
+
+		// Only update with valid attachments
+		$this->batch_update_images( $valid_images, $obj->ID );
+
+		// Update gallery meta with filtered valid images
 		update_post_meta(
 			$obj->ID,
 			'modula-images',
-			$modula_images
+			$valid_images
 		);
 	}
 
@@ -252,8 +279,37 @@ class Modula_CPT {
 		}
 
 		// We’ll process in chunks to avoid overly large queries
+		// Additional security: Filter out any invalid attachments that may have slipped through
+		$valid_images = array();
+		foreach ( $images as $image ) {
+			if ( ! isset( $image['id'] ) || empty( $image['id'] ) ) {
+				continue;
+			}
+
+			$attachment_id = absint( $image['id'] );
+			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			// Security check: Verify the ID is an attachment
+			if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+				continue;
+			}
+
+			// Security check: Verify user has permission to edit this attachment
+			if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
+				continue;
+			}
+
+			$valid_images[] = $image;
+		}
+
+		if ( empty( $valid_images ) ) {
+			return;
+		}
+
 		$batch_size = 200;
-		$chunks     = array_chunk( $images, $batch_size );
+		$chunks     = array_chunk( $valid_images, $batch_size );
 
 		foreach ( $chunks as $chunk ) {
 			$this->process_chunk( $chunk );
@@ -266,14 +322,34 @@ class Modula_CPT {
 	private function process_chunk( $images_chunk ) {
 		global $wpdb;
 
-		// 1) Collect all relevant attachment IDs
+		// 1) Collect and validate all relevant attachment IDs
 		$attachment_ids = array();
+		$valid_images   = array();
+		
 		foreach ( $images_chunk as $image ) {
-			if ( ! empty( $image['id'] ) ) {
-				$attachment_ids[] = absint( $image['id'] );
+			if ( ! isset( $image['id'] ) || empty( $image['id'] ) ) {
+				continue;
 			}
+
+			$attachment_id = absint( $image['id'] );
+			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			// Security check: Verify the ID is an attachment
+			if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+				continue;
+			}
+
+			// Security check: Verify user has permission to edit this attachment
+			if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
+				continue;
+			}
+
+			$attachment_ids[] = $attachment_id;
+			$valid_images[]   = $image;
 		}
-		$attachment_ids = array_filter( $attachment_ids );
+
 		$attachment_ids = array_unique( $attachment_ids );
 
 		if ( empty( $attachment_ids ) ) {
@@ -322,10 +398,20 @@ class Modula_CPT {
 		$meta_delete_ids = array();  // We'll delete old alt rows in one go
 		$meta_inserts    = array();  // We'll insert the new alt rows
 
-		// 4) Loop through images and build the final updates only if needed
-		foreach ( $images_chunk as $image ) {
+		// 4) Loop through valid images and build the final updates only if needed
+		foreach ( $valid_images as $image ) {
 			$attachment_id = isset( $image['id'] ) ? absint( $image['id'] ) : 0;
 			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			// Additional security check: Verify the ID is still an attachment (defense in depth)
+			if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+				continue;
+			}
+
+			// Additional security check: Verify user still has permission (defense in depth)
+			if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
 				continue;
 			}
 

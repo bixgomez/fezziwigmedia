@@ -2266,7 +2266,8 @@ const {
 const {
   Fragment: edit_Fragment,
   useEffect: edit_useEffect,
-  useState
+  useState,
+  useRef: edit_useRef
 } = wp.element;
 const {
   withSelect
@@ -2299,28 +2300,29 @@ const ModulaEdit = props => {
     currentGallery,
     currentSelectize
   } = attributes;
-
-  // Check when the alignmnent is changed so we can resize the instance
   const [alignmentCheck, setAlignment] = useState(props.attributes.align);
-
-  // Check when id is changed and it is not a component rerender . Saves unnecessary fetch requests
   const [idCheck, setIdCheck] = useState(id);
+  const modulaInstanceRef = edit_useRef(null);
   edit_useEffect(() => {
     if (id !== 0) {
       onIdChange(id);
     }
   }, []);
   edit_useEffect(() => {
-    //Grab the instance and set it as atribute to access it when we want
-    jQuery(document).on('modula_api_after_init', function (event, inst) {
-      props.setAttributes({
-        instance: inst
-      });
-    });
-    if (props.attributes.instance != undefined && settings != undefined && settings.type == 'grid') {
-      props.attributes.instance.reset(props.attributes.instance);
+    const handleModulaInit = function (event, inst) {
+      modulaInstanceRef.current = inst;
+    };
+    jQuery(document).on('modula_api_after_init', handleModulaInit);
+    return () => {
+      jQuery(document).off('modula_api_after_init', handleModulaInit);
+    };
+  }, []);
+  edit_useEffect(() => {
+    // Use the ref instead of attributes.instance to avoid circular references
+    if (modulaInstanceRef.current != null && settings != undefined && settings.type == 'grid') {
+      modulaInstanceRef.current.reset(modulaInstanceRef.current);
     }
-  });
+  }, [settings]);
   const onIdChange = id => {
     if (isNaN(id) || '' == id) {
       return;
@@ -2339,7 +2341,7 @@ const ModulaEdit = props => {
         }]
       });
       setAttributes({
-        id: id,
+        id,
         images: res.modulaImages
       });
       if (idCheck != id || undefined == settings) {
@@ -2352,7 +2354,7 @@ const ModulaEdit = props => {
   }
   const getSettings = id => {
     fetch(`${modulaVars.restURL}wp/v2/modula-gallery/${id}`).then(res => res.json()).then(result => {
-      let settings = result;
+      const settings = result;
       setAttributes({
         status: 'loading'
       });
@@ -2365,9 +2367,9 @@ const ModulaEdit = props => {
         },
         url: modulaVars.ajaxURL,
         success: result => {
-          let galleryId = Math.floor(Math.random() * 999);
+          const galleryId = Math.floor(Math.random() * 999);
           setAttributes({
-            galleryId: galleryId,
+            galleryId,
             settings: settings.modulaSettings,
             jsConfig: result,
             status: 'ready'
@@ -2381,9 +2383,9 @@ const ModulaEdit = props => {
       setAttributes({
         status: 'ready'
       });
-      var modulaGalleries = jQuery('.modula.modula-gallery');
+      const modulaGalleries = jQuery('.modula.modula-gallery');
       jQuery.each(modulaGalleries, function () {
-        var modulaID = jQuery(this).attr('id'),
+        const modulaID = jQuery(this).attr('id'),
           modulaSettings = jQuery(this).data('config');
         modulaSettings.lazyLoad = 0;
         jQuery(this).modulaGallery(modulaSettings);
@@ -2396,12 +2398,12 @@ const ModulaEdit = props => {
       status: 'ready'
     });
     const modulaSliders = jQuery('.modula-slider');
-    if (modulaSliders.length > 0 && 'function' == typeof ModulaCarousel) {
-      let config = jQuery(`#${id}`).data('config'),
+    if (modulaSliders.length > 0 && 'function' === typeof ModulaCarousel) {
+      const config = jQuery(`#${id}`).data('config'),
         main = jQuery(`#${id}`).find('.modula-items');
       new ModulaCarousel(main[0], config.slider_settings);
-    } else if (modulaSliders.length > 0 && 'undefined' != typeof jQuery.fn.slick) {
-      let config = jQuery(`#${id}`).data('config'),
+    } else if (modulaSliders.length > 0 && 'undefined' !== typeof jQuery.fn.slick) {
+      const config = jQuery(`#${id}`).data('config'),
         main = jQuery(`#${id}`).find('.modula-items');
       main.slick(config.slider_settings);
     }
@@ -2412,7 +2414,7 @@ const ModulaEdit = props => {
       data: {
         action: 'modula_check_hover_effect',
         nonce: modulaVars.nonce,
-        effect: effect
+        effect
       },
       url: modulaVars.ajaxURL,
       success: result => {
@@ -2423,7 +2425,7 @@ const ModulaEdit = props => {
     });
   };
   const selectOptions = () => {
-    let options = [{
+    const options = [{
       value: 0,
       label: edit_('select a gallery', 'modula-best-grid-gallery')
     }];

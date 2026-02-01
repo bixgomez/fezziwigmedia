@@ -54,7 +54,7 @@ html body .modula .modula-items .modula-item img.pic {
     transition: width .3s, height .3s, transform .3s linear, opacity .2s linear;
 }
 
-html body .modula .modula-items .modula-item picture.pic img {
+html body .modula .modula-items.justified-gallery .modula-item picture.pic img {
     max-width: 999em;
     height: 100%;
 }

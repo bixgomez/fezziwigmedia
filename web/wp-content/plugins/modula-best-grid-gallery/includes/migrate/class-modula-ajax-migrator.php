@@ -47,27 +47,29 @@ class Modula_Ajax_Migrator {
 
 		$source          = sanitize_text_field( wp_unslash( $_POST['source'] ) );
 		$response        = array();
-		$gallery_id      = $_POST['id'];
+		$galery_atts = array();
+		// Need to make replace so we can search our shortcode in content
+		$galery_atts['id']        = absint( $_POST['id']['id'] );
+		$galery_atts['shortcode'] = str_replace( '\"', '"', sanitize_text_field( $_POST['id']['shortcode'] ) );
 		$chunk           = isset( $_POST['chunk'] ) ? absint( $_POST['chunk'] ) : 0;
 		$modula_importer = Modula_Importer::get_instance();
-		// Get the images
-		$images = $modula_importer->prepare_images( $source, $gallery_id );
+
+		$pattern = '/ids\s*=\s*["\']([^"\']+)["\']/';
+		$result  = preg_match( $pattern, $galery_atts['shortcode'], $gallery_ids );
+		$images_ids = isset( $gallery_ids[1] ) ? $gallery_ids[1] : '';
+		$images = $modula_importer->prepare_images( $source, $images_ids );
 		// Initialize $images variable
 		$attachments = array();
 		// we slice the images in chunks so that the AJAX will do the rest
 		$images = array_slice( $images, $chunk, 5 );
 
 		if ( is_array( $images ) && count( $images ) > 0 ) {
-
-
-			$response['attachments'] = apply_filters( 'modula_migrate_attachments_' . $source, array(), $images, $gallery_id );
-			//$response['attachments'] = $attachments;
+			$response['attachments'] = apply_filters( 'modula_migrate_attachments_' . $source, array(), $images, $galery_atts['id'] );
 
 			// If array smaller than 5 we reached the end of the array
 			if ( count( $images ) < 5 ) {
 				$response['end_of_array'] = 'end_of_array';
 			}
-
 		} else {
 			// If there are no images in the array we reached the end of it
 			$response['end_of_array'] = 'end_of_array';

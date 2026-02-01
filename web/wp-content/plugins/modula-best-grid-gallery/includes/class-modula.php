@@ -167,6 +167,7 @@ class Modula {
 		add_filter( 'mce_buttons', array( $this, 'editor_button' ) );
 		add_filter( 'mce_external_plugins', array( $this, 'register_editor_plugin' ) );
 		add_action( 'wp_ajax_modula_shortcode_editor', array( $this, 'modula_shortcode_editor' ) );
+		add_action( 'admin_print_scripts', array( $this, 'add_editor_nonce' ) );
 
 		// Allow other mime types to be uploaded
 		add_filter( 'upload_mimes', array( $this, 'modula_upload_mime_types' ) );
@@ -542,9 +543,40 @@ class Modula {
 	}
 
 	/**
+	 * Add nonce for TinyMCE editor plugin
+	 */
+	public function add_editor_nonce() {
+		$screen = get_current_screen();
+		// Only add nonce on post edit screens where TinyMCE is available
+		if ( ! $screen || ! in_array( $screen->base, array( 'post', 'page' ), true ) ) {
+			return;
+		}
+		?>
+		<script type="text/javascript">
+			var modulaEditorNonce = '<?php echo esc_js( wp_create_nonce( 'modula-ajax-save' ) ); ?>';
+		</script>
+		<?php
+	}
+
+	/**
 	 * Display galleries selection
 	 */
 	public function modula_shortcode_editor() {
+		// Check user capability
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'modula-best-grid-gallery' ) );
+		}
+
+		// Verify nonce
+		$nonce = '';
+		if ( isset( $_REQUEST['nonce'] ) ) {
+			$nonce = sanitize_text_field( wp_unslash( $_REQUEST['nonce'] ) );
+		}
+
+		if ( ! wp_verify_nonce( $nonce, 'modula-ajax-save' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'modula-best-grid-gallery' ) );
+		}
+
 		$css_path  = MODULA_URL . 'assets/css/admin/edit.css';
 		$admin_url = admin_url();
 		$galleries = Modula_Helper::get_galleries();

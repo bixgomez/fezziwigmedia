@@ -234,7 +234,7 @@ class Modula_Importer {
 			// Small fix for wp_core galleries
 			$val          = ( $value ) ? $value : $g_gallery['id'];
 			$upload_count = absint( $g_gallery['count'] );
-			$id           = absint( $g_gallery['id'] );
+			$id           = ( 'wp_core' === $source ) ? sanitize_text_field( $g_gallery['id'] ) : absint( $g_gallery['id'] );
 
 			$html .= '<div class="modula-importer-checkbox-wrapper">' .
 					'<label for="' . esc_attr( $source ) . '-galleries-' . esc_attr( $id ) . '"' .

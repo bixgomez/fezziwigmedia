@@ -155,7 +155,8 @@ jQuery(window).on('elementor/frontend/init', function () {
 		$(document).on('lazyloaded', function (evt) {
 			var element = $(evt.target),
 				parent,
-				index;
+				index,
+				picElement;
 
 			if ('modula' == element.data('source')) {
 				element.data('size', {
@@ -164,6 +165,13 @@ jQuery(window).on('elementor/frontend/init', function () {
 				});
 				parent = element.parents('.modula-item');
 				parent.addClass('tg-loaded');
+
+				// Support for picture element - add class to both img and picture parent
+				picElement = element.closest('.pic');
+				if (picElement.length && picElement.prop('tagName') === 'PICTURE') {
+					picElement.addClass('tg-loaded');
+				}
+
 				index = instance.$items.not('.jtg-hidden').index(parent);
 				instance.placeImage(index);
 
@@ -643,10 +651,12 @@ jQuery(window).on('elementor/frontend/init', function () {
 	// load the image in order to get the width and heoght of the picture.
 	Plugin.prototype.loadImage = function (index) {
 		var instance = this,
-			source   = instance.$items.not('.jtg-hidden').eq(index).find('.pic'),
+			picElement = instance.$items.not('.jtg-hidden').eq(index).find('.pic'),
+			source   = picElement.is('img') ? picElement : picElement.find('img'),
 			size     = {};
 
 		if ('0' != instance.options.lazyLoad) {
+			
 			instance.placeImage(index);
 			return;
 		}
@@ -667,12 +677,14 @@ jQuery(window).on('elementor/frontend/init', function () {
 
 	// function used to place the image in container based on the alignment select by the user.
 	Plugin.prototype.placeImage = function (index) {
+
 		if ('grid' == this.options.type) {
 			return;
 		}
-
+		
 		var $tile  = this.$items.not('.jtg-hidden').eq(index);
-		var $image = $tile.find('.pic');
+		var $picElement = $tile.find('.pic');
+		var $image = $picElement.is('img') ? $picElement : $picElement.find('img');
 
 		var tSize = $tile.data('size');
 		var iSize = $image.data('size');
@@ -680,6 +692,7 @@ jQuery(window).on('elementor/frontend/init', function () {
 		if (typeof tSize == 'undefined') {
 			return;
 		}
+
 		if (typeof iSize == 'undefined') {
 			return;
 		}
@@ -744,6 +757,11 @@ jQuery(window).on('elementor/frontend/init', function () {
 
 		$image.css(cssProps);
 		this.$items.not('.jtg-hidden').eq(index).addClass('tg-loaded');
+
+		// Support for picture element - add class to picture parent if it exists
+		if ($image.parent().prop('tagName') === 'PICTURE') {
+			$image.parent().addClass('tg-loaded');
+		}
 	};
 
 	// based on settings set the needed socials.

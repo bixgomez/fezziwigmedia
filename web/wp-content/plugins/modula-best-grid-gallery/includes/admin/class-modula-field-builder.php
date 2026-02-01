@@ -222,11 +222,19 @@ class Modula_Field_Builder {
 	private function _render_shortcode_metabox( $post ) {
 		$shortcode = '[modula id="' . $post->ID . '"]';
 
+		$shortcodes = apply_filters( 'modula_admin_aditional_shortcodes_dropdown', array(), $post );
+
 		do_action( 'modula_admin_before_shortcode_metabox', $post );
 
 		echo '<div class="modula-copy-shortcode">';
 		echo '<input type="text" value="' . esc_attr( $shortcode ) . '"  onclick="select()" readonly>';
-		echo '<a href="#" title="' . esc_attr__( 'Copy shortcode', 'modula-best-grid-gallery' ) . '" class="copy-modula-shortcode button button-primary dashicons dashicons-format-gallery" style="width:40px;"></a><span></span>';
+		if ( ! empty( $shortcodes ) ) {
+			echo '<button type="button" class="modula-shortcode-dropdown-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'Toggle additional shortcodes', 'modula-best-grid-gallery' ) . '" style="display:flex;" >';
+			echo '<span class="dashicons dashicons-arrow-down-alt2"></span>';
+			echo '</button>';
+		}
+		echo '<a href="#" title="' . esc_attr__( 'Copy shortcode', 'modula-best-grid-gallery' ) . '" class="copy-modula-shortcode button button-primary dashicons dashicons-format-gallery" style="width:40px;"></a>';
+		echo '<span class="copy-feedback"></span>';
 		echo '<p class="shortcode-description">' . sprintf(
 			// Translators: %1$s: opening <u> tag, %2$s: closing </u> tag
 			esc_html__( 'You can use this to display your newly created gallery inside a %1$s post or a page %2$s', 'modula-best-grid-gallery' ),
@@ -234,7 +242,17 @@ class Modula_Field_Builder {
 			'</u>'
 		) . '</p>';
 		echo '</div>';
-
+		if ( ! empty( $shortcodes ) ) {
+			foreach ( $shortcodes as $sh ) {
+				echo '<div class="modula-shortcode-dropdown" style="display:none;">';
+				echo '<div class="modula-copy-shortcode">';
+				echo '<input type="text" value="' . esc_attr( $sh['code'] ) . '" onclick="select()" readonly="">';
+				echo '<a href="#" title="Copy shortcode" class="copy-modula-shortcode button button-primary dashicons dashicons-format-gallery" style="width:40px"></a>';
+				echo '<span></span>';
+				echo '<p>' . wp_kses_post( $sh['description'] ) . '</p></div>';
+			}
+			echo '</div>';
+		}
 		do_action( 'modula_admin_after_shortcode_metabox', $post );
 	}
 

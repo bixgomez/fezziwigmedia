@@ -32,7 +32,7 @@ class Modula_Elementor_Widget_Activation {
 	public function register_widgets() {
 		$this->include_widgets_files();
 		// Register Widgets
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\Modula_Elementor_Widget() );
+		\Elementor\Plugin::instance()->widgets_manager->register( new Widgets\Modula_Elementor_Widget() );
 	}
 
 	public function __construct() {
