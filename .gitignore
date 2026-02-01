@@ -27,3 +27,4 @@ cache/
 .vite
 .env.local
 ._*
+wp-config.php
