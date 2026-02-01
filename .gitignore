@@ -28,3 +28,4 @@ cache/
 .env.local
 ._*
 wp-config.php
+/web/fixdb/
