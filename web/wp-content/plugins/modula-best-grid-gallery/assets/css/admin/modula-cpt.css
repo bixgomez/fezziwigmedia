@@ -1608,10 +1608,8 @@ tr.troubleshoot-subfield.hide {
 
 .modula-shortcode-dropdown {
     width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border-top: 1px solid #ddd;
     background: #fff;
-    padding: 10px;
     display: none;
     box-sizing: border-box;
     margin-bottom: 10px;

@@ -250,8 +250,8 @@ class Modula_Field_Builder {
 				echo '<a href="#" title="Copy shortcode" class="copy-modula-shortcode button button-primary dashicons dashicons-format-gallery" style="width:40px"></a>';
 				echo '<span></span>';
 				echo '<p>' . wp_kses_post( $sh['description'] ) . '</p></div>';
+				echo '</div>';
 			}
-			echo '</div>';
 		}
 		do_action( 'modula_admin_after_shortcode_metabox', $post );
 	}
