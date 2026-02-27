@@ -1,0 +1,49 @@
+.post-teasers--websites {
+  gap: 3cqi;
+}
+
+.post-teaser--websites,
+a.post-teaser--websites {
+  display: flex;
+  gap: 2cqi;
+
+  .post-teaser-text {
+    position: relative;
+    z-index: 200;
+    background-color: rgba($color-beige-light, 0.85);
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    padding: 2cqi;
+    font-size: clamp(12px, 2.25cqi, 18px);
+    opacity: 90;
+    transition: opacity 0.25s linear;
+
+    .entry-header {
+      display: contents;
+    }
+
+    .entry-title {
+      font-size: 1.25em;
+
+      a {
+        text-decoration: none;
+        color: $color-blue--darker;
+        display: block;
+      }
+    }
+
+    .entry-content {
+      font-size: 1em;
+      color: $color-blue--dark;
+    }
+
+    .post-teaser-image {
+      width: 30cqi;
+    }
+  }
+
+  @include breakpoint($sm-down) {
+    gap: 0
+  }
+}
