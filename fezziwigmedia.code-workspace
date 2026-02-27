@@ -1,0 +1,70 @@
+{
+  "folders": [
+	{
+		"path": "."
+	},
+	{
+		"path": "docroot/wp-content/themes/fezziwig-media-arts"
+	},
+	{
+		"path": "fezziwig-vue"
+	}
+],
+  "settings": {
+    "intelephense.environment.phpVersion": "8.1",
+    "terminal.integrated.env.osx": {},
+    "[vue]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "editor.formatOnSave": true,
+    "vetur.validation.template": false,
+    "volar.takeOverMode.enabled": true,
+    "prettier.requireConfig": false,
+    "php.version": "8.1"
+  },
+  "launch": {
+    "configurations": [
+      {
+        "name": "Listen for Xdebug",
+        "type": "php",
+        "request": "launch",
+        "hostname": "0.0.0.0",
+        "port": 9003,
+        "pathMappings": {
+          "/var/www/html": "${workspaceFolder}"
+        },
+        "preLaunchTask": "DDEV: Enable Xdebug",
+        "postDebugTask": "DDEV: Disable Xdebug",
+        "skipFiles": [
+          "**/vendor/**/*.php",
+          "**/wp-admin/**/*.php",
+          "**/wp-includes/**/*.php",
+          "**/wp-blog-header.php"
+        ]
+      }
+    ]
+  },
+  "tasks": {
+    "tasks": [
+      {
+        "label": "DDEV: Enable Xdebug",
+        "type": "shell",
+        "command": "ddev xdebug on",
+        "presentation": {
+          "reveal": "silent",
+          "close": true
+        }
+      },
+      {
+        "label": "DDEV: Disable Xdebug",
+        "type": "shell",
+        "command": "ddev xdebug off",
+        "presentation": {
+          "reveal": "silent",
+          "close": true
+        }
+      }
+    ]
+  }
+}
