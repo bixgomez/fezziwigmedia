@@ -20,7 +20,7 @@ a.post-teaser {
   grid-template-columns: 8rem auto;
   text-decoration: none;
   color: $color-blue--darker;
-  // @include transition(color, 0.25s, ease-in-out);
+  // @include transition(color);
   overflow: hidden;
   position: relative;
 
@@ -36,7 +36,7 @@ a.post-teaser {
     line-height: 1;
     font-size: .825rem;
     font-weight: 500;
-    // @include transition((color, opacity), 0.2s, linear);
+    // @include transition((color, opacity));
     opacity: .8;
   }
 
@@ -87,6 +87,6 @@ a.post-teaser {
     object-fit: cover;
     filter: saturate(100%);
     opacity: .75;
-    // @include transition((filter, opacity), 0.5s, ease-in-out);
+    // @include transition((filter, opacity));
   }
 }

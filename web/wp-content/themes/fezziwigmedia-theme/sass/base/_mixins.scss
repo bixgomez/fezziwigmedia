@@ -6,7 +6,7 @@
   }
 }
 
-@mixin transition($properties: opacity, $duration: 0.25s, $timing: linear, $delay: null) {
+@mixin transition($properties: opacity, $duration: 0.125s, $timing: linear, $delay: null) {
   $transition-list: ();
 
   @each $property in $properties {
