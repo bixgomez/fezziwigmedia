@@ -1110,8 +1110,9 @@ tr[data-container="effect"] > td {
     border-bottom: 1px solid #ddd;
 }
 
-.media-modal .modula-edit-popup .attachment-details .attachment-info .settings .setting span.name {
+.media-modal .modula-edit-popup .attachment-details .attachment-info .settings .setting .name {
     display: block;
+    float: none;
     width: 100%;
     min-width: 100%;
     margin: 0;
@@ -2744,4 +2745,10 @@ Some responsive fixes
 
 .modula-add-new-wrapper {
     position:relative;
+}
+
+/* Required so tinyMce link insertion dialogs show */
+html body.post-type-modula-gallery .mce-floatpanel,
+html body.post-type-modula-album .mce-floatpanel{
+    z-index: 160001 !important;
 }

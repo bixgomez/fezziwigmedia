@@ -46,6 +46,9 @@
 				'enableEmail'            => boolval( $data->settings['enableEmail'] ),
 				'socialDesktopCollapsed' => boolval( $data->settings['socialDesktopCollapsed'] ),
 				'lazyLoad'               => modula_run_lazy_load( $data->settings ),
+				// Video defaults (some extensions expect these properties to exist).
+				'video_template'         => false,
+				'video_type'             => false,
 
 				/* Item container attributes & classes */
 				'item_classes'           => array( 'modula-item' ),

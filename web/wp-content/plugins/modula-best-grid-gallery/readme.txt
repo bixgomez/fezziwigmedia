@@ -4,7 +4,7 @@ Tags: gallery plugin, image gallery, video gallery, responsive gallery, WordPres
 Requires at least: 5.3
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 2.13.9
+Stable tag: 2.14.17
 
 License: GNU General Public License v3.0 or later  
 
@@ -325,6 +325,60 @@ The simplest way to install is to click on 'Plugins' then 'Add' and type 'Modula
 4. Mobile Responsive Image Galleries - Galleries automatically adapt to smartphone and tablet screen sizes
 
 == Changelog ==
+= 2.14.17 - 25.02.2026 =
+Fixed: Migrator detection cache.
+
+= 2.14.16 - 23.02.2026 =
+Fixed: Moved touch navigation settings to base plugin
+
+= 2.14.14 - 20.02.2026 =
+Fixed: Endpoint changes
+
+= 2.14.13 - 19.02.2026 =
+Fixed: Z-index issue with lightbox.
+
+= 2.14.12 - 17.02.2026 =
+Fixed: Modula shortcode button in tinymce editors.
+
+= 2.14.11 - 13.02.2026 =
+Fixed: Moved some styling and scripts to footer.
+
+= 2.14.10 - 12.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.9 - 11.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.8 - 10.02.2026 =
+Fixed: Core gallery migration.
+
+= 2.14.7 - 09.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.6 - 07.02.2026 =
+Fixed: Beaver Builder block directory path.
+
+= 2.14.5 - 06.02.2026 =
+Fixed: Telemetry dismiss notice was not working correctly.
+Added: Extensions page design improvements.
+
+= 2.14.4 - 06.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.3 - 06.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.2 - 05.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.1 - 05.02.2026 =
+Fixed: Various issues and bugs.
+
+= 2.14.0 - 05.02.2026 =
+Changed: Multiple improvements to the codebase.
+Added: Support for extensions bundled in pro
+Fixed: Various issues and bugs.
+
 = 2.13.9 - 02.02.2026 =
 Added: Additional $atts parameter to frontend shortcode settings filter.
 Updated: Admin shortcodes dropdown design.
