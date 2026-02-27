@@ -15,11 +15,11 @@ get_header();
 
 			<section class="error-404 not-found">
 				<header class="page-header">
-					<h1 class="page-title"><?php esc_html_e( 'Oops! That page can&rsquo;t be found.', 'fezziwig-media-arts' ); ?></h1>
+					<h1 class="page-title"><?php esc_html_e( 'Oops! That page can&rsquo;t be found.', 'fezziwigmedia-theme' ); ?></h1>
 				</header><!-- .page-header -->
 
 				<div class="page-content">
-					<p><?php esc_html_e( 'It looks like nothing was found at this location. Maybe try one of the links below or a search?', 'fezziwig-media-arts' ); ?></p>
+					<p><?php esc_html_e( 'It looks like nothing was found at this location. Maybe try one of the links below or a search?', 'fezziwigmedia-theme' ); ?></p>
 
 						<?php
 						get_search_form();
@@ -28,7 +28,7 @@ get_header();
 						?>
 
 						<div class="widget widget_categories">
-							<h2 class="widget-title"><?php esc_html_e( 'Most Used Categories', 'fezziwig-media-arts' ); ?></h2>
+							<h2 class="widget-title"><?php esc_html_e( 'Most Used Categories', 'fezziwigmedia-theme' ); ?></h2>
 							<ul>
 								<?php
 								wp_list_categories(
@@ -46,7 +46,7 @@ get_header();
 
 						<?php
 						/* translators: %1$s: smiley */
-						$fezziwig_media_arts_archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', 'fezziwig-media-arts' ), convert_smilies( ':)' ) ) . '</p>';
+						$fezziwig_media_arts_archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', 'fezziwigmedia-theme' ), convert_smilies( ':)' ) ) . '</p>';
 						the_widget( 'WP_Widget_Archives', 'dropdown=1', "after_title=</h2>$fezziwig_media_arts_archive_content" );
 
 						the_widget( 'WP_Widget_Tag_Cloud' );

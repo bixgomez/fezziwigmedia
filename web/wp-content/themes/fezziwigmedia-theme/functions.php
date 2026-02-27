@@ -26,9 +26,9 @@ function fezziwig_media_arts_setup()
 		* Make theme available for translation.
 		* Translations can be filed in the /languages/ directory.
 		* If you're building a theme based on Fezziwig Media Arts, use a find and replace
-		* to change 'fezziwig-media-arts' to the name of your theme in all the template files.
+		* to change 'fezziwigmedia-theme' to the name of your theme in all the template files.
 		*/
-  load_theme_textdomain('fezziwig-media-arts', get_template_directory() . '/languages');
+  load_theme_textdomain('fezziwigmedia-theme', get_template_directory() . '/languages');
 
   // Add default posts and comments RSS feed links to head.
   add_theme_support('automatic-feed-links');
@@ -50,7 +50,7 @@ function fezziwig_media_arts_setup()
 
   register_nav_menus(
     array(
-      'primary' => esc_html__('Primary Menu', 'fezziwig-media-arts'),
+      'primary' => esc_html__('Primary Menu', 'fezziwigmedia-theme'),
     )
   );
 
@@ -125,9 +125,9 @@ function fezziwig_media_arts_widgets_init()
 {
   register_sidebar(
     array(
-      'name'          => esc_html__('Sidebar', 'fezziwig-media-arts'),
+      'name'          => esc_html__('Sidebar', 'fezziwigmedia-theme'),
       'id'            => 'sidebar-1',
-      'description'   => esc_html__('Add widgets here.', 'fezziwig-media-arts'),
+      'description'   => esc_html__('Add widgets here.', 'fezziwigmedia-theme'),
       'before_widget' => '<section id="%1$s" class="widget %2$s">',
       'after_widget'  => '</section>',
       'before_title'  => '<h2 class="widget-title">',
@@ -142,7 +142,7 @@ add_action('widgets_init', 'fezziwig_media_arts_widgets_init');
  */
 function fezziwig_media_arts_scripts()
 {
-  wp_enqueue_style('fezziwig-media-arts-style', get_stylesheet_uri(), array(), _S_VERSION);
+  wp_enqueue_style('fezziwigmedia-theme-style', get_stylesheet_uri(), array(), _S_VERSION);
   wp_enqueue_style('fezziwig-timber-google-fonts--1', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700|Arvo:400,700|Montserrat:400,500,600,700', false);
   wp_enqueue_style('fezziwig-timber-google-fonts--2', '//fonts.googleapis.com/css?family=EB+Garamond:400,400i,600', false);
   wp_enqueue_style('fezziwig-timber-google-fonts--3', '//fonts.googleapis.com/css?family=Josefin+Sans:100,300,400', false);
@@ -150,9 +150,9 @@ function fezziwig_media_arts_scripts()
   wp_enqueue_style('fezziwig-timber-google-fonts--5', '//fonts.googleapis.com/css?family=Playfair+Display+SC:400,700', false);
   wp_enqueue_style('fezziwig-timber-google-fonts--6', '//fonts.googleapis.com/css?family=Vast+Shadow', false);
 
-  wp_style_add_data('fezziwig-media-arts-style', 'rtl', 'replace');
+  wp_style_add_data('fezziwigmedia-theme-style', 'rtl', 'replace');
 
-  wp_enqueue_script('fezziwig-media-arts-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
+  wp_enqueue_script('fezziwigmedia-theme-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 
   if (is_singular() && comments_open() && get_option('thread_comments')) {
     wp_enqueue_script('comment-reply');

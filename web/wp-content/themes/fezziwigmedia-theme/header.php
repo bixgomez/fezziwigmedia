@@ -28,7 +28,7 @@
 		<div class="site-container">
 			<div id="page" class="site">
 
-				<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'fezziwig-media-arts' ); ?></a>
+				<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'fezziwigmedia-theme' ); ?></a>
 				<header id="masthead" class="site-header">
 					<div id="masthead-inner" class="section-inner">
 						<div class="site-branding">

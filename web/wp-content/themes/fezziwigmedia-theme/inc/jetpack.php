@@ -33,7 +33,7 @@ function fezziwig_media_arts_jetpack_setup() {
 		'jetpack-content-options',
 		array(
 			'post-details' => array(
-				'stylesheet' => 'fezziwig-media-arts-style',
+				'stylesheet' => 'fezziwigmedia-theme-style',
 				'date'       => '.posted-on',
 				'categories' => '.cat-links',
 				'tags'       => '.tags-links',
