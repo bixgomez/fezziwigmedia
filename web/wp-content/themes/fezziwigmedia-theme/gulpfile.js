@@ -8,9 +8,9 @@ const { src, dest, watch, series, parallel } = require('gulp');
 const browsersync = require('browser-sync').create();
 const sass = require('gulp-sass')(require('sass'));
 const autoprefixer = require('gulp-autoprefixer');
-const sourcemaps = require('gulp-sourcemaps');
 const plumber = require('gulp-plumber');
-const cache = require('gulp-cached');
+const cleanCSS = require('gulp-clean-css');
+const rename = require('gulp-rename');
 const notify = require('gulp-notify');
 const sassGlob = require('gulp-sass-glob');
 
@@ -21,19 +21,20 @@ sass.compiler = require('sass')
 function buildStyles() {
   return src('sass/style.scss')
     .pipe(plumbError()) // Global error handler through all pipes.
-    .pipe(sourcemaps.init())
+    .pipe(sassGlob())
     .pipe(sass({
       includePaths: [
         './node_modules/breakpoint-sass/stylesheets/',
         './node_modules/@fortawesome/fontawesome-free/scss'
       ],
       errLogToConsole: true,
-      outputStyle: 'compressed'
+      outputStyle: 'expanded'
     }))
     .pipe(autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7']))
-    .pipe(sourcemaps.write())
-    .pipe(dest('./'))
-    .pipe(browsersync.reload({ stream: true }));
+    .pipe(dest('./css'))
+    .pipe(cleanCSS())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(dest('./css'));
 }
 
 // Watch changes on all *.scss files, lint them and
@@ -44,14 +45,22 @@ function watchFiles() {
       { events: 'all', ignoreInitial: false },
       series(buildStyles)
   );
+
+  // Reload only after minified CSS has been written to disk.
+  watch(
+      ['css/style.min.css'],
+      { events: 'all', ignoreInitial: true },
+      series(browserSyncReload)
+  );
 }
 
 // Watch changes on all *.php files, lint them and
 // trigger buildStyles() at the end.
 function watchPHP() {
   watch(
-      ['./**/*.scss'],
-      { events: 'all', ignoreInitial: false }
+      ['./**/*.php'],
+      { events: 'all', ignoreInitial: true },
+      series(browserSyncReload)
   );
 }
 
@@ -63,6 +72,11 @@ function browserSync(done) {
       domain: 'localhost:3000'
     }
   });
+  done();
+}
+
+function browserSyncReload(done) {
+  browsersync.reload();
   done();
 }
 

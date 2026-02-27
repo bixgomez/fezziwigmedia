@@ -1,11 +1,11 @@
 .post-teasers--websites {
-  gap: 3cqi;
+  gap: 2cqi;
 }
 
 .post-teaser--websites,
 a.post-teaser--websites {
   display: flex;
-  gap: 2cqi;
+  gap: 1px;
 
   .post-teaser-text {
     position: relative;
@@ -41,9 +41,5 @@ a.post-teaser--websites {
     .post-teaser-image {
       width: 30cqi;
     }
-  }
-
-  @include breakpoint($sm-down) {
-    gap: 0
   }
 }

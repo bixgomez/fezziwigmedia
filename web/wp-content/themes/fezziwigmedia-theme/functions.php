@@ -142,7 +142,7 @@ add_action('widgets_init', 'fezziwig_media_arts_widgets_init');
  */
 function fezziwig_media_arts_scripts()
 {
-  wp_enqueue_style('fezziwigmedia-theme-style', get_stylesheet_uri(), array(), _S_VERSION);
+  wp_enqueue_style('fezziwigmedia-theme-style', get_template_directory_uri() . '/css/style.min.css', array(), _S_VERSION);
   wp_enqueue_style('fezziwig-timber-google-fonts--1', '//fonts.googleapis.com/css?family=Open+Sans:300,400,700|Arvo:400,700|Montserrat:400,500,600,700', false);
   wp_enqueue_style('fezziwig-timber-google-fonts--2', '//fonts.googleapis.com/css?family=EB+Garamond:400,400i,600', false);
   wp_enqueue_style('fezziwig-timber-google-fonts--3', '//fonts.googleapis.com/css?family=Josefin+Sans:100,300,400', false);

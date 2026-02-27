@@ -59,11 +59,6 @@ a.post-teaser {
       color: $color-orange--darkest;
     }
   }
-
-  @include breakpoint($sm-down) {
-    grid-template-columns: 0 auto;
-    gap: 0
-  }
 }
 
 .teaser--inner {
@@ -75,11 +70,11 @@ a.post-teaser {
 }
 
 .post-teaser-image {
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   position: relative;
   display: block;
-  width: auto;
+  width: 20cqi;
 
   img {
     display: block;
@@ -93,11 +88,6 @@ a.post-teaser {
     filter: saturate(100%);
     opacity: .75;
     transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  }
-
-  @include breakpoint($sm-down) {
-    width: 0;
-    opacity: 0;
   }
 }
 
