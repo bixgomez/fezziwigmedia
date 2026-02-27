@@ -13,29 +13,52 @@ const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const notify = require('gulp-notify');
 const sassGlob = require('gulp-sass-glob');
+const sourcemaps = require('gulp-sourcemaps');
 
 // Set compiler to use dart-sass.
 sass.compiler = require('sass')
 
+const sassIncludePaths = [
+  './node_modules/breakpoint-sass/stylesheets/',
+  './node_modules/@fortawesome/fontawesome-free/scss'
+];
+
+const autoprefixerTargets = ['last 15 versions', '> 1%', 'ie 8', 'ie 7'];
+
 // Compile CSS from Sass.
-function buildStyles() {
+function buildStylesExpanded() {
   return src('sass/style.scss')
     .pipe(plumbError()) // Global error handler through all pipes.
     .pipe(sassGlob())
+    .pipe(sourcemaps.init())
     .pipe(sass({
-      includePaths: [
-        './node_modules/breakpoint-sass/stylesheets/',
-        './node_modules/@fortawesome/fontawesome-free/scss'
-      ],
+      includePaths: sassIncludePaths,
       errLogToConsole: true,
       outputStyle: 'expanded'
     }))
-    .pipe(autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7']))
-    .pipe(dest('./css'))
-    .pipe(cleanCSS())
-    .pipe(rename({ suffix: '.min' }))
+    .pipe(autoprefixer(autoprefixerTargets))
+    .pipe(sourcemaps.write('.'))
     .pipe(dest('./css'));
 }
+
+function buildStylesMinified() {
+  return src('sass/style.scss')
+    .pipe(plumbError()) // Global error handler through all pipes.
+    .pipe(sassGlob())
+    .pipe(sourcemaps.init())
+    .pipe(sass({
+      includePaths: sassIncludePaths,
+      errLogToConsole: true,
+      outputStyle: 'expanded'
+    }))
+    .pipe(autoprefixer(autoprefixerTargets))
+    .pipe(cleanCSS())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(sourcemaps.write('.'))
+    .pipe(dest('./css'));
+}
+
+const buildStyles = series(buildStylesExpanded, buildStylesMinified);
 
 // Watch changes on all *.scss files, lint them and
 // trigger buildStyles() at the end.
@@ -43,7 +66,7 @@ function watchFiles() {
   watch(
       ['sass/*.scss', 'sass/**/*.scss'],
       { events: 'all', ignoreInitial: false },
-      series(buildStyles)
+      buildStyles
   );
 
   // Reload only after minified CSS has been written to disk.
@@ -100,4 +123,4 @@ function plumbError() {
 exports.default = parallel(browserSync, watchFiles, watchPHP); // $ gulp
 exports.sass = buildStyles; // $ gulp sass
 exports.watch = watchFiles; // $ gulp watch
-exports.build = series(buildStyles); // $ gulp build
+exports.build = buildStyles; // $ gulp build

@@ -2,18 +2,18 @@
   text-align: center;
   padding: 0;
   margin: 0;
-  font-size: 1em;
+  font-size: 1.02em;
 
   @include breakpoint($md) {
     font-size: 1.04em;
   }
 
   @include breakpoint($lg) {
-    font-size: 1.29em;
+    font-size: 1.39em;
   }
 
   @include breakpoint($xl) {
-    font-size: 1.5em;
+    font-size: 1.666em;
   }
 }
 
@@ -28,12 +28,11 @@
   margin-bottom: -0.125em;
   line-height: 1;
 
-  @include breakpoint($md-up) {
     border-bottom: 4px double $color-orange--pale;
     padding-bottom: 0.175em;
     margin-bottom: 0.3em;
     letter-spacing: 0.138em;
-  }
+  
 
   @include breakpoint($lg-up) {
     letter-spacing: 0.139em;
@@ -77,6 +76,7 @@
 
 .site-subtitle-1 {
   font-family: "Playfair Display SC", Georgia, serif;
+  font-weight: 500;
   color: mix($color-blue--darkest, $color-orange--darkest, 60%);
   font-size: 1.1em;
   line-height: 1;
@@ -93,7 +93,8 @@
   }
 
   @include breakpoint($sm-down) {
-    display: none;
+    // display: none;
+    flex-direction: column;
 
     .divider-dot {
       display: none;
@@ -101,10 +102,13 @@
 
     .drupal-wordpress {
       display: block;
+      margin-bottom: .18em;
+      font-size: 1.715em;
     }
 
     .design-dev {
       display: block;
+      font-size: 1.535em;
     }
   }
 }

@@ -231,7 +231,7 @@ p:last-of-type {
   text-align: center;
   padding: 0;
   margin: 0;
-  font-size: 1em;
+  font-size: 1.02em;
 }
 @media (min-width: 800px) {
   .site-branding--titles {
@@ -240,12 +240,12 @@ p:last-of-type {
 }
 @media (min-width: 1024px) {
   .site-branding--titles {
-    font-size: 1.29em;
+    font-size: 1.39em;
   }
 }
 @media (min-width: 1200px) {
   .site-branding--titles {
-    font-size: 1.5em;
+    font-size: 1.666em;
   }
 }
 
@@ -259,14 +259,10 @@ p:last-of-type {
   margin-top: -0.18em;
   margin-bottom: -0.125em;
   line-height: 1;
-}
-@media (min-width: 800px) {
-  .site-title {
-    border-bottom: 4px double rgba(246, 127, 96, 0.7);
-    padding-bottom: 0.175em;
-    margin-bottom: 0.3em;
-    letter-spacing: 0.138em;
-  }
+  border-bottom: 4px double rgba(246, 127, 96, 0.7);
+  padding-bottom: 0.175em;
+  margin-bottom: 0.3em;
+  letter-spacing: 0.138em;
 }
 @media (min-width: 1024px) {
   .site-title {
@@ -305,6 +301,7 @@ p:last-of-type {
 
 .site-subtitle-1 {
   font-family: "Playfair Display SC", Georgia, serif;
+  font-weight: 500;
   color: #6b3a33;
   font-size: 1.1em;
   line-height: 1;
@@ -325,16 +322,22 @@ p:last-of-type {
 }
 @media (min-width: 0) and (max-width: 799px) {
   .site-subtitle-1 {
-    display: none;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
   }
   .site-subtitle-1 .divider-dot {
     display: none;
   }
   .site-subtitle-1 .drupal-wordpress {
     display: block;
+    margin-bottom: 0.18em;
+    font-size: 1.715em;
   }
   .site-subtitle-1 .design-dev {
     display: block;
+    font-size: 1.535em;
   }
 }
 
