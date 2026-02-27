@@ -5,3 +5,19 @@
     clear: both;
   }
 }
+
+@mixin transition($properties: opacity, $duration: 0.25s, $timing: linear, $delay: null) {
+  $transition-list: ();
+
+  @each $property in $properties {
+    $value: $property $duration $timing;
+
+    @if $delay != null {
+      $value: $value $delay;
+    }
+
+    $transition-list: append($transition-list, $value, comma);
+  }
+
+  transition: $transition-list;
+}

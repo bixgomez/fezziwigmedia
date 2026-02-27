@@ -5,7 +5,7 @@
 .post-teaser--websites,
 a.post-teaser--websites {
   display: flex;
-  gap: 1px;
+  gap: .5cqi;
 
   .post-teaser-text {
     position: relative;
@@ -17,7 +17,7 @@ a.post-teaser--websites {
     padding: 2cqi;
     font-size: clamp(12px, 2.25cqi, 18px);
     opacity: 90;
-    transition: opacity 0.25s linear;
+    // @include transition(opacity);
 
     .entry-header {
       display: contents;

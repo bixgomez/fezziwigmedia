@@ -12,7 +12,7 @@ html body div.modula div.modula-items {
   grid-gap: 0.5em;
   width: 100%;
   height: auto !important;
-  transition: width 1s, height 1s, background-color 1s, transform 1s;
+  // @include transition((width, height, background-color, transform), 1s);
   min-height: 100px;
   position: relative;
   z-index: 1;
@@ -44,7 +44,7 @@ html body div.modula div.modula-items {
     padding: 0;
     margin: 0;
     background-color: mix(black, transparent, 10%);
-    transition: 0.125s ease-in-out;
+    // @include transition(all, 0.125s, ease-in-out);
     width: auto !important;
     height: auto !important;
     aspect-ratio: 1/1;
@@ -85,7 +85,7 @@ html body div.modula div.modula-items {
         height: 92% !important;
         opacity: 0.9;
         object-fit: cover;
-        transition: 0.125s ease-in-out;
+        // @include transition(all, 0.125s, ease-in-out);
         margin: 0 !important;
       }
 
