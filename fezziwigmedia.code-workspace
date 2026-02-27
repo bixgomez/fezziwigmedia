@@ -1,15 +1,15 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"path": "docroot/wp-content/themes/fezziwig-media-arts"
-	},
-	{
-		"path": "fezziwig-vue"
-	}
-],
+    {
+      "path": "."
+    },
+    {
+      "path": "fezziwig-vue"
+    },
+    {
+      "path": "web/wp-content/themes/fezziwigmedia-theme"
+    }
+  ],
   "settings": {
     "intelephense.environment.phpVersion": "8.1",
     "terminal.integrated.env.osx": {},
