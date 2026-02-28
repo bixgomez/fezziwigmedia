@@ -29,18 +29,18 @@ if ($external_link) {
 ?>
 
 <!-- post-teaser--layout-b.php -->
-<a href="<?php echo esc_url($the_link); ?>" id="post-<?php the_ID(); ?>" target="<?php echo esc_attr($the_target); ?>" <?php post_class(array('post-teaser', 'post-teaser--' . $category_slug)); ?>>
+<a href="<?php echo esc_url($the_link); ?>" id="post-<?php the_ID(); ?>" target="<?php echo esc_attr($the_target); ?>" <?php post_class(array('post-teaser', 'post-teaser--layout-b', 'post-teaser--category-' . $category_slug)); ?>>
 
-  <div class="post-teaser-image">
+  <div class="post-teaser__image">
     <?php the_post_thumbnail('thumbnail'); ?>
   </div>
 
-  <div class="post-teaser-text">
-    <header class="entry-header">
-      <?php the_title('<h2 class="entry-title">', '</h2>'); ?>
+  <div class="post-teaser__content">
+    <header class="entry-header post-teaser__header">
+      <?php the_title('<h2 class="entry-title post-teaser__title">', '</h2>'); ?>
     </header><!-- .entry-header -->
 
-    <div class="entry-content">
+    <div class="entry-content post-teaser__excerpt">
       <?php
       the_excerpt();
       ?>

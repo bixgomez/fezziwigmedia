@@ -26,22 +26,10 @@ if ($category_id) :
   );
   $query = new WP_Query($args);
   if ($query->have_posts()) : ?>
-    <ul class="post-teasers">
+    <ul class="post-teaser-list post-teaser-list--category-<?php echo esc_attr($category_slug); ?>">
       <?php while ($query->have_posts()) : $query->the_post(); ?>
         <li>
-          <?php
-          // First, try to include the template part specific to the current category
-          if (locate_template('template-parts/post-teaser-' . $category_slug . '.php', false, false)) {
-            // Include the category-specific template (like post-teaser-presentations.php)
-            get_template_part('template-parts/post-teaser', $category_slug);
-          } elseif (locate_template('template-parts/post-teaser.php', false, false)) {
-            // Fallback to the general teaser template
-            get_template_part('template-parts/post-teaser');
-          } else {
-            // Final fallback if neither exist
-            get_template_part('template-parts/content');
-          }
-          ?>
+          <?php get_template_part('template-parts/post-teaser'); ?>
         </li>
       <?php endwhile; ?>
     </ul>

@@ -1,8 +1,8 @@
-.post-teasers-container {
+.post-teaser-list-wrap {
   container-type: inline-size;
 }
 
-.post-teasers {
+.post-teaser-list {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -24,7 +24,7 @@ a.post-teaser {
   overflow: hidden;
   position: relative;
 
-  .read-more-link {
+  .post-teaser__read-more {
     display: block;
     width: min-content;
     background-color: rgba(black, .05);
@@ -43,25 +43,25 @@ a.post-teaser {
   &:hover {
     color: $color-orange--darker;
 
-    .post-teaser-image {
+    .post-teaser__image {
       img {
         filter: saturate(0%);
         opacity: 1.0;
       }
     }
 
-    .post-teaser-text {
+    .post-teaser__content {
       opacity: 1;
     }
 
-    .read-more-link {
+    .post-teaser__read-more {
       opacity: 1;
       color: $color-orange--darkest;
     }
   }
 }
 
-.teaser--inner {
+.post-teaser__inner {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -69,7 +69,7 @@ a.post-teaser {
   position: relative;
 }
 
-.post-teaser-image {
+.post-teaser__image {
   aspect-ratio: 1 / 1;
   overflow: hidden;
   position: relative;

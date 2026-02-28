@@ -1,13 +1,13 @@
-.post-teasers--websites {
+.post-teaser-list--category-websites {
   gap: 2cqi;
 }
 
-.post-teaser--websites,
-a.post-teaser--websites {
+.post-teaser--category-websites,
+a.post-teaser--category-websites {
   display: flex;
   gap: .5cqi;
 
-  .post-teaser-text {
+  .post-teaser__content {
     position: relative;
     z-index: 200;
     background-color: rgba($color-beige-light, 0.85);
@@ -19,11 +19,13 @@ a.post-teaser--websites {
     opacity: 90;
     // @include transition(opacity);
 
-    .entry-header {
+    .entry-header,
+    .post-teaser__header {
       display: contents;
     }
 
-    .entry-title {
+    .entry-title,
+    .post-teaser__title {
       font-size: 1.25em;
 
       a {
@@ -33,12 +35,13 @@ a.post-teaser--websites {
       }
     }
 
-    .entry-content {
+    .entry-content,
+    .post-teaser__excerpt {
       font-size: 1em;
       color: $color-blue--dark;
     }
 
-    .post-teaser-image {
+    .post-teaser__image {
       width: 30cqi;
     }
   }

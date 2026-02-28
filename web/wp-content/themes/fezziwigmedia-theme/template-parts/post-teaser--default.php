@@ -19,22 +19,22 @@ if (!empty($categories)) {
 ?>
 
 <!-- post-teaser--default.php -->
-<a href="<?php echo esc_url(get_permalink()); ?>" class="post-teaser post-teaser--<?php echo $category_slug; ?>">
+<a href="<?php echo esc_url(get_permalink()); ?>" class="post-teaser post-teaser--default post-teaser--category-<?php echo esc_attr($category_slug); ?>">
 
-  <div class="post-teaser-image">
+  <div class="post-teaser__image">
     <?php the_post_thumbnail('thumbnail'); ?>
   </div>
 
-  <div class="post-teaser-text">
-    <header class="entry-header">
-      <?php the_title('<h2 class="entry-title">', '</h2>'); ?>
+  <div class="post-teaser__content">
+    <header class="entry-header post-teaser__header">
+      <?php the_title('<h2 class="entry-title post-teaser__title">', '</h2>'); ?>
     </header>
 
-    <div class="entry-content">
+    <div class="entry-content post-teaser__excerpt">
       <?php the_excerpt(); ?>
     </div>
 
-    <div class="read-more-link">
+    <div class="post-teaser__read-more">
       READ MORE
     </div>
   </div>

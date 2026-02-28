@@ -20,18 +20,18 @@ if (!empty($categories)) {
 ?>
 
 <!-- post-teaser--layout-a.php -->
-<a href="<?php echo esc_url(get_permalink()); ?>" id="post-<?php the_ID(); ?>" <?php post_class(array('post-teaser', 'post-teaser--' . $category_slug)); ?>>
+<a href="<?php echo esc_url(get_permalink()); ?>" id="post-<?php the_ID(); ?>" <?php post_class(array('post-teaser', 'post-teaser--layout-a', 'post-teaser--category-' . $category_slug)); ?>>
 
-  <div class="post-teaser-image">
+  <div class="post-teaser__image">
     <?php the_post_thumbnail('thumbnail'); ?>
   </div>
 
-  <div class="post-teaser-text">
-    <header class="entry-header">
-      <?php the_title('<h2 class="entry-title">', '</h2>'); ?>
+  <div class="post-teaser__content">
+    <header class="entry-header post-teaser__header">
+      <?php the_title('<h2 class="entry-title post-teaser__title">', '</h2>'); ?>
     </header><!-- .entry-header -->
 
-    <div class="entry-content">
+    <div class="entry-content post-teaser__excerpt">
       <?php the_excerpt(); ?>
     </div><!-- .entry-content -->
   </div>
