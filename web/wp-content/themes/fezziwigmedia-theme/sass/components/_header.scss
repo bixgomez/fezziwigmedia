@@ -1,19 +1,15 @@
+.site-branding {
+  container-type: inline-size;
+}
+
 .site-branding--titles {
   text-align: center;
   padding: 0;
   margin: 0;
-  font-size: 1.02em;
+  font-size: 3.73cqi;
 
   @include breakpoint($md) {
-    font-size: 1.04em;
-  }
-
-  @include breakpoint($lg) {
-    font-size: 1.39em;
-  }
-
-  @include breakpoint($xl) {
-    font-size: 1.666em;
+    font-size: 2.5cqi;
   }
 }
 
@@ -57,19 +53,6 @@
       display: block;
       font-size: 1.27em;
       margin-top: -0.05em;
-    }
-  }
-
-  @include breakpoint($xs-down) {
-    .fezziwig {
-      display: block;
-      font-size: 0.88em;
-    }
-
-    .media-arts {
-      display: block;
-      font-size: 0.65em;
-      margin-top: -0.01em;
     }
   }
 }
