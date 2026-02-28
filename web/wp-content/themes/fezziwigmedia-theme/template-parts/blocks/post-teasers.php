@@ -28,7 +28,7 @@ if ($category_id) :
   if ($query->have_posts()) : ?>
     <ul class="post-teaser-list post-teaser-list--category-<?php echo esc_attr($category_slug); ?>">
       <?php while ($query->have_posts()) : $query->the_post(); ?>
-        <li>
+        <li class="post-teaser-list__item">
           <?php get_template_part('template-parts/post-teaser'); ?>
         </li>
       <?php endwhile; ?>

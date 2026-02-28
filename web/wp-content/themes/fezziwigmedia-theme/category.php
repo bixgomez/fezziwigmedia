@@ -31,12 +31,14 @@ $category_slug = $category->slug;
 
     <?php
       /* Start the Loop */
-      echo '<div class="post-teaser-list-wrap"><div class="post-teaser-list post-teaser-list--category-' . esc_attr($category_slug) . '">';
+      echo '<div class="post-teaser-list-wrap"><ul class="post-teaser-list post-teaser-list--category-' . esc_attr($category_slug) . '">';
       while (have_posts()) :
         the_post();
+        echo '<li class="post-teaser-list__item">';
         get_template_part('template-parts/post-teaser');
+        echo '</li>';
       endwhile;
-      echo '</div></div>';
+      echo '</ul></div>';
 
       the_posts_navigation();
 

@@ -12,6 +12,12 @@
   container-type: inline-size;
 }
 
+.post-teaser-list__item {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .post-teaser,
 a.post-teaser {
   width: 100cqi;
