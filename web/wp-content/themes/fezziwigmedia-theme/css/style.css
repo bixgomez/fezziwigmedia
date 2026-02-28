@@ -507,9 +507,11 @@ html body div.modula div.modula-items div.modula-item .modula-item-content:hover
 
 .post-teaser-list-wrap {
   container-type: inline-size;
+  margin: 1.25rem 0;
 }
 
 .post-teaser-list {
+  width: 100cqi;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -518,31 +520,109 @@ html body div.modula div.modula-items div.modula-item .modula-item-content:hover
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 2rem;
-  margin: 1.25rem 0;
   list-style: none;
   padding: 0;
-  container-type: inline-size;
 }
 
 .post-teaser-list__item {
   list-style: none;
   margin: 0;
   padding: 0;
+  width: 100cqi;
 }
 
 .post-teaser,
 a.post-teaser {
+  -webkit-transition: color 0.125s linear;
+  transition: color 0.125s linear;
   width: 100cqi;
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 8rem auto;
+  gap: 2cqi;
+  grid-template-columns: 20cqi auto;
   text-decoration: none;
   color: #46505d;
   overflow: hidden;
   position: relative;
 }
-.post-teaser .post-teaser__read-more,
-a.post-teaser .post-teaser__read-more {
+.post-teaser:hover,
+a.post-teaser:hover {
+  color: #e3390d;
+}
+.post-teaser:hover .post-teaser__image img,
+a.post-teaser:hover .post-teaser__image img {
+  -webkit-filter: saturate(100%);
+          filter: saturate(100%);
+  opacity: 1;
+}
+.post-teaser:hover .post-teaser__content,
+a.post-teaser:hover .post-teaser__content {
+  opacity: 1;
+}
+.post-teaser:hover .post-teaser__read-more,
+a.post-teaser:hover .post-teaser__read-more {
+  opacity: 1;
+  color: #b32d0a;
+}
+
+.post-teaser__image {
+  overflow: hidden;
+  position: relative;
+  display: block;
+  width: 20cqi;
+  min-height: 20cqi;
+  -webkit-filter: saturate(75%);
+          filter: saturate(75%);
+}
+.post-teaser__image img {
+  -webkit-transition: opacity 0.125s linear, -webkit-filter 0.125s linear;
+  transition: opacity 0.125s linear, -webkit-filter 0.125s linear;
+  transition: filter 0.125s linear, opacity 0.125s linear;
+  transition: filter 0.125s linear, opacity 0.125s linear, -webkit-filter 0.125s linear;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: auto;
+  width: inherit;
+  z-index: 100;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -webkit-filter: saturate(100%);
+          filter: saturate(100%);
+  opacity: 0.8;
+}
+
+.post-teaser__content {
+  -webkit-transition: opacity 0.125s linear;
+  transition: opacity 0.125s linear;
+  width: 78cqi;
+  font-size: 3cqi;
+  font-size: clamp(12px, 3cqi, 18px);
+  opacity: 0.9;
+}
+.post-teaser__content .entry-header,
+.post-teaser__content .post-teaser__header {
+  display: contents;
+}
+.post-teaser__content .entry-title,
+.post-teaser__content .post-teaser__title {
+  font-size: 1.25em;
+}
+.post-teaser__content .entry-title a,
+.post-teaser__content .post-teaser__title a {
+  text-decoration: none;
+  color: #46505d;
+  display: block;
+}
+.post-teaser__content .entry-content,
+.post-teaser__content .post-teaser__excerpt {
+  font-size: 1em;
+  color: #515c6b;
+}
+
+.post-teaser__read-more {
+  -webkit-transition: color 0.125s linear, opacity 0.125s linear;
+  transition: color 0.125s linear, opacity 0.125s linear;
   display: block;
   width: -webkit-min-content;
   width: -moz-min-content;
@@ -557,110 +637,6 @@ a.post-teaser .post-teaser__read-more {
   font-size: 0.825rem;
   font-weight: 500;
   opacity: 0.8;
-}
-.post-teaser:hover,
-a.post-teaser:hover {
-  color: #e3390d;
-}
-.post-teaser:hover .post-teaser__image img,
-a.post-teaser:hover .post-teaser__image img {
-  -webkit-filter: saturate(0%);
-          filter: saturate(0%);
-  opacity: 1;
-}
-.post-teaser:hover .post-teaser__content,
-a.post-teaser:hover .post-teaser__content {
-  opacity: 1;
-}
-.post-teaser:hover .post-teaser__read-more,
-a.post-teaser:hover .post-teaser__read-more {
-  opacity: 1;
-  color: #b32d0a;
-}
-
-.post-teaser__inner {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.post-teaser__image {
-  aspect-ratio: 1/1;
-  overflow: hidden;
-  position: relative;
-  display: block;
-  width: 20cqi;
-}
-.post-teaser__image img {
-  display: block;
-  position: relative;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -webkit-filter: saturate(100%);
-          filter: saturate(100%);
-  opacity: 0.75;
-}
-
-.post-teaser-list--category-websites {
-  gap: 2cqi;
-}
-
-.post-teaser--category-websites,
-a.post-teaser--category-websites {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  gap: 0.5cqi;
-}
-.post-teaser--category-websites .post-teaser__content,
-a.post-teaser--category-websites .post-teaser__content {
-  position: relative;
-  z-index: 200;
-  background-color: rgba(241, 232, 218, 0.85);
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  padding: 2cqi;
-  font-size: clamp(12px, 2.25cqi, 18px);
-  opacity: 90;
-}
-.post-teaser--category-websites .post-teaser__content .entry-header,
-.post-teaser--category-websites .post-teaser__content .post-teaser__header,
-a.post-teaser--category-websites .post-teaser__content .entry-header,
-a.post-teaser--category-websites .post-teaser__content .post-teaser__header {
-  display: contents;
-}
-.post-teaser--category-websites .post-teaser__content .entry-title,
-.post-teaser--category-websites .post-teaser__content .post-teaser__title,
-a.post-teaser--category-websites .post-teaser__content .entry-title,
-a.post-teaser--category-websites .post-teaser__content .post-teaser__title {
-  font-size: 1.25em;
-}
-.post-teaser--category-websites .post-teaser__content .entry-title a,
-.post-teaser--category-websites .post-teaser__content .post-teaser__title a,
-a.post-teaser--category-websites .post-teaser__content .entry-title a,
-a.post-teaser--category-websites .post-teaser__content .post-teaser__title a {
-  text-decoration: none;
-  color: #46505d;
-  display: block;
-}
-.post-teaser--category-websites .post-teaser__content .entry-content,
-.post-teaser--category-websites .post-teaser__content .post-teaser__excerpt,
-a.post-teaser--category-websites .post-teaser__content .entry-content,
-a.post-teaser--category-websites .post-teaser__content .post-teaser__excerpt {
-  font-size: 1em;
-  color: #515c6b;
-}
-.post-teaser--category-websites .post-teaser__content .post-teaser__image,
-a.post-teaser--category-websites .post-teaser__content .post-teaser__image {
-  width: 30cqi;
 }
 
 .post-navigation {

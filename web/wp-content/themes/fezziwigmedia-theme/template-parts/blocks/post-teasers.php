@@ -26,13 +26,15 @@ if ($category_id) :
   );
   $query = new WP_Query($args);
   if ($query->have_posts()) : ?>
-    <ul class="post-teaser-list post-teaser-list--category-<?php echo esc_attr($category_slug); ?>">
-      <?php while ($query->have_posts()) : $query->the_post(); ?>
-        <li class="post-teaser-list__item">
-          <?php get_template_part('template-parts/post-teaser'); ?>
-        </li>
-      <?php endwhile; ?>
-    </ul>
+    <div class="post-teaser-list-wrap">
+      <ul class="post-teaser-list post-teaser-list--category-<?php echo esc_attr($category_slug); ?>">
+        <?php while ($query->have_posts()) : $query->the_post(); ?>
+          <li class="post-teaser-list__item">
+            <?php get_template_part('template-parts/post-teaser'); ?>
+          </li>
+        <?php endwhile; ?>
+      </ul>
+    </div>
     <?php
     // Reset post data after the loop
     wp_reset_postdata();
