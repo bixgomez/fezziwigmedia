@@ -1,0 +1,44 @@
+// Technology Pills
+// Displays technology tags as compact, scannable pills
+//
+// Usage: .technology-pills wraps a list of .technology-pill items
+// Designed for 3-6 pills max per project
+
+.technology-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0;
+  list-style: none;
+  font-size: .85rem;
+}
+
+.technology-pill {
+  display: inline-block;
+  padding: .25em .4em;
+  font-size: .825em;
+  font-weight: 500;
+  opacity: .95;
+  line-height: 1;
+  color: #555;
+  background-color: rgba(0, 0, 0, .05);
+  border: .075em solid rgba(0, 0, 0, .1);
+  border-radius: .25em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+a.technology-pill {
+  // Subtle hover state
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+// When pills appear inside a linked card, prevent color inheritance
+a .technology-pills .technology-pill {
+  color: #555;
+}

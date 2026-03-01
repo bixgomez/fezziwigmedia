@@ -38,6 +38,16 @@ if (!empty($primary_category_slug)) {
       <?php the_excerpt(); ?>
     </div><!-- .entry-content -->
 
+    <?php
+    $technologies = get_the_terms(get_the_ID(), 'technology');
+    if ($technologies && !is_wp_error($technologies)) : ?>
+      <ul class="technology-pills">
+        <?php foreach ($technologies as $tech) : ?>
+          <li class="technology-pill"><?php echo esc_html($tech->name); ?></li>
+        <?php endforeach; ?>
+      </ul>
+    <?php endif; ?>
+
     <?php if ($show_read_more) : ?>
       <div class="post-teaser__read-more">
         READ MORE

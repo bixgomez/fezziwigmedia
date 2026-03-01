@@ -694,4 +694,44 @@ body.single-post .article-content.has-gallery .article-sidebar {
   height: -moz-min-content;
   height: min-content;
 }
+
+.technology-pills {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.technology-pill {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 0.825em;
+  font-weight: 500;
+  opacity: 0.95;
+  line-height: 1;
+  color: #555;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 0.075em solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.25em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+a.technology-pill {
+  -webkit-transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease;
+}
+a.technology-pill:hover {
+  background-color: #e0e0e0;
+}
+
+a .technology-pills .technology-pill {
+  color: #555;
+}
 /*# sourceMappingURL=style.css.map */

@@ -14,6 +14,37 @@ if (! defined('_S_VERSION')) {
 }
 
 /**
+ * Register Technologies custom taxonomy for portfolio posts.
+ */
+function fezziwig_register_technologies_taxonomy()
+{
+  $labels = array(
+    'name'              => 'Technologies',
+    'singular_name'     => 'Technology',
+    'search_items'      => 'Search Technologies',
+    'all_items'         => 'All Technologies',
+    'edit_item'         => 'Edit Technology',
+    'update_item'       => 'Update Technology',
+    'add_new_item'      => 'Add New Technology',
+    'new_item_name'     => 'New Technology Name',
+    'menu_name'         => 'Technologies',
+  );
+
+  $args = array(
+    'hierarchical'      => false,
+    'labels'            => $labels,
+    'show_ui'           => true,
+    'show_admin_column' => true,
+    'show_in_rest'      => true,
+    'query_var'         => true,
+    'rewrite'           => array('slug' => 'technology'),
+  );
+
+  register_taxonomy('technology', array('post'), $args);
+}
+add_action('init', 'fezziwig_register_technologies_taxonomy');
+
+/**
  * Sets up theme defaults and registers support for various WordPress features.
  *
  * Note that this function is hooked into the after_setup_theme hook, which
