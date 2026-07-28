@@ -229,7 +229,7 @@ class WPChill_Telemetry_Core {
 	 * Opt out of telemetry
 	 */
 	public function opt_out() {
-		update_option( self::CONSENT_OPTION, false );
+		update_option( self::CONSENT_OPTION, '0' );
 		delete_option( self::QUEUE_OPTION );
 		delete_option( self::LAST_SEND_OPTION );
 	}
@@ -398,7 +398,7 @@ class WPChill_Telemetry_Core {
 
 		$json_size = strlen( wp_json_encode( $settings ) );
 		if ( $json_size > self::MAX_PAYLOAD_SIZE ) {
-			$settings = array_slice( $settings, 0, count( $settings ) / 2, true );
+			$settings = array_slice( $settings, 0, (int) ( count( $settings ) / 2 ), true );
 		}
 
 		return $settings;
@@ -494,7 +494,6 @@ class WPChill_Telemetry_Core {
 		$body        = wp_remote_retrieve_body( $response );
 
 		if ( $status_code >= 400 ) {
-			$this->enqueue_for_retry( $endpoint, $payload );
 			return new WP_Error( 'http_error', 'HTTP ' . $status_code . ': ' . $body );
 		}
 
@@ -722,7 +721,8 @@ class WPChill_Telemetry_Core {
 				});
 			});
 			
-			$('.wpchill-telemetry-opt-out').on('click', function() {
+			$('.wpchill-telemetry-opt-out').on('click', function(e) {
+				e.preventDefault();
 				var button = $(this);
 				button.prop('disabled', true).text('<?php echo esc_js( __( 'Disabling...', 'modula-best-grid-gallery' ) ); ?>');
 				
@@ -731,7 +731,7 @@ class WPChill_Telemetry_Core {
 					nonce: '<?php echo wp_create_nonce( 'wpchill_telemetry_nonce' ); ?>'
 				}, function(response) {
 					if (response.success) {
-						location.reload();
+						button.closest('.wpchill-telemetry-consent').slideUp(function() { $(this).remove(); });
 					}
 				});
 			});

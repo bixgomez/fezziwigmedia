@@ -2,9 +2,9 @@
 Contributors: wpchill, silkalns  
 Tags: gallery plugin, image gallery, video gallery, responsive gallery, WordPress gallery plugin 
 Requires at least: 5.3
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 2.14.17
+Stable tag: 2.14.31
 
 License: GNU General Public License v3.0 or later  
 
@@ -325,6 +325,61 @@ The simplest way to install is to click on 'Plugins' then 'Add' and type 'Modula
 4. Mobile Responsive Image Galleries - Galleries automatically adapt to smartphone and tablet screen sizes
 
 == Changelog ==
+= 2.14.31 - 20.07.2026 =
+Fixed: Security issue.
+
+= 2.14.30 - 16.06.2026 =
+Fixed: PHP warning for undefined variable $item_data when gallery has no renderable images.
+Fixed: Bulk add images to gallery from Media Library not working correctly.
+Fixed: Telemetry retry queue could grow indefinitely causing excessive database writes.
+
+= 2.14.29 - 12.06.2026 =
+Fixed: Image caption changes no longer affect the description in media library.
+
+= 2.14.28 - 19.05.2026 =
+Fixed: Fatal error on frontend when gallery settings are invalid.
+
+= 2.14.27 - 12.05.2026 =
+Changed: Moved several lightbox settings to base plugin.
+Fixed: Copy caption on double tap not working on mobile.
+Fixed: Large captions in lightbox pushing image out of view.
+
+= 2.14.26 - 05.05.2026 =
+Fixed: Schema.org markup now generates a unique ID per gallery when multiple galleries are present on the same page.
+Added: Filter to disable gallery schema.org display.
+
+= 2.14.25 - 30.04.2026 =
+Fixed: Admin CSS adjustments.
+Fixed: Gallery save redirecting to posts list instead of the editor.
+
+= 2.14.24 - 28.04.2026 =
+Fixed: Admin CSS adjustments.
+Fixed: Security issue.
+
+= 2.14.23 - 09.04.2026 =
+Fixed: Admin styles compatibility with WordPress 7.0.
+
+= 2.14.22 - 20.03.2026 =
+Fixed: No srcset for cropped images.
+
+= 2.14.21 - 16.03.2026 =
+Fixed: JavaScript error in image edit screen.
+Fixed: Sometimes the telemetry notice prompt could not be dissmissed.
+Fixed: An issue where large captions and hover effects disrupted the lightbox functionality.
+Added: A filter to enqueue front styles early if a gallery shortcode is detected in a page.
+
+= 2.14.20 - 12.03.2026 =
+Fixed: License key cannot be changed.
+Fixed: Core gallery importer.
+Added: Color selector & code tab in image description TinyMCE editor.
+
+= 2.14.19 - 06.03.2026 =
+Fixed: Security issues.
+Fixed: TinyMCE editor floatpanel compatibility with Divi theme.
+
+= 2.14.18 - 03.03.2026 =
+Fixed: Enqueue front styles early.
+
 = 2.14.17 - 25.02.2026 =
 Fixed: Migrator detection cache.
 

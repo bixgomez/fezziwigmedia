@@ -5,6 +5,8 @@
 	<div <?php echo Modula_Helper::generate_attributes( $data->items_container ); ?>>
 		<?php
 
+		$item_data = array();
+
 		foreach ( $data->images as $image ) {
 			$image_object = get_post( $image['id'] );
 
@@ -26,6 +28,9 @@
 
 			// Check per gallery & per image if we should show title.
 			$should_hide_title = ( boolval( $data->settings['hide_title'] ) || ( isset( $image['hide_title'] ) && boolval( $image['hide_title'] ) ) );
+			$is_slider         = isset( $data->settings['slider_image_crop'] );
+			$custom_size       = $is_slider ? 'custom' === $data->settings['slider_image_size'] : 'custom' === $data->settings['grid_image_size'];
+			$crop              = $is_slider ? boolval( $data->settings['slider_image_crop'] ) : boolval( $data->settings['grid_image_crop'] );
 
 			// Create array with data in order to send it to image template
 			$item_data = array(
@@ -46,6 +51,7 @@
 				'enableEmail'            => boolval( $data->settings['enableEmail'] ),
 				'socialDesktopCollapsed' => boolval( $data->settings['socialDesktopCollapsed'] ),
 				'lazyLoad'               => modula_run_lazy_load( $data->settings ),
+				'gallery_type'           => $data->settings['type'],
 				// Video defaults (some extensions expect these properties to exist).
 				'video_template'         => false,
 				'video_type'             => false,
@@ -74,6 +80,7 @@
 					'alt'         => isset( $image['alt'] ) ? $image['alt'] : '',
 					'data-full'   => $full_img_src,
 					'title'       => isset( $image['title'] ) ? $image['title'] : '',
+					'crop'        => $custom_size && $crop,
 				),
 				'social_attributes'      => array(
 					'data-modula-gallery-id' => preg_replace( '/[^0-9]/', '', $data->gallery_id ),

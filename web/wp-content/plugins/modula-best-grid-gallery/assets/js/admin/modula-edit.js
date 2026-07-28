@@ -70,22 +70,9 @@
 				$('body').addClass('modal-open');
 				$('body').append(html);
 
-				$(document).one(
-					'click',
-					'.modula-modal__overlay.' + upsell,
-					{
-						upsell,
-					},
-					modulaCloseModal
-				);
-				$(document).one(
-					'click',
-					'.modula-modal__dismiss.' + upsell,
-					{
-						upsell,
-					},
-					modulaCloseModal
-				);
+				const $overlay = $('.modula-modal__overlay.' + upsell);
+
+				$overlay.find('.modula-modal__dismiss').on('click', { upsell }, modulaCloseModal);
 			}
 		);
 	};

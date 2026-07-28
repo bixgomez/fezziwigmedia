@@ -23,6 +23,7 @@ class Modula_Shortcode {
 
 		add_shortcode( 'modula-make-money', array( $this, 'affiliate_shortcode_handler' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_gallery_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_front_styles_early' ), 20 );
 		add_action( 'wp_footer', array( $this, 'print_gallery_css_in_footer' ), 10 );
 
 		// Add shortcode related hooks
@@ -62,13 +63,73 @@ class Modula_Shortcode {
 		wp_register_script( 'modula-grid-justified-gallery', MODULA_URL . 'assets/js/front/justifiedGallery' . $suffix . '.js', array( 'jquery' ), MODULA_LITE_VERSION, true );
 		wp_register_script( 'modula-fancybox', MODULA_URL . 'assets/js/front/fancybox' . $suffix . '.js', array( 'jquery', 'modulaFancybox' ), MODULA_LITE_VERSION, true );
 		wp_register_script( 'modulaFancybox', MODULA_URL . 'assets/js/front/modula-fancybox' . $suffix . '.js', array( 'dompurify' ), MODULA_LITE_VERSION, true );
-		wp_add_inline_script( 'modulaFancybox', "const ModulaShareButtons = '" . addslashes( wp_json_encode( Modula_Helper::render_lightbox_share_template() ) ) . "';", 'before' );
+		wp_add_inline_script( 'modulaFancybox', "var ModulaShareButtons = '" . addslashes( wp_json_encode( Modula_Helper::render_lightbox_share_template() ) ) . "';", 'before' );
 		wp_register_script( 'modula-lazysizes', MODULA_URL . 'assets/js/front/lazysizes' . $suffix . '.js', array( 'jquery' ), MODULA_LITE_VERSION, true );
 
 		// @todo: minify all css & js for a better optimization.
 		wp_register_script( 'modula', MODULA_URL . 'assets/js/front/jquery-modula' . $suffix . '.js', array( 'jquery', 'modula-isotope' ), MODULA_LITE_VERSION, true );
 	}
 
+	/**
+	 * Enqueue Modula front styles in the head when the content has [modula] shortcode.
+	 * Ensures styles load even when the shortcode runs after wp_head (e.g. with some themes or page builders).
+	 */
+	public function maybe_enqueue_front_styles_early() {
+		if ( ! apply_filters( 'modula_maybe_enqueue_front_styles_early', false ) ) {
+			return;
+		}
+
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		$post = get_queried_object();
+		if ( ! $post instanceof \WP_Post ) {
+			return;
+		}
+
+		// Collect content to search: post_content + standard WP widget content.
+		$content_to_search = $post->post_content;
+		foreach ( array(
+			'widget_text'        => 'text',
+			'widget_custom_html' => 'content',
+		) as $option => $key ) {
+			foreach ( get_option( $option, array() ) as $instance ) {
+				if ( ! empty( $instance[ $key ] ) ) {
+					$content_to_search .= ' ' . $instance[ $key ];
+				}
+			}
+		}
+
+		if ( ! has_shortcode( $content_to_search, 'modula' ) && ! has_shortcode( $content_to_search, 'Modula' ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'modula' );
+		wp_enqueue_style( 'modula-fancybox' );
+
+		$pattern = get_shortcode_regex( array( 'modula', 'Modula' ) );
+
+		if ( preg_match_all( '/' . $pattern . '/s', $content_to_search, $matches ) ) {
+			foreach ( $matches[3] as $atts_string ) {
+				$atts = shortcode_parse_atts( $atts_string );
+				if ( empty( $atts['id'] ) ) {
+					continue;
+				}
+
+				$settings = get_post_meta( absint( $atts['id'] ), 'modula-settings', true );
+				if ( empty( $settings ) || ! is_array( $settings ) ) {
+					$settings = array();
+				}
+
+				foreach ( apply_filters( 'modula_necessary_styles', array(), $settings ) as $style_slug ) {
+					if ( ! wp_style_is( $style_slug, 'enqueued' ) ) {
+						wp_enqueue_style( $style_slug );
+					}
+				}
+			}
+		}
+	}
 
 
 	public function gallery_shortcode_handler( $atts ) {
@@ -298,6 +359,12 @@ class Modula_Shortcode {
 			$js_config['lightbox'] = 'fancybox';
 		}
 
+		$js_config['lightbox_devices'] = apply_filters( 'modula_lightbox_devices', 'both' );
+
+		if ( apply_filters( 'modula_lightbox_caption_copy', false ) && wp_is_mobile() ) {
+			$js_config['copyCaptionMobile'] = 1;
+		}
+
 		return $js_config;
 	}
 
@@ -408,6 +475,12 @@ class Modula_Shortcode {
 		if ( ! isset( $settings['lightbox'] ) || 'no-link' != $settings['lightbox'] ) {
 			$css .= "#{$gallery_id}.modula-gallery .modula-item > a, #{$gallery_id}.modula-gallery .modula-item a.modula-item-link, #{$gallery_id}.modula-gallery .modula-item-content > a:not(.modula-no-follow) { cursor:" . esc_attr( $settings['cursor'] ) . '; } ';
 		}
+
+		if ( isset( $settings['lightbox'] ) && 'no-link' === $settings['lightbox'] ) {
+			/* Allows text selection for hover effects titles and captions */
+			$css .= "#{$gallery_id}.modula-gallery .figc *:not(:has(*)), #{$gallery_id}.modula-gallery .figc .jtg-description, #{$gallery_id}.modula-gallery .figc .jtg-title, #{$gallery_id}.modula-gallery .figc .jtg-description:has(a) { position: relative; z-index: 2; }";
+		}
+
 		$css .= "#{$gallery_id}.modula-gallery .modula-item-content .modula-no-follow { cursor: default; } ";
 		$css  = apply_filters( 'modula_shortcode_css', $css, $gallery_id, $settings );
 

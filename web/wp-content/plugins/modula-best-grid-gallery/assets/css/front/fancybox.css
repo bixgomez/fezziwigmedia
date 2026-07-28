@@ -554,6 +554,7 @@
 .modula-best-grid-gallery .fancybox__viewport {
 	width: 100%;
 	height: 100%;
+	display: block;
 }
 
 .modula-best-grid-gallery .fancybox__viewport.is-draggable {
@@ -732,6 +733,30 @@
 	opacity: var(--fancybox-opacity, 1);
 	cursor: auto;
 	visibility: visible;
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image.has-caption .fancybox__caption {
+	max-height: 35vh;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image.has-caption .fancybox__caption::-webkit-scrollbar {
+	width: 4px;
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image.has-caption .fancybox__caption::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image.has-caption .fancybox__caption::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.25);
+	border-radius: 2px;
+}
+
+.modula-best-grid-gallery .fancybox__slide.has-image.has-caption .fancybox__caption::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.5);
 }
 
 .modula-best-grid-gallery .is-loading .fancybox__caption,
@@ -1649,4 +1674,7 @@ body.admin-bar.modula-best-grid-gallery .fancybox__container {
 	100% {
 		opacity: 0;
 	}
+}
+.modula-best-grid-gallery .fancybox__container.modula-fancybox-container {
+	visibility: visible;
 }

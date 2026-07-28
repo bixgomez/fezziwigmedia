@@ -523,10 +523,6 @@ class Modula_Backward_Compatibility {
 		unset( $options['video'], $options['youtube'], $options['vimeo'] );
 		// END Video Backwards comp.
 
-		if ( isset( $settings['lightbox_touch'] ) && $settings['lightbox_touch'] ) {
-			$options['Carousel']['Panzoom']['touch'] = true;
-		}
-
 		if ( isset( $settings['lightbox_transitionEffect'] ) ) {
 			$options['Carousel']['transition'] = ( 'false' === $settings['lightbox_transitionEffect'] ) ? 'fade' : $settings['lightbox_transitionEffect'];
 		}
@@ -748,7 +744,7 @@ class Modula_Backward_Compatibility {
 	 */
 	public function backward_compatibility_front_social_icons_collapsed( $settings ) {
 
-		if ( ! isset( $settings['socialDesktopCollapsed'] ) ) {
+		if ( is_array( $settings ) && ! isset( $settings['socialDesktopCollapsed'] ) ) {
 			$settings['socialDesktopCollapsed'] = 0;
 		}
 

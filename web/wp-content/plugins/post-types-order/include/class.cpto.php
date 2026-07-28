@@ -46,6 +46,9 @@
                     
                     add_action( 'wp_ajax_update-custom-type-order',         array ( $this, 'saveAjaxOrder') );
                     add_action( 'wp_ajax_update-custom-type-order-archive', array ( $this, 'saveArchiveAjaxOrder') );
+                    
+                    add_filter( 'plugin_action_links_post-types-order/post-types-order.php',                  array ( $this,  'add_plugin_action_links') );
+                    add_filter( 'network_admin_plugin_action_links_post-types-order/post-types-order.php' ,   array ( $this,  'add_plugin_action_links')  );
                 
                 }
 
@@ -306,7 +309,7 @@
                         return;
                                                                 
                     //if is taxonomy term filter return
-                    if(is_category()    ||  is_tax())
+                    if( is_category()    ||  is_tax() )
                         return;
                     
                     //return if use orderby columns
@@ -333,7 +336,7 @@
                     // Localize the script with new data
                     $CPTO_variables = array(
                                                 'post_type'             =>  $screen->post_type,
-                                                'archive_sort_nonce'    =>  wp_create_nonce( 'CPTO_archive_sort_nonce_' . $userdata->ID) 
+                                                'archive_sort_nonce'    =>  wp_create_nonce( 'CPTO_archive_sort_nonce' ) 
                                             );
                     wp_localize_script( 'cpto', 'CPTO', $CPTO_variables );
 
@@ -376,6 +379,9 @@
                     //verify the nonce
                     if (! wp_verify_nonce( $nonce, 'interface_sort_nonce') )
                         die();
+                        
+                    if ( ! current_user_can( $this->functions->get_required_capability( ) ) )
+                        die();
                     
                     parse_str( sanitize_text_field( wp_unslash( $_POST['order'] ) ) , $data );
                     
@@ -388,7 +394,7 @@
                                             foreach( $values as $position => $id ) 
                                                 {
                                                     //sanitize
-                                                    $id =   (int)$id;
+                                                    $id =   intval ( $id ); 
                                                     
                                                     $data = array('menu_order' => $position);
                                                     
@@ -406,7 +412,7 @@
                                                 {
                                                     
                                                     //sanitize
-                                                    $id =   (int)$id;
+                                                    $id =   intval ( $id );
                                                     
                                                     $data = array('menu_order' => $position, 'post_parent' => str_replace('item_', '', $key));
                                                     
@@ -443,7 +449,10 @@
                     $nonce      =   ( isset( $_POST['archive_sort_nonce'] ) ) ? sanitize_text_field( wp_unslash( $_POST['archive_sort_nonce'] ) ) : '';
                     
                     //verify the nonce
-                    if ( ! wp_verify_nonce( $nonce, 'CPTO_archive_sort_nonce_' . $userdata->ID ) )
+                    if ( ! wp_verify_nonce( $nonce, 'CPTO_archive_sort_nonce' ) )
+                        die();
+                        
+                    if ( ! current_user_can( $this->functions->get_required_capability( $post_type ) ) )
                         die();
                     
                     parse_str( sanitize_text_field( wp_unslash( $_POST['order'] ) ) , $data );
@@ -489,6 +498,9 @@
                     //update the menu_order within database
                     foreach( $objects_ids as $menu_order   =>  $id ) 
                         {
+                            //sanitize
+                            $id =   intval ( $id );
+                            
                             $data = array(
                                             'menu_order' => $menu_order
                                             );
@@ -525,20 +537,6 @@
                     $post_types = get_post_types();
                     
                     $options          =     $this->functions->get_options();
-                    //get the required user capability
-                    $capability = '';
-                    if(isset($options['capability']) && !empty($options['capability']))
-                        {
-                            $capability = $options['capability'];
-                        }
-                    else if (is_numeric($options['level']))
-                        {
-                            $capability = $this->functions->userdata_get_user_level();
-                        }
-                        else
-                            {
-                                $capability = 'manage_options';  
-                            }
                     
                     $PTO_Interface =    new PTO_Interface();
                     
@@ -561,7 +559,7 @@
                             if(isset($options['show_reorder_interfaces'][$post_type_name]) && $options['show_reorder_interfaces'][$post_type_name] !== 'show')
                                 continue;
                                 
-                            $required_capability = apply_filters('pto/edit_capability', $capability, $post_type_name);
+                            $required_capability = $this->functions->get_required_capability ( $post_type_name );
                             
                             if ( $post_type_name == 'post' )
                                 $hookID   = add_submenu_page('edit.php', __('Re-Order', 'post-types-order'), __('Re-Order', 'post-types-order'), $required_capability, 'order-post-types-'.$post_type_name, array( $PTO_Interface, 'sort_page') );
@@ -592,6 +590,17 @@
                         
                     wp_register_style('CPTStyleSheets', CPTURL . '/css/cpt.css', array(), PTO_VERSION );
                     wp_enqueue_style( 'CPTStyleSheets');
+                }
+                
+                
+                
+            function add_plugin_action_links( $plugin_actions )
+                {
+                    $new_actions = array();
+
+                    $new_actions['cpto_settings'] = sprintf( __( '<a href="%s">Settings</a>', 'post-types-order' ), esc_url( admin_url( 'options-general.php?page=cpto-options' ) ) );
+
+                    return array_merge( $new_actions, $plugin_actions );    
                 }
             
             
