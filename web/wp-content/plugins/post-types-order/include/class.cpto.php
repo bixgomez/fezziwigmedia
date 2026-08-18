@@ -385,6 +385,8 @@
                     
                     parse_str( sanitize_text_field( wp_unslash( $_POST['order'] ) ) , $data );
                     
+                    $processed_ids  =   array();
+                    
                     if (is_array($data))
                         {
                             foreach($data as $key => $values ) 
@@ -404,6 +406,8 @@
                                                     $data = apply_filters('pto/save-ajax-order', $data, $key, $id);
                                                     
                                                     $wpdb->update( $wpdb->posts, $data, array('ID' => $id) );
+                                                    
+                                                    $processed_ids[]    =   $id;
                                                 } 
                                         } 
                                     else 
@@ -422,16 +426,62 @@
                                                     $data = apply_filters('pto/save-ajax-order', $data, $key, $id);
                                                     
                                                     $wpdb->update( $wpdb->posts, $data, array('ID' => $id) );
+                                                    
+                                                    $processed_ids[]    =   $id;
                                                 }
                                         }
                                 }
                             
                         }
                         
+                    //Anything of the same post type that was left out of this batch (hidden by the 
+                    //reorder screen's display cap, or a brand-new post that was never sorted) is still
+                    //sitting at the default menu_order = 0. Push those to the back instead of letting
+                    //them resurface at the front of the list on the next page load.
+                    $this->park_unordered_items( $processed_ids );
+                        
                     //trigger action completed
                     do_action('PTO/order_update_complete');
                     
                     CptoFunctions::site_cache_clear();
+                }
+                
+                
+            /**
+            * Park items left out of an order-save batch that are still sitting at the
+            * default menu_order = 0, so they don't jump to the front of the list just
+            * because 0 sorts first.
+            * 
+            * @param array $processed_ids IDs that were just given a real menu_order.
+            */
+            function park_unordered_items( $processed_ids ) 
+                {
+                    global $wpdb;
+                    
+                    $processed_ids  =   array_filter( array_map( 'intval', (array) $processed_ids ) );
+                    
+                    if ( empty( $processed_ids ) )
+                        return;
+                    
+                    //every item in a single save batch belongs to the same post type
+                    $post_type  =   get_post_type( reset( $processed_ids ) );
+                    
+                    if ( empty( $post_type ) )
+                        return;
+                    
+                    $park_at        =   apply_filters( 'pto/park_unordered_items_at', 999999999, $post_type );
+                    
+                    $placeholders   =   implode( ',', array_fill( 0, count( $processed_ids ), '%d' ) );
+                    
+                    $sql            =   "UPDATE {$wpdb->posts}
+                                        SET menu_order = %d
+                                        WHERE post_type = %s
+                                        AND menu_order = 0
+                                        AND ID NOT IN ($placeholders)";
+                    
+                    $params         =   array_merge( array( $park_at, $post_type ), array_values( $processed_ids ) );
+                    
+                    $wpdb->query( $wpdb->prepare( $sql, $params ) );
                 }
                 
                 

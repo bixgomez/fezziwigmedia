@@ -2,8 +2,8 @@
 Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
-Tested up to: 7.0
-Stable tag: 2.4.8
+Tested up to: 7.1
+Stable tag: 2.4.9
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,11 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.4.9 =
+ - Limit the total items in the re-order interface to 500, to avoid server errors ( .e.g memory exhaust, timeout load, timeout processing etc ) 
+ - New filter for adjusting the default 500 limit pto/interface/query/limit
+ - WordPress 7.1 compatibility check and tag update.
 
 = 2.4.8 = 
  - Improved required user capability and Ajax capability checks.

@@ -9,6 +9,12 @@
             var $functions;
             var $CPTO;
             
+            // Max number of items queried/shown in the sortable list (performance safeguard)
+            var $items_limit           =   500;
+            
+            // Real total of items found for the current post type (set by list_pages())
+            var $total_found_posts     =   0;
+            
             /**
             * Constructor
             * 
@@ -96,7 +102,7 @@
                             </div>
                         </noscript>
                         
-                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>      
            
                         <div id="order-objects">
            
@@ -121,9 +127,32 @@
            
             
                             <div id="post-body"> 
+                            
+                                <?php
+                                    // Run the (limited) query first so we know the real total before printing anything.
+                                    ob_start();
+                                    $this->list_pages('hide_empty=0&title_li=&post_type=' . $this->CPTO->current_post_type->name );
+                                    $sortable_items = ob_get_clean();
+                                    
+                                    if ( $this->total_found_posts > $this->items_limit ) :
+                                ?>
+                                    <div class="pto-notice pto-notice--limit">
+                                        <p>
+                                            <?php
+                                                printf(
+                                                    /* translators: 1: total number of items found, 2: number of items currently shown/sortable */
+                                                    esc_html__( 'This post type contains %1$d items, but for performance reasons, only the first %2$d items (based on the current order) are displayed here. Items beyond this limit cannot be reordered from this screen. Use the pto/interface/query/limit filter to adjust the number of displayed items, or consider the Advanced Post Types Order plugin and its pagination features.', 'post-types-order' ),
+                                                    (int) $this->total_found_posts,
+                                                    (int) $this->items_limit
+                                                );
+                                            ?>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+                                
                                 <ul id="sortable" class="sortable ui-sortable">
                                 
-                                    <?php $this->list_pages('hide_empty=0&title_li=&post_type=' . $this->CPTO->current_post_type->name ); ?>
+                                    <?php echo $sortable_items; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already sanitized with wp_kses_post() in list_pages() ?>
                                     
                                 </ul>
                             </div>
@@ -216,10 +245,15 @@
                     
                     // Query pages.
                     $r['hierarchical'] = 0;
+                    
+                    // Allow the limit itself to be filtered, then keep it on the object
+                    // so callers (e.g. sort_page()) can compare it against found_posts.
+                    $this->items_limit = (int) apply_filters( 'pto/interface/query/limit', $this->items_limit );
+                    
                     $args = array(
                                 'sort_column'       =>  'menu_order',
                                 'post_type'         =>  $post_type,
-                                'posts_per_page'    => -1,
+                                'posts_per_page'    =>  $this->items_limit,
                                 'post_status'       =>  'any',
                                 'orderby'            => array(
                                                             'menu_order'    => 'ASC',
@@ -232,6 +266,10 @@
                     
                     $the_query  = new WP_Query( $args );
                     $pages      = $the_query->posts;
+                    
+                    // found_posts reflects the TOTAL matching rows regardless of posts_per_page,
+                    // so we can warn the user even though we only fetched/display $this->items_limit of them.
+                    $this->total_found_posts = (int) $the_query->found_posts;
 
                     if ( !empty($pages) ) 
                         {

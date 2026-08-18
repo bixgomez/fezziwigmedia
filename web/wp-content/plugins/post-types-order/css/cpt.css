@@ -22,6 +22,28 @@
 #order-objects #nav-menu-footer .major-publishing-actions {clear: both;padding: 5px 0px;} 
 #order-objects #nav-menu-footer .submit {padding: 0px;}
 
+.pto-notice {
+    margin: 0 0 15px;
+    padding: 10px 15px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-left: 4px solid #dba617; /* amber = informational, not an error */
+    border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    font-size: 13px;
+    line-height: 1.6;
+    color: #3c434a;
+}
+
+.pto-notice p {
+    margin: 0;
+}
+
+
+.pto-notice--limit {
+    border-left-color: #dba617;
+}
+
 #order-objects .ui-sortable-placeholder{border-color:#bbb;background-color:#FCFCFC; height:32px; background-image: none; -moz-border-radius: 6px 6px 6px 6px; border: 3px dashed #E6E6E6; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; box-sizing: border-box;}
 #order-objects .ui-sortable-helper{filter:alpha(opacity=75); /* for internet explorer */opacity: 0.75; /* CSS3 standard */-moz-opacity:0.75; /* for older gecko browsers */-khtml-opacity: 0.75; /* for older webkit browsers */}
 
