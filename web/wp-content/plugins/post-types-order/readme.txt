@@ -3,7 +3,7 @@ Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
 Tested up to: 7.1
-Stable tag: 2.4.9
+Stable tag: 2.5
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,13 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+= 2.5 =
+ - Fix drag & drop icon for WordPress 7.1
+ - Process the options page form earlier, for the data to change accordingly when rendering the admin interfaces ( e.g. the menu hide / show )
+ - Identify the custom menus which contains multiple post types ( get_available_menu_locations() ). 
+ - Display a list of available custom post types if the menu has multiple. 
+ - Ensure the current post type sorting function is enabled before processing the response. 
+ - Improved code. 
 
 = 2.4.9 =
  - Limit the total items in the re-order interface to 500, to avoid server errors ( .e.g memory exhaust, timeout load, timeout processing etc ) 

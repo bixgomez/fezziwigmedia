@@ -1,4 +1,4 @@
-#cpto h2.subtitle {font-size: 15px; font-style: italic; font-weight: bold; padding-left: 0px}
+#cpto h2.subtitle {font-size: 15px; font-weight: bold; padding-left: 0px; padding: 20px 0 10px 0;}
 .wrap .example { color: #666666; font-size: 11px; font-weight: bold}
 
 #order-objects img {vertical-align: middle}
@@ -51,6 +51,17 @@
 #order-objects .button-primary.warning:hover {background: #a81010}
 
 #order-objects #post-body {background: none repeat scroll 0 0 #FFFFFF;border-width: 0 1px 0 1px;border-color: #CCCCCC;border-style: solid; padding: 10px;}
+
+.wp-list-taxonomy {width: 100%}
+.wp-list-taxonomy thead tr th{padding: 10px 0; text-align: left;}
+.wp-list-taxonomy tr {background-color: #FCFCFC;}
+.wp-list-taxonomy tbody th.check-column {padding: 9px 0 22px;}
+.wp-list-taxonomy td {color: #555555;}
+.wp-list-taxonomy td, .wp-list-taxonomy th {border-bottom-color: #DFDFDF; border-top-color: #FFFFFF;}
+.wp-list-taxonomy th, .wp-list-taxonomy td {overflow: hidden;}
+.wp-list-taxonomy td {padding: 9px 7px 4px 7px; vertical-align: top;}
+.wp-list-taxonomy td, .wp-list-taxonomy th {border-style: solid; border-width: 1px 0;}
+.wp-list-taxonomy * {word-wrap: break-word;}
 
 
 
