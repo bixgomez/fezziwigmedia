@@ -3,7 +3,7 @@ Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
 Tested up to: 7.1
-Stable tag: 2.5
+Stable tag: 2.5.1
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,11 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.5.1 =
+ - Fix: Removed the comparison of the object ids, when saving the order in the default WordPress archive. That may cause issues for non-admin users that have no view access to specific objects. 
+ - Updated the navigational links logic: For A → B → C, when viewing B, the Previous = A and the Next = C
+
 = 2.5 =
  - Fix drag & drop icon for WordPress 7.1
  - Process the options page form earlier, for the data to change accordingly when rendering the admin interfaces ( e.g. the menu hide / show )

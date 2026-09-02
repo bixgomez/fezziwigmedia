@@ -180,7 +180,7 @@
                             }
                         else
                             {
-                                $where = str_replace("p.post_date < '". $post->post_date  ."'", "p.menu_order > '$current_menu_order'", $where);  
+                                $where = str_replace("p.post_date < '". $post->post_date  ."'", "p.menu_order < '$current_menu_order'", $where);  
                             }
                     
                     return $where;
@@ -196,7 +196,7 @@
                 {
                     global $post, $wpdb;
                     
-                    $sort = 'ORDER BY p.menu_order ASC, p.post_date DESC LIMIT 1';
+                    $sort = 'ORDER BY p.menu_order DESC, p.post_date ASC LIMIT 1';
 
                     return $sort;
                 }
@@ -273,7 +273,7 @@
                             }
                         else
                             {
-                                $where = str_replace("p.post_date > '". $post->post_date  ."'", "p.menu_order < '$current_menu_order'", $where);  
+                                $where = str_replace("p.post_date > '". $post->post_date  ."'", "p.menu_order > '$current_menu_order'", $where);  
                             }
                     
                     return $where;
@@ -289,7 +289,7 @@
                 {
                     global $post, $wpdb; 
                     
-                    $sort = 'ORDER BY p.menu_order DESC, p.post_date ASC LIMIT 1';
+                    $sort = 'ORDER BY p.menu_order ASC, p.post_date DESC LIMIT 1';
                     
                     return $sort;    
                 }
