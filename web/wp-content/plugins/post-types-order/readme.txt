@@ -3,7 +3,7 @@ Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
 Tested up to: 7.1
-Stable tag: 2.5.1
+Stable tag: 2.5.3
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,13 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.5.3 =
+ - Fix: Use the object date (default sorting method) for the Next/Previous navigation links when menu_order is set to the default value (0).
+
+= 2.5.2 =
+ - New option "Revert Previous/Next Links" which reverts the navigational links
+ - Removed the current_user_can( 'edit_post', $id ) to allow users like contributors or custom roles to still be able to save the sorting. 
 
 = 2.5.1 =
  - Fix: Removed the comparison of the object ids, when saving the order in the default WordPress archive. That may cause issues for non-admin users that have no view access to specific objects. 

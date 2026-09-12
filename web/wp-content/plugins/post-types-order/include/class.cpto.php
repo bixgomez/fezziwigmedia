@@ -693,7 +693,7 @@
                             if (
                                 ! $post
                                 || $post->post_type !== $post_type
-                                || ! current_user_can( 'edit_post', $id )
+                               // || ! current_user_can( 'edit_post', $id )     //commented out, so the editor roles can still re-order
                             )
                                 {
                                     wp_send_json_error(
