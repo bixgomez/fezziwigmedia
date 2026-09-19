@@ -54,6 +54,10 @@ class Modula_Shortcode_Modern {
 			return esc_html__( 'Gallery not found.', 'modula-best-grid-gallery' );
 		}
 
+		if ( ! Modula_Helper::is_visitor_readable_gallery( $gallery ) ) {
+			return Modula_Helper::visitor_shortcode_unavailable_message( $gallery );
+		}
+
 		// Get and prepare settings
 		$settings = $this->get_gallery_settings( $gallery_id, $atts['align'] );
 		if ( empty( $settings ) ) {
@@ -149,10 +153,6 @@ class Modula_Shortcode_Modern {
 			$gallery = get_post( $gallery_posts[0] );
 		}
 
-		if ( ! Modula_Helper::is_visitor_readable_gallery( $gallery ) ) {
-			return null;
-		}
-
 		return $gallery;
 	}
 
@@ -165,6 +165,10 @@ class Modula_Shortcode_Modern {
 	 */
 	private function get_gallery_settings( $gallery_id, $align ) {
 		$gallery_id_string = 'modula-' . $gallery_id;
+
+		if ( class_exists( '\Modula\V2\Meta_Sync' ) ) {
+			\Modula\V2\Meta_Sync::maybe_repair_gallery_filter_list( (int) $gallery_id );
+		}
 
 		// Get raw settings
 		$settings = apply_filters(

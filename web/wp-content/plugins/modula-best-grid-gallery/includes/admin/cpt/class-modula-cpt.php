@@ -689,7 +689,7 @@ class Modula_CPT {
 					}
 
 					// Values for selects
-					$lightbox_values = apply_filters( 'modula_lightbox_values', array( 'no-link', 'direct', 'fancybox', 'lightbox-prefer-url', 'external-url' ) );
+					$lightbox_values = apply_filters( 'modula_lightbox_values', array( 'no-link', 'fancybox', 'lightbox-prefer-url', 'external-url' ) );
 
 					switch ( $field_id ) {
 						case 'type':
@@ -712,8 +712,14 @@ class Modula_CPT {
 							$modula_settings[ $field_id ] = absint( $settings[ $field_id ] );
 							break;
 						case 'lightbox':
-							if ( in_array( $settings[ $field_id ], $lightbox_values ) ) {
-								$modula_settings[ $field_id ] = sanitize_text_field( wp_unslash( $settings[ $field_id ] ) );
+							$lightbox_val = sanitize_text_field( wp_unslash( $settings[ $field_id ] ) );
+							if ( function_exists( 'modula_coerce_lightbox_click_mode' ) ) {
+								$lightbox_val = modula_coerce_lightbox_click_mode( $lightbox_val );
+							} elseif ( 'direct' === $lightbox_val ) {
+								$lightbox_val = 'fancybox';
+							}
+							if ( in_array( $lightbox_val, $lightbox_values, true ) ) {
+								$modula_settings[ $field_id ] = $lightbox_val;
 							} else {
 								$modula_settings[ $field_id ] = 'fancybox';
 							}
@@ -824,6 +830,40 @@ class Modula_CPT {
 		}
 
 		$modula_settings = $this->ensure_hover_builder_in_flat_settings( $post_id, $modula_settings );
+		$modula_settings = $this->ensure_gallery_filter_list_on_classic_save( $post_id, $settings, $modula_settings );
+
+		return $modula_settings;
+	}
+
+	/**
+	 * Do not wipe a non-empty gallery filter name list with missing/placeholder POST data.
+	 *
+	 * @param int                  $post_id          Gallery post ID.
+	 * @param array<string, mixed> $settings         Raw `modula-settings` POST (pre-sanitize).
+	 * @param array<string, mixed> $modula_settings Sanitized flat settings.
+	 * @return array<string, mixed>
+	 */
+	private function ensure_gallery_filter_list_on_classic_save( $post_id, $settings, array $modula_settings ) {
+		if ( ! function_exists( 'modula_resolve_gallery_filter_list_save' ) ) {
+			return $modula_settings;
+		}
+
+		$prev = get_post_meta( $post_id, 'modula-settings', true );
+		$prev = is_array( $prev ) ? $prev : array();
+
+		if ( ! array_key_exists( 'filters', $modula_settings )
+			&& ! ( is_array( $settings ) && array_key_exists( 'filters', $settings ) )
+			&& ! array_key_exists( 'filters', $prev ) ) {
+			return $modula_settings;
+		}
+
+		$existing    = array_key_exists( 'filters', $prev ) ? $prev['filters'] : array( '' );
+		$key_present = is_array( $settings ) && array_key_exists( 'filters', $settings );
+		$incoming    = $key_present && array_key_exists( 'filters', $modula_settings )
+			? $modula_settings['filters']
+			: null;
+
+		$modula_settings['filters'] = modula_resolve_gallery_filter_list_save( $incoming, $existing, $key_present );
 
 		return $modula_settings;
 	}

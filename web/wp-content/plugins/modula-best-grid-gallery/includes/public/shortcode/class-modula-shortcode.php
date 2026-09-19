@@ -181,8 +181,8 @@ class Modula_Shortcode {
 
 		$script_manager = Modula_Script_Manager::get_instance();
 
-		/* Generate uniq id for this gallery */
-		$gallery_id = 'modula-' . $atts['id'];
+		/* Generate uniq id for this gallery (classic root; modern stack uses modula-{id}). */
+		$gallery_id = 'jtg-' . $atts['id'];
 
 		// Check if is an old Modula post or new.
 		$gallery = get_post( $atts['id'] );
@@ -223,12 +223,15 @@ class Modula_Shortcode {
 		}
 
 		if ( ! Modula_Helper::is_visitor_readable_gallery( $gallery ) ) {
-			return;
+			return Modula_Helper::visitor_shortcode_unavailable_message( $gallery );
 		}
 
 		self::$classic_stack_rendered = true;
 
-		/* Get gallery settings */
+		/* Get gallery settings — repair wiped filter lists before visitor consume. */
+		if ( class_exists( '\Modula\V2\Meta_Sync' ) ) {
+			\Modula\V2\Meta_Sync::maybe_repair_gallery_filter_list( (int) $atts['id'] );
+		}
 		$settings = apply_filters( 'modula_backwards_compatibility_front', get_post_meta( $atts['id'], 'modula-settings', true ), $atts );
 
 		unset( $raw_atts['id'], $raw_atts['align'] );
@@ -413,8 +416,10 @@ class Modula_Shortcode {
 		);
 
 		// Check for lightbox
-		$js_config['lightbox'] = $settings['lightbox'];
-		if ( apply_filters( 'modula_disable_lightboxes', true ) && ! in_array( $settings['lightbox'], array( 'no-link', 'direct', 'external-url', 'attachment-page', 'lightbox-prefer-url' ), true ) ) {
+		$js_config['lightbox'] = function_exists( 'modula_coerce_lightbox_click_mode' )
+			? modula_coerce_lightbox_click_mode( $settings['lightbox'] )
+			: $settings['lightbox'];
+		if ( apply_filters( 'modula_disable_lightboxes', true ) && ! in_array( $js_config['lightbox'], array( 'no-link', 'external-url', 'attachment-page', 'lightbox-prefer-url' ), true ) ) {
 			$js_config['lightbox'] = 'fancybox';
 		}
 
