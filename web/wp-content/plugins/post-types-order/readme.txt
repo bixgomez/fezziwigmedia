@@ -2,8 +2,8 @@
 Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
-Tested up to: 7.1
-Stable tag: 2.5.3
+Tested up to: 7.1.1
+Stable tag: 2.5.5
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -116,6 +116,10 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 == Changelog ==
 
+= 2.5.5 =
+ - Relocate the pto/interface/query/limit filter so it can adjust the items_limit class property before it is used in the code.
+ - Fix: Correctly reconstruct the $object_ids list for the queried objects.
+ 
 = 2.5.3 =
  - Fix: Use the object date (default sorting method) for the Next/Previous navigation links when menu_order is set to the default value (0).
 

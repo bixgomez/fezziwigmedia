@@ -675,12 +675,22 @@
                             $submitted_ids[] = absint( $submitted_id );
                         }
            
-                    array_splice(
-                        $object_ids,
-                        $edit_start_at,
-                        count( $submitted_ids ),
-                        $submitted_ids
+                    
+                    $submitted_ids = array_values( array_unique( array_map( 'absint', $submitted_ids ) ) );
+
+                    // Remove any submitted IDs from the existing full list, preserving the order
+                    // of everything else in $object_ids.
+                    $object_ids = array_values(
+                        array_filter(
+                            $object_ids,
+                            function ( $id ) use ( $submitted_ids ) {
+                                return ! in_array( $id, $submitted_ids, true );
+                            }
+                        )
                     );
+
+                    // Put the submitted IDs in front, in their submitted order.
+                    $object_ids = array_merge( $submitted_ids, $object_ids );
 
                     /*
                      * This handler renumbers the entire post-type sequence, so every
