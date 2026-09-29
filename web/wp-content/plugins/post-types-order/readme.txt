@@ -2,8 +2,8 @@
 Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
-Tested up to: 7.1.1
-Stable tag: 2.5.5
+Tested up to: 7.1.2
+Stable tag: 2.5.6
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,11 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.5.6 =
+ - Import the old options structure to the new format.
+ - Fix: Text typo.
+ - WordPress 7.1.2 compatibility check and tag update. 
 
 = 2.5.5 =
  - Relocate the pto/interface/query/limit filter so it can adjust the items_limit class property before it is used in the code.

@@ -23,6 +23,8 @@
                     $is_configured = get_option('CPT_configured');
                     if ($is_configured == '')
                         add_action( 'admin_notices', array ( $this, 'admin_configure_notices'));
+                        
+                    $this->updater();
                     
                     add_filter('init',                      array ( $this, 'on_init'));
                     
@@ -96,6 +98,24 @@
             function compatibility()
                 {
                     include_once( CPTPATH . '/include/class.compatibility.php');                    
+                }
+                
+                
+                
+            /**
+            * Update wrapper
+            * 
+            */
+            function updater()
+                {
+                    
+                    //no not run on plugin activation
+                    if ( isset($_GET['action'])   &&  ( $_GET['action']     ==  'activate-plugin' || $_GET['action']     ==  'activate'  ) )
+                        return;
+                       
+                    //check for update from older version
+                    include_once( CPTPATH . '/include/class.updater.php');
+                    
                 }
                 
                 
