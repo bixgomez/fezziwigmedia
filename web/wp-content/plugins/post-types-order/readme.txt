@@ -2,8 +2,8 @@
 Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
-Tested up to: 7.1.2
-Stable tag: 2.5.6
+Tested up to: 7.1.3
+Stable tag: 2.5.7
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -116,6 +116,10 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 == Changelog ==
 
+= 2.5.7 =
+ - When using WPML, Polylang, Bogo, the park items left out of an order-save runs only for current language objects. 
+ - WordPress 7.1.3 compatibility check and tag update
+ 
 = 2.5.6 =
  - Import the old options structure to the new format.
  - Fix: Text typo.

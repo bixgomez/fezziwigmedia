@@ -58,7 +58,7 @@
              * @param array $options Plugin options.
              * @return array
              */
-            public function _update_2_5_0( $options )
+            public function _update_2_5_0( )
                 {
                     $options            =     CptoFunctions::get_options();
                     
