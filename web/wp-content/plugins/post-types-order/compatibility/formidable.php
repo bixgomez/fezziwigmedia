@@ -18,7 +18,7 @@
             function __construct()
                 {
                     if( !   $this->is_plugin_active())
-                        return FALSE;
+                        return;
                         
                     add_filter( 'pto/posts_orderby/ignore', array ( $this, 'ignore_post_types_order_sort' ), 10, 3 );
 

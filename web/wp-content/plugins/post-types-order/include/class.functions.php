@@ -79,6 +79,7 @@
                                             'use_query_ASC_DESC'                =>  '',
                                             'capability'                        =>  'manage_options',
                                             'edit_view_links'                   =>  '',
+                                            'items_limit_enabled'               =>  1,
                                             'navigation_sort_apply'             =>  1,
                                             'navigation_sort_revert'            =>  '',
                                             
@@ -102,17 +103,71 @@
             
             
             /**
+            * Check whether the annual Black Friday and Cyber Monday promotion is active.
+            *
+            * Uses the WordPress site timezone. Both the 26 November start date and the
+            * 2 December end date are included.
+            *
+            * @return bool
+            */
+            function is_black_friday_promotion_active()
+                {
+                    $today = current_time( 'md' );
+
+                    return $today >= '1125' && $today <= '1202';
+                }
+
+
+            /**
+            * Output the Black Friday and Cyber Monday promotional content.
+            *
+            * Keep the campaign markup in this method so it can be replaced without
+            * changing the cpt_info_box() renderer or its date gate.
+            */
+            function black_friday_promotion_content()
+                {
+                    ?>
+                        <div class="cpto-black-friday-promotion">
+                            <a class="cpto-black-friday-promotion__image" href="https://www.nsp-code.com/premium-plugins/advanced-post-types-order/" target="_blank" rel="noopener noreferrer">
+                                <img src="<?php echo esc_url( CPTURL . '/images/bf-apto.png' ); ?>"  alt="<?php esc_attr_e( 'Black Friday and Cyber Monday', 'post-types-order' ); ?>">
+                            </a>
+                            <div class="cpto-black-friday-promotion__content">
+                                <a href="https://www.nsp-code.com/premium-plugins/advanced-post-types-order/" target="_blank" rel="noopener noreferrer">
+                                    <img src="<?php echo esc_url( CPTURL . '/images/logo-white.png' ); ?>"  alt="<?php esc_attr_e( 'Black Friday and Cyber Monday', 'post-types-order' ); ?>">
+                                </a>
+                                <strong><?php esc_html_e( 'Black Friday & Cyber Monday special', 'post-types-order' ); ?></strong>
+                                <p><?php 
+                                
+                                echo wp_kses(
+                                                __( 'Discover the <b>Advanced Post Types Order</b> features during our limited-time event.', 'post-types-order' ),
+                                                array(
+                                                    'b' => array(),
+                                                )
+                                            );
+                                
+                                ?> <a href="https://www.nsp-code.com/premium-plugins/advanced-post-types-order/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more', 'post-types-order' ); ?></a></p>
+                            </div>
+                        </div>
+                    <?php
+                }
+
+
+            /**
             * General messages box
-            *     
+            *
             */
             function cpt_info_box()
                 {
                     ?>
                         <div id="cpt_info_box">
+                            <?php if ( $this->is_black_friday_promotion_active() ) { ?>
+                                <?php $this->black_friday_promotion_content(); ?>
+                            <?php } else { ?>
                             <h4><a href="https://www.nsp-code.com/premium-plugins/advanced-post-types-order/" target="_blank"><img width="151" src="<?php echo esc_url ( CPTURL . "/images/logo.png" ) ?>" class="attachment-large size-large wp-image-36927" alt=""></a><br /><?php esc_html_e('Did you know an Advanced version of this plug-in is available, with Automatic Sorting, AI Prompts, and many more?', 'post-types-order') ?> <a target="_blank" href="https://www.nsp-code.com/premium-plugins/advanced-post-types-order/"><?php esc_html_e('Read more', 'post-types-order') ?></a></h4>
                             <p><?php esc_html_e('Check our', 'post-types-order') ?> <a target="_blank" href="https://wordpress.org/plugins/taxonomy-terms-order/">Category Order - Taxonomy Terms Order</a> <?php esc_html_e('plugin which allow to custom sort categories and custom taxonomies terms', 'post-types-order') ?> </p>
                             <p><span style="color:#CC0000" class="dashicons dashicons-megaphone" alt="f488">&nbsp;</span> <?php esc_html_e('Check our', 'post-types-order') ?> <a href="https://wordpress.org/plugins/wp-hide-security-enhancer/" target="_blank"><b>WP Hide & Security Enhancer</b></a> <?php esc_html_e('an extra layer of security for your site. It provides an easy way to protect your website’s code from being exploited by hiding your WordPress core files, themes, and plugins.', 'post-types-order') ?>.</p>
                             <p><span style="color:#CC0000" class="dashicons dashicons-megaphone" alt="f488">&nbsp;</span> <?php esc_html_e('Check our', 'post-types-order') ?> <a href="https://wordpress.org/plugins/software-license-lite/" target="_blank"><b>Software License Lite for WooCommerce</b></a> <?php esc_html_e('A centralized licensing solution for WooCommerce that manages product licenses, delivers software updates, supports ongoing maintenance, and helps protect your code.', 'post-types-order') ?>.</p>
+                            <?php } ?>
                             <div class="clear"></div>
                         </div>
                     

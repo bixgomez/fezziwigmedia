@@ -43,6 +43,7 @@
                             $options['use_query_ASC_DESC']          = isset($_POST['use_query_ASC_DESC'])       ? intval($_POST['use_query_ASC_DESC'])   : '';
                             
                             $options['edit_view_links']             = isset($_POST['edit_view_links'])          ? intval($_POST['edit_view_links'])   : '';
+                            $options['items_limit_enabled']         = isset($_POST['items_limit_enabled'])      ? intval($_POST['items_limit_enabled'])   : '';   // <-- new
                             $options['navigation_sort_apply']       = isset($_POST['navigation_sort_apply'])    ? intval($_POST['navigation_sort_apply'])   : '';
                             $options['navigation_sort_revert']      = isset($_POST['navigation_sort_revert'])    ? intval($_POST['navigation_sort_revert'])   : '';
                                                 
@@ -208,6 +209,19 @@
                                                     <input type="checkbox" <?php checked( '1', $options['edit_view_links'] ); ?> id="edit_view_links" value="1" name="edit_view_links">
                                                     <?php esc_html_e("In the reorder interface, display an 'Edit' and 'View' link for each item, allowing users to quickly manage or preview individual items.", 'post-types-order') ?>
                                                     <br /><?php esc_html_e("For better performance and user experience, consider hiding these links by default, particularly for very long lists. This will help streamline the interface, reducing visual clutter and enhancing page load times by making the HTML structure lighter.", 'post-types-order') ?>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr valign="top">
+                                            <th scope="row" style="text-align: right;"><label for="items_limit_enabled"><?php esc_html_e('Enable Items Limit', 'post-types-order') ?></label></th>
+                                            <td>
+                                                <p>
+                                                    <input type="checkbox" <?php checked( '1', $options['items_limit_enabled'] ); ?> id="items_limit_enabled" value="1" name="items_limit_enabled">
+                                                    <?php esc_html_e("Limit the number of items loaded in the Re-Order interface for performance reasons. Uncheck this option to load and reorder all items.", 'post-types-order') ?>
+                                                </p>
+                                                <p class="description">
+                                                    <?php esc_html_e("The default limit is 700 items. Developers can adjust the limit using the pto/interface/query/limit filter. Loading a very large number of items may slow down or freeze the Re-Order screen.", 'post-types-order') ?>
                                                 </p>
                                             </td>
                                         </tr>

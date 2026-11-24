@@ -3,7 +3,7 @@ Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
 Tested up to: 7.1.3
-Stable tag: 2.5.9
+Stable tag: 2.6
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,13 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.6 =
+ - New option "Enable Items Limit" to enable disable the default limit of 700 objects per page, to avoid page loading issues when large number of items. 
+ - Apply Auto Apply Sort to REST collection queries.
+ - Add menu_order to a Gutenberg/REST post collection query.
+ - Run the code updater only in the admin dashboard
+ 
 
 = 2.5.9 =
  - Compatibility with Blocksy: sync the ct_content_block to ct-dashboard show/hide option.

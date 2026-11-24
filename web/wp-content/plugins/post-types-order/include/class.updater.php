@@ -13,6 +13,10 @@
                 
             private function _run()
                 {                    
+                    //updater run only in the admin dashboard
+                    if ( ! is_admin() || ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) )
+                        return;
+                    
                     $options            =     CptoFunctions::get_options();
                     
                     $version            =   isset ( $options['plugin_version'] )    ?   $options['plugin_version']  :   '1';

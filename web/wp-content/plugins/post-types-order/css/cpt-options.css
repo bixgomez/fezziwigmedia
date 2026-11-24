@@ -3,6 +3,7 @@
 #cpto #cpt_info_box a {text-decoration: none}
 #cpto #cpt_info_box a img {padding: 10px;  background-color: #f0f0f0;  border-radius: 15px;}
 #cpto #cpt_info_box #donate_form { padding: 20px 0 17px;    text-align: center;    width: 100%;}
+
 #form_data .pt-list {display:flex; flex-wrap: wrap;}
 #form_data .pt-item {flex-basis: calc(25% - 10px);  flex-grow: 0;  margin: 5px;}
 #form_data .pt-list::after {  content: "";  flex-basis: calc(25% - 10px);  flex-grow: 1;  margin: 5px;}

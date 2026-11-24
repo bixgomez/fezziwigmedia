@@ -10,8 +10,11 @@
             var $CPTO;
             
             // Max number of items queried/shown in the sortable list (performance safeguard)
-            var $items_limit           =   700;
-            
+            var $items_limit           =   7;
+
+            // Whether the above limit is active (Settings > Post Types Order)
+            var $items_limit_enabled   =   TRUE;
+
             // Real total of items found for the current post type (set by list_pages())
             var $total_found_posts     =   0;
                         
@@ -27,9 +30,22 @@
                     global $CPTO;
                     $this->CPTO         =   $CPTO;
                     
+                    // Check whether the item limit is enabled in the plugin settings.
+                    // Defaults to enabled for installations saved before this option existed.
+                    $options = $this->functions->get_options();
+
+                    $this->items_limit_enabled = ! isset( $options['items_limit_enabled'] )
+                        || (string) $options['items_limit_enabled'] === '1';
+
                     // Allow the limit itself to be filtered, then keep it on the object
                     // so callers (e.g. sort_page()) can compare it against found_posts.
                     $this->items_limit = (int) apply_filters( 'pto/interface/query/limit', $this->items_limit );
+
+                    // No limit: -1 tells WP_Query to retrieve every matching item.
+                    if ( ! $this->items_limit_enabled )
+                        {
+                            $this->items_limit = -1;
+                        }
                     
                     add_action( 'admin_init',                               array ( $this, 'admin_init'), 10 );
                     
@@ -440,14 +456,17 @@
                                     $this->list_pages('hide_empty=0&title_li=&post_type=' . $this->CPTO->current_post_type->name );
                                     $sortable_items = ob_get_clean();
                                     
-                                    if ( $this->total_found_posts > $this->items_limit ) :
+                                    if ( $this->items_limit_enabled && $this->items_limit > 0 && $this->total_found_posts > $this->items_limit ) :
                                 ?>
                                     <div class="pto-notice pto-notice--limit">
                                         <p>
                                             <?php
                                                 printf(
                                                     /* translators: 1: total number of items found, 2: number of items currently shown/sortable */
-                                                    esc_html__( 'This post type contains %1$d items, but for performance reasons, only the first %2$d items (based on the current order) are displayed here. Items beyond this limit cannot be reordered from this screen. Use the pto/interface/query/limit filter to adjust the number of displayed items, or consider the Advanced Post Types Order plugin and its pagination features.', 'post-types-order' ),
+                                                    esc_html__( 'This post type contains %1$d items, but for performance reasons, only the first %2$d items ( based on the current order ) are displayed here. Items beyond this limit cannot be reordered from this screen. Adjust the limit with the pto/interface/query/limit filter.', 'post-types-order' )
+                                                     . '<br />'
+                                                     . esc_html__( 'Or disable the limit in Settings > Post Types Order, or consider the Advanced Post Types Order plugin and its pagination features.', 'post-types-order' )
+                                                     ,
                                                     (int) $this->total_found_posts,
                                                     (int) $this->items_limit
                                                 );

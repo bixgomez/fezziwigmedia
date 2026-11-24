@@ -29,7 +29,9 @@
                     add_filter('init',                      array ( $this, 'on_init'));
                     
                     add_filter('pre_get_posts', array ( $this, 'pre_get_posts'));
-                    add_filter('posts_orderby', array ( $this, 'posts_orderby'), 99, 2);                        
+                    add_filter('posts_orderby', array ( $this, 'posts_orderby'), 99, 2); 
+                    
+                    add_action( 'rest_api_init', array( $this, 'register_rest_query_sort_filters' ) );                       
                 }
                 
             
@@ -155,6 +157,109 @@
                         }
                         
                     return $query;
+                }
+            
+            
+            /**
+             * Apply Auto Apply Sort to REST collection queries.
+             *
+             * Gutenberg's Query Loop editor preview retrieves posts through the REST API,
+             * rather than through the frontend Query Loop rendering path.
+             */
+            function register_rest_query_sort_filters()
+                {
+                    $post_types = get_post_types(
+                        array(
+                            'show_in_rest' => TRUE,
+                        ),
+                        'names'
+                    );
+
+                    foreach ( $post_types as $post_type )
+                        {
+                            add_filter(
+                                'rest_' . $post_type . '_query',
+                                array( $this, 'rest_query_apply_custom_order' ),
+                                99,
+                                2
+                            );
+                        }
+                }
+
+
+            /**
+             * Add menu_order to a Gutenberg/REST post collection query.
+             *
+             * @param array           $args    WP_Query arguments prepared by the REST controller.
+             * @param WP_REST_Request $request Current REST request.
+             * @return array
+             */
+            function rest_query_apply_custom_order( $args, $request )
+                {
+                    $options = $this->functions->get_options();
+
+                    if ( strval( $options['autosort'] ) !== '1' )
+                        return $args;
+
+                    if ( isset( $args['ignore_custom_sort'] ) && $args['ignore_custom_sort'] === TRUE )
+                        return $args;
+
+                    $post_type = isset( $args['post_type'] ) ? $args['post_type'] : '';
+
+                    if ( 'nav_menu_item' === $post_type )
+                        return $args;
+
+                    /*
+                     * Match the existing Auto Apply Sort behavior:
+                     * - normally menu_order is ASC;
+                     * - when enabled, respect the Query Loop's selected ASC/DESC direction.
+                     */
+                    $menu_order_direction = 'ASC';
+
+                    if (
+                        strval( $options['use_query_ASC_DESC'] ) === '1'
+                        && isset( $args['order'] )
+                        && in_array( strtoupper( $args['order'] ), array( 'ASC', 'DESC' ), TRUE )
+                    )
+                        {
+                            $menu_order_direction = strtoupper( $args['order'] );
+                        }
+
+                    $existing_orderby = isset( $args['orderby'] ) ? $args['orderby'] : 'date';
+                    $existing_order  = isset( $args['order'] ) ? strtoupper( $args['order'] ) : 'DESC';
+
+                    /*
+                     * Put the saved PTO position first and retain the Query Loop's selected
+                     * order as a deterministic tie-breaker.
+                     */
+                    if ( is_array( $existing_orderby ) )
+                        {
+                            $args['orderby'] = array_merge(
+                                array( 'menu_order' => $menu_order_direction ),
+                                $existing_orderby
+                            );
+                        }
+                    else if ( 'menu_order' !== $existing_orderby )
+                        {
+                            $args['orderby'] = array(
+                                'menu_order'      => $menu_order_direction,
+                                $existing_orderby => $existing_order,
+                            );
+                        }
+                    else
+                        {
+                            $args['orderby'] = array(
+                                'menu_order' => $menu_order_direction,
+                            );
+                        }
+
+                    /*
+                     * The REST query now explicitly contains the complete PTO ordering.
+                     * Avoid the generic posts_orderby() callback adding menu_order a second time.
+                     */
+                    $args['ignore_custom_sort'] = TRUE;
+
+                    return $args;
                 }
             
             
@@ -507,12 +612,18 @@
                                                     //sanitize
                                                     $id =   intval ( $id );
                                                     
-                                                    $data = array('menu_order' => $position, 'post_parent' => str_replace('item_', '', $key));
+                                                    $data = array(
+                                                                        'menu_order'  => $position,
+                                                                        'post_parent' => intval( str_replace( 'item_', '', $key ) ),
+                                                                    );
                                                     
                                                     //Deprecated, rely on pto/save-ajax-order 
                                                     $data = apply_filters('post-types-order_save-ajax-order', $data, $key, $id);
                                                     
                                                     $data = apply_filters('pto/save-ajax-order', $data, $key, $id);
+                                                    
+                                                    // Ensure post_parent is an integer after filters.
+                                                    $data['post_parent'] = intval( $data['post_parent'] );
                                                     
                                                     $wpdb->update( $wpdb->posts, $data, array('ID' => $id) );
                                                     

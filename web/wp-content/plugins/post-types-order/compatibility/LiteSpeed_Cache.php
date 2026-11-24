@@ -17,7 +17,7 @@
             function __construct()
                 {
                     if( !   $this->is_plugin_active())
-                        return FALSE;
+                        return;
                     
                     add_action( 'PTO/order_update_complete', array( $this, 'order_update_complete') );
                 }
