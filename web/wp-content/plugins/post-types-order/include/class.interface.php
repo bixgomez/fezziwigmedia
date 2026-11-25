@@ -10,7 +10,7 @@
             var $CPTO;
             
             // Max number of items queried/shown in the sortable list (performance safeguard)
-            var $items_limit           =   7;
+            var $items_limit           =   700;
 
             // Whether the above limit is active (Settings > Post Types Order)
             var $items_limit_enabled   =   TRUE;

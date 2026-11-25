@@ -414,6 +414,9 @@
             */
             function admin_options_print_styles()
                 {
+                    wp_register_style('CPTStyleSheets', CPTURL . '/css/cpt.css', array(), PTO_VERSION );
+                    wp_enqueue_style( 'CPTStyleSheets'); 
+                    
                     wp_register_style('pto-options', CPTURL . '/css/cpt-options.css', array(), PTO_VERSION );
                     wp_enqueue_style( 'pto-options'); 
                 }

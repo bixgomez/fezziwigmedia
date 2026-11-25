@@ -3,7 +3,7 @@ Contributors: nsp-code, tdgu
 Tags: post order, posts order, post sort, posts sort, post types order
 Requires at least: 2.8
 Tested up to: 7.1.3
-Stable tag: 2.6
+Stable tag: 2.6.1
 Requires PHP: 5.6
 License: GPLv2 or later
 
@@ -115,6 +115,9 @@ Consider upgrading to our advanced version of this plugin, which offers these fe
 
 
 == Changelog ==
+
+= 2.6.1 =
+ - Fix: Unintended limit of 7 items instead of 700 in the re-order interface.
 
 = 2.6 =
  - New option "Enable Items Limit" to enable disable the default limit of 700 objects per page, to avoid page loading issues when large number of items. 
